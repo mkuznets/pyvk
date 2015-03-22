@@ -1,0 +1,7 @@
+__pycache__
+*.swp
+*.swn
+*.swo
+*.out
+*.rt
+*.ini
