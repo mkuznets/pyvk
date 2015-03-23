@@ -46,7 +46,7 @@ class VK:
             # Password authorisation.
             log_message('Warning: it\'s not safe to use password '
                         'authorisation')
-            self.token = self.auth(start_state='login')
+            self.token = self._auth(start_state='login')
 
         elif token:
             # Token authorisation.
@@ -57,7 +57,7 @@ class VK:
 
         if not self.token:
             # Try to get net token.
-            self.token = self.auth()
+            self.token = self._auth()
 
         if not self.token:
             # If nothing helped
@@ -86,7 +86,7 @@ class VK:
 
                 # Trying to renew access token
                 self.token = None
-                self.token = self.auth()
+                self.token = self._auth()
                 if not self.token:
                     log_message('Cannot renew access token... good bye...')
 
@@ -99,7 +99,7 @@ class VK:
 
         return result
 
-    def auth(self, start_state=None, password=None):
+    def _auth(self, start_state=None, password=None):
 
         # Read cache with cookies and previous token
         cache = auth_cache(self.username, self.cache_dir)
