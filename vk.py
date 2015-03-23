@@ -24,7 +24,7 @@ class VK:
             os.makedirs(self.cache_dir)
 
         elif not os.access(self.cache_dir, os.W_OK)\
-            or not os.access(self.cache_dir, os.R_OK):
+                or not os.access(self.cache_dir, os.R_OK):
             raise IOError('Cannot write or read from cache directory %s' %
                           self.cache_dir)
 
@@ -105,7 +105,7 @@ class VK:
         cache = auth_cache(self.username, self.cache_dir)
 
         auth = Auth(self.username, self.api_id, self.mask, cache,
-                       password=password)
+                    password=password)
 
         return auth.token
 
@@ -277,8 +277,49 @@ class Auth:
         if act == 'grant_access':
             return ('grant_access', form.action)
 
+        elif act == 'authcheck_code':
+            action_url = '%s://%s%s' % (url.scheme, url.netloc, form.action)
+            return ('authcheck', action_url, dict(form.fields))
+
         else:
-            raise RuntimeError('#Error: unpredictable behavior 2')
+            raise RuntimeError('#Error: login response has unexpected formatting.')
+
+    def _s_authcheck(self, action_url, fields):
+
+        if not ('remember' in fields and 'code' in fields):
+            raise RuntimeError('#Error: authcheck page has unexpected formatting.')
+
+        fields['remember'] = 0
+        fields['code'] = prompt.ask_code()
+
+        r = self.http.post(action_url, data=fields, timeout=settings.timeout)
+
+        doc = lxml.html.document_fromstring(r.text.encode())
+
+        # Check for wrong password
+        errors = doc.find_class('service_msg_warning')
+
+        if errors:
+            print('#Error: secret code may be incorrect.')
+            # TODO: print error text from page
+            return ('authcheck', action_url, fields)
+
+        url = urlparse(r.url)
+
+        # Token page
+        if url.fragment.startswith('access_token='):
+            return ('get_token', url)
+
+        # Otherwise: check the need to confirm access
+        form = doc.forms[0]
+        action_url = urlparse(form.action)
+        act = parse_qs(action_url.query)['act'][0]
+
+        if act == 'grant_access':
+            return ('grant_access', form.action)
+
+        else:
+            raise RuntimeError('#Error: response has unexpected formatting.')
 
     def _s_grant_access(self, action_url):
 
@@ -321,12 +362,23 @@ def log_message(text, file=None):
 
 class prompt:
     def ask_pw():
+        print()
         return getpass.getpass()
 
     def ask_user():
         username = input('Username (email of mobile number): ')
-        print()
         return username.strip()
+
+    def ask_code():
+
+        while True:
+            code = input('Secret code: ').strip()
+            if not (code.isdigit() and len(code) == 6):
+                print('The code must be a 6-digit number.')
+                continue
+            break
+
+        return int(code)
 
 
 class AuthError(Exception):
