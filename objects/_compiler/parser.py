@@ -43,18 +43,26 @@ def p_attr_list(p):
 
 def p_attr(p):
     '''
-    attr : ID modifier_opt ID
+    attr : ID type_opt required_opt ID
     '''
     p[0] = ast.Attr(*list(p)[1:])
 
 
-def p_modifier_opt(p):
+def p_type_opt(p):
     '''
-    modifier_opt : empty
-                 | STAR
-                 | STAR STAR
+    type_opt : empty
+             | STAR
+             | STAR STAR
     '''
     p[0] = (1 if p[1] else 0) if len(p) == 2 else 2
+
+
+def p_required_opt(p):
+    '''
+    required_opt : empty
+                 | BANG
+    '''
+    p[0] = True if p[1] else False
 
 
 def p_empty(p):

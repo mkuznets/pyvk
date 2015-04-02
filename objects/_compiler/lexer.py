@@ -3,7 +3,7 @@
 keywords = []
 
 tokens = keywords + [
-    'ID', 'LBRACKET', 'RBRACKET', 'COMMA', 'STAR', 'CARET'
+    'ID', 'LBRACKET', 'RBRACKET', 'COMMA', 'STAR', 'CARET', 'BANG'
 ]
 
 # Tokens
@@ -11,6 +11,7 @@ tokens = keywords + [
 # net operators
 t_CARET         = r'\^'
 t_STAR          = r'\*'
+t_BANG          = r'\!'
 t_COMMA         = r','
 t_LBRACKET      = r'\['
 t_RBRACKET      = r'\]'

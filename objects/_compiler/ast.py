@@ -137,9 +137,10 @@ class Class(Node):
     attr_names = ('name','plain',)
 
 class Attr(Node):
-    def __init__(self, type, modifier, name, coord=None):
+    def __init__(self, type, modifier, required, name, coord=None):
         self.type = type
         self.modifier = modifier
+        self.required = required
         self.name = name
         self.coord = coord
 
@@ -147,5 +148,5 @@ class Attr(Node):
         nodelist = []
         return tuple(nodelist)
 
-    attr_names = ('type','modifier','name',)
+    attr_names = ('type','modifier','required','name',)
 
