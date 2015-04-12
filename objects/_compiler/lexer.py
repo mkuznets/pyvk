@@ -22,7 +22,7 @@ keywords_map = {k.lower(): k for k in keywords}
 
 
 def t_ID(t):
-    r'[A-Za-z_][\w_]*'
+    r'[A-Za-z_]\w*'
     t.type = keywords_map.get(t.value, 'ID')
     return t
 

@@ -86,3 +86,23 @@ def build():
     tokens = lexer.tokens
     tab_path = os.path.dirname(os.path.realpath(__file__)) + '/~parsetab/spec'
     return yacc.yacc(start='spec', debug=0, tabmodule=tab_path)
+
+
+
+import sys
+import inspect
+
+def print_grammar():
+    rules = []
+
+    for name, obj in inspect.getmembers(sys.modules[__name__]):
+        if inspect.isfunction(obj) and name[:2] == 'p_'\
+                and obj.__doc__ is not None:
+            rule = str(obj.__doc__).strip()
+            rules.append(rule)
+
+    print("\n".join(rules))
+
+
+if __name__ == '__main__':
+    print_grammar()

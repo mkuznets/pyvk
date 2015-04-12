@@ -27,7 +27,7 @@ class Builder(ast.NodeVisitor):
             base_classes_code = f.read()
 
         # Field types.
-        with open('_field_types.py', 'r') as f:
+        with open('_attr_types.py', 'r') as f:
             types_code = f.read()
             lines = types_code.split("\n")
             types_code = ''
@@ -149,9 +149,9 @@ class Builder(ast.NodeVisitor):
 if __name__ == '__main__':
 
     import inspect
-    import _field_types
+    import _attr_types
 
-    types = {name[5:]: member for name, member in inspect.getmembers(_field_types)
+    types = {name[5:]: member for name, member in inspect.getmembers(_attr_types)
                 if inspect.isfunction(member) and name.startswith('test_')}
 
     lexer = spec_lexer.build()
