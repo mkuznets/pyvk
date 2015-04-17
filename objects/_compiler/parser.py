@@ -72,9 +72,9 @@ def p_empty(p):
 
 def p_error(p):
     if p:
-        print('Syntax error at `%s\'' % p.value, p.lineno, ':', p.lexpos)
+        raise SyntaxError('Syntax error at line %s: `%s\'' % (p.lineno, p.value))
     else:
-        print('Syntax error at EOF')
+        raise SyntaxError('Syntax error at EOF')
 
 
 def build():
