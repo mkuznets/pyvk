@@ -30,7 +30,7 @@ class Post(VKObject):
         'reply_owner_id', 'reply_post_id', 'friends_only', 'comments', 'likes',
         'reposts', 'post_type', 'post_source', 'attachments', 'geo',
         'signer_id', 'copy_history', 'can_pin', 'is_pinned')
-        self.__attrs_required__ = set(['id', 'owner_id', 'date'])
+        self.__attrs_required__ = set(['id', 'owner_id', 'date', 'comments'])
 
         super(Post, self).__init__(**kwargs)
 
@@ -1031,21 +1031,21 @@ def test_intp(x):
     '''
     Positive integers.
     '''
-    return True if type(x) is int and x > 0 else False
+    return type(x) is int and x > 0
 
 
 def test_intpz(x):
     '''
     Positive integers and zero.
     '''
-    return True if type(x) is int and x >= 0 else False
+    return type(x) is int and x >= 0
 
 
 def test_flag(x):
     '''
     Binary flag: {0, 1}.
     '''
-    return True if type(x) is int and 0 <= x <= 1 else False
+    return type(x) is int and 0 <= x <= 1
 
 ## Group
 
@@ -1053,20 +1053,20 @@ def test_int_0_1_2(x):
     '''
     Integers {0, 1, 2}.
     '''
-    return True if type(x) is int and 0 <= x <= 2 else False
+    return type(x) is int and 0 <= x <= 2
 
 
 def test_int_1_2_3(x):
     '''
     Integers {1, 2, 3}.
     '''
-    return True if type(x) is int and 1 <= x <= 3 else False
+    return type(x) is int and 1 <= x <= 3
 
 
 def test_group_deactivated(x):
-    return True if x == 'deleted' or x == 'banned' else False
+    return x == 'deleted' or x == 'banned'
 
 
 def test_group_type(x):
-    return True if x == 'group' or x == 'page' or x == 'event' else False
+    return x == 'group' or x == 'page' or x == 'event'
 
