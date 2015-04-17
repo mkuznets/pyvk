@@ -61,8 +61,5 @@ if __name__ == '__main__':
     b = Indenter()
     r = b.traverse(spec_ast)
 
-    with open('~base.cfg.bak', 'w') as f:
-        f.write(code)
-
-    with open('base.cfg', 'w') as f:
+    with open('base.cfg-new', 'w') as f:
         f.write(r)
