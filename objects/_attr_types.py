@@ -5,7 +5,9 @@ function has to be named `test_<type_alias>`, had a single argument, and return
 values interpretable as Boolean.
 '''
 
+
 ## Common types.
+
 
 def test_intp(x):
     '''
@@ -27,7 +29,9 @@ def test_flag(x):
     '''
     return type(x) is int and 0 <= x <= 1
 
+
 ## Group
+
 
 def test_int_0_1_2(x):
     '''
@@ -57,12 +61,8 @@ def test_user_deactivated(x):
     return x == 'deactivated' or x == 'banned'
 
 
-def test_hidden(x):
-    return x == 1
-
-
 def test_relation_int(x):
-    return x== 0 or x == 1 or x == 2 or x == 3 or x == 4 or x == 5 or x == 6 or x == 7
+    return type(x) is int and 0 <= x <= 7
 
 
 def test_int_1_2(x):
@@ -70,7 +70,7 @@ def test_int_1_2(x):
 
 
 def test_int_0_1_2_3(x):
-    return x == 0 or x == 1 or x == 2 or x == 3
+    return type(x) is int and 0 <= x <= 3
 
 
 def test_occupation_type(x):
@@ -78,19 +78,19 @@ def test_occupation_type(x):
 
 
 def test_political(x):
-    return x == 1 or x == 2 or x == 3 or x == 4 or x == 5 or x == 6 or x == 7 or x == 8 or x == 9
+    return type(x) is int and 1 <= x <= 9
 
 
 def test_people_main(x):
-    return x == 1 or x == 2 or x == 3 or x == 4 or x == 5 or x == 6 
+    return type(x) is int and 1 <= x <= 6
 
 
 def test_life_main(x):
-    return x == 1 or x == 2 or x == 3 or x == 4 or x == 5 or x == 6  or x == 7 or x == 8
+    return type(x) is int and 1 <= x <= 8
 
 
 def test_view(x):
-    return x == 1 or x == 2 or x == 3 or x == 4 or x == 5
+    return type(x) is int and 1 <= x <= 5
 
 ## Message
 
@@ -100,7 +100,8 @@ def test_push_settings(x):
 
 
 def test_action_str(x):
-    return x == 'chat_photo_update' or x == 'chat_photo_remove' or x == 'chat_create' or x == 'chat_title_update' or x == 'chat_invite_user' or x == 'chat_kick_user'
+    return x in ('chat_photo_update', 'chat_photo_remove', 'chat_create',
+                 'chat_title_update', 'chat_invite_user', 'chat_kick_user')
 
 
 def test_int1(x):
@@ -109,26 +110,20 @@ def test_int1(x):
 
 ## Attachments
 def test_attach_type(x):
-    return (x == 'photo' or x == 'video' or x == 'audio' or x == 'doc' or x == 'wall' or x == 'wall_reply' or x == 'sticker' 
-            or x == 'posted_photo' or x == 'graffiti' or x == 'link' or x == 'note' or x == 'app' or x == 'poll' or x == 'page' 
-            or x == 'album' or x == 'photos_list')
+    return x in ('photo', 'video', 'audio', 'doc', 'wall', 'wall_reply',
+                 'sticker', 'posted_photo', 'graffiti', 'link', 'note', 'app',
+                 'poll', 'page', 'album', 'photos_list')
 
 
 ## Privacy
 
-def test_privacy_str(x):
-    return x == 'all' or x == 'friends' or x == 'friends_of_friends'
+def test_privacy_view(x):
+    import re
 
+    if type(x) is str:
+        return x in ('all', 'friends', 'friends_of_friends',
+                     'friends_of_friends_only', 'nobody', 'only_me') \
+            or re.match('\-?list\d+', x)
 
-def test_privacy_int(x):
-    return type(x) is int and x != 0
-
-
-def test_privacy_list(x):
-    try:
-        a = int(x[4:])
-    except ValueError:
-        return False
     else:
-        return x[:4] == 'list'
-
+        return type(x) is int
