@@ -15,9 +15,18 @@ class PlainObject(object):
 
             setattr(self, '_%s' % attr, value)
 
-
-class VKObject(PlainObject):
-
     def _fetch_field(self, attr):
         # Default behaviour: return the underlying attribute value.
         return getattr(self, '_%s' % attr, None)
+
+
+class VKObject(PlainObject):
+
+    def __init__(self, **kwargs):
+
+        if '__vk__' not in kwargs:
+            raise ValueError('%s: VK handler is required.'
+                             % self.__class__.__name__)
+
+        self._vk = kwargs['__vk__']
+        super(VKObject, self).__init__(**kwargs)

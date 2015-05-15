@@ -15,12 +15,21 @@ class PlainObject(object):
 
             setattr(self, '_%s' % attr, value)
 
-
-class VKObject(PlainObject):
-
     def _fetch_field(self, attr):
         # Default behaviour: return the underlying attribute value.
         return getattr(self, '_%s' % attr, None)
+
+
+class VKObject(PlainObject):
+
+    def __init__(self, **kwargs):
+
+        if '__vk__' not in kwargs:
+            raise ValueError('%s: VK handler is required.'
+                             % self.__class__.__name__)
+
+        self._vk = kwargs['__vk__']
+        super(VKObject, self).__init__(**kwargs)
 
 
 class Post(VKObject):
@@ -224,7 +233,7 @@ class Post(VKObject):
 
     @attachments.setter
     def attachments(self, x):
-        if type(x) is Attachment:
+        if isinstance(x, collections.Iterable) and all(type(e) is Attachment for e in lst):
             self._attachments = x
         else:
             raise TypeError("Post.attachments: cannot set attribute with value"
@@ -266,7 +275,7 @@ class Post(VKObject):
 
     @copy_history.setter
     def copy_history(self, x):
-        if type(x) is Post:
+        if isinstance(x, collections.Iterable) and all(type(e) is Post for e in lst):
             self._copy_history = x
         else:
             raise TypeError("Post.copy_history: cannot set attribute with value"
@@ -1433,7 +1442,7 @@ class User(VKObject):
 
     @universities.setter
     def universities(self, x):
-        if type(x) is University:
+        if isinstance(x, collections.Iterable) and all(type(e) is University for e in lst):
             self._universities = x
         else:
             raise TypeError("User.universities: cannot set attribute with value"
@@ -1447,7 +1456,7 @@ class User(VKObject):
 
     @schools.setter
     def schools(self, x):
-        if type(x) is School:
+        if isinstance(x, collections.Iterable) and all(type(e) is School for e in lst):
             self._schools = x
         else:
             raise TypeError("User.schools: cannot set attribute with value"
@@ -1559,7 +1568,7 @@ class User(VKObject):
 
     @relatives.setter
     def relatives(self, x):
-        if type(x) is Relative:
+        if isinstance(x, collections.Iterable) and all(type(e) is Relative for e in lst):
             self._relatives = x
         else:
             raise TypeError("User.relatives: cannot set attribute with value"
@@ -2294,7 +2303,7 @@ class School(PlainObject):
 
     def __init__(self, **kwargs):
         self.__attrs__ = ('id', 'country', 'city', 'name', 'year_from',
-        'year_to', 'year_graduated', 'class', 'type', 'type_str')
+        'year_to', 'year_graduated', 'class_letter', 'type', 'type_str')
         self.__attrs_required__ = set(['id', 'country', 'city', 'name'])
 
         super(School, self).__init__(**kwargs)
@@ -2398,17 +2407,17 @@ class School(PlainObject):
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
-    def class(self):
-        if self._class is None:
-            self._class = self._fetch_field('class')
-        return self._class
+    def class_letter(self):
+        if self._class_letter is None:
+            self._class_letter = self._fetch_field('class_letter')
+        return self._class_letter
 
-    @class.setter
-    def class(self, x):
+    @class_letter.setter
+    def class_letter(self, x):
         if type(x) is str:
-            self._class = x
+            self._class_letter = x
         else:
-            raise TypeError("School.class: cannot set attribute with value"
+            raise TypeError("School.class_letter: cannot set attribute with value"
                             " of type `%s', `str' expected" % x.__class__.__name__)
 
     @property
@@ -2789,7 +2798,7 @@ class Personal(PlainObject):
 
     @langs.setter
     def langs(self, x):
-        if type(x) is str:
+        if isinstance(x, collections.Iterable) and all(type(e) is str for e in lst):
             self._langs = x
         else:
             raise TypeError("Personal.langs: cannot set attribute with value"
@@ -3893,7 +3902,7 @@ class Message(VKObject):
 
     @attachments.setter
     def attachments(self, x):
-        if type(x) is Attachment_m:
+        if isinstance(x, collections.Iterable) and all(type(e) is Attachment_m for e in lst):
             self._attachments = x
         else:
             raise TypeError("Message.attachments: cannot set attribute with value"
@@ -3907,7 +3916,7 @@ class Message(VKObject):
 
     @fwd_messages.setter
     def fwd_messages(self, x):
-        if type(x) is Message:
+        if isinstance(x, collections.Iterable) and all(type(e) is Message for e in lst):
             self._fwd_messages = x
         else:
             raise TypeError("Message.fwd_messages: cannot set attribute with value"
@@ -3977,7 +3986,7 @@ class Message(VKObject):
 
     @chat_active.setter
     def chat_active(self, x):
-        if type(x) is str:
+        if isinstance(x, collections.Iterable) and all(type(e) is str for e in lst):
             self._chat_active = x
         else:
             raise TypeError("Message.chat_active: cannot set attribute with value"
@@ -4196,7 +4205,7 @@ class Chat(VKObject):
 
     @users.setter
     def users(self, x):
-        if test_intp(x):
+        if isinstance(x, collections.Iterable) and all(test_intp(e) for e in lst):
             self._users = x
         else:
             raise TypeError("Chat.users: cannot set attribute with value"
@@ -4304,7 +4313,7 @@ class Comment(VKObject):
 
     @attachments.setter
     def attachments(self, x):
-        if type(x) is Attachment_w:
+        if isinstance(x, collections.Iterable) and all(type(e) is Attachment_w for e in lst):
             self._attachments = x
         else:
             raise TypeError("Comment.attachments: cannot set attribute with value"
@@ -4921,7 +4930,7 @@ class Wall(PlainObject):
 
     @attachments.setter
     def attachments(self, x):
-        if type(x) is Attachment_w:
+        if isinstance(x, collections.Iterable) and all(type(e) is Attachment_w for e in lst):
             self._attachments = x
         else:
             raise TypeError("Wall.attachments: cannot set attribute with value"
@@ -5716,7 +5725,7 @@ class Poll(PlainObject):
 
     @answers.setter
     def answers(self, x):
-        if type(x) is Answer:
+        if isinstance(x, collections.Iterable) and all(type(e) is Answer for e in lst):
             self._answers = x
         else:
             raise TypeError("Poll.answers: cannot set attribute with value"
@@ -5804,7 +5813,7 @@ class Privacy(VKObject):
 
     @privacy_view.setter
     def privacy_view(self, x):
-        if test_privacy_view(x):
+        if isinstance(x, collections.Iterable) and all(test_privacy_view(e) for e in lst):
             self._privacy_view = x
         else:
             raise TypeError("Privacy.privacy_view: cannot set attribute with value"

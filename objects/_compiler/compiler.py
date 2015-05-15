@@ -138,10 +138,19 @@ class Builder(ast.NodeVisitor):
             '                        " of type `%s\', `' + node.type + '\' expected" % x.__class__.__name__)'
         ]
 
+        # Single type test procedure.
         if node.type in self.types:
-            condition = 'test_%s(x)' % node.type
+            type_test = 'test_%s(%%s)' % node.type
         else:
-            condition = 'type(x) is %s' % node.type
+            type_test = 'type(%%s) is %s' % node.type
+
+
+        # The whole condition on the argument.
+        if node.modifier == 2:
+            condition = 'isinstance(x, collections.Iterable) '\
+                'and all(%s for e in lst)' % (type_test % 'e')
+        else:
+            condition = type_test % 'x'
 
         return (node.name, getter, setter, condition, node.required)
 
