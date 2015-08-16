@@ -11,7 +11,7 @@ from auth_cache import auth_cache
 import requests
 
 
-class VK:
+class VK(object):
     def __init__(self, api_id, permissions, username=None, password=None,
                  token=None, cache_dir=None):
 
@@ -130,12 +130,12 @@ class VK:
 
         mask = 0
         for cat in categories:
-            mask += settings.masks.get(cat, 0)
+            mask += masks.get(cat, 0)
 
         return mask
 
 
-class Auth:
+class Auth(object):
 
     def __init__(self, username, api_id, mask, cache, password=None, start_state=None):
 

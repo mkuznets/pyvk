@@ -127,3 +127,9 @@ def test_privacy_view(x):
 
     else:
         return type(x) is int
+
+
+## Relative
+
+def test_relative_type(x):
+    return x in ('parent', 'sibling', 'child', 'grandchild', 'grandparent')

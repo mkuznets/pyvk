@@ -1043,12 +1043,12 @@ class User(VKObject):
         'photo_200_orig', 'photo_200', 'photo_400_orig', 'photo_max',
         'photo_max_orig', 'online', 'lists', 'domain', 'has_mobile',
         'contacts', 'site', 'education', 'universities', 'schools', 'status',
-        'last_seen', 'followers_count', 'common_count', 'counters',
-        'occupation', 'nickname', 'relatives', 'relation', 'personal',
-        'connections', 'twitter', 'livejornal', 'instagram', 'skype',
-        'facebook', 'exports', 'wall_comments', 'activities', 'interests',
-        'music', 'movies', 'tv', 'books', 'games', 'about', 'quotes',
-        'can_post', 'can_see_all_posts', 'can_see_audio',
+        'status_audio', 'last_seen', 'followers_count', 'common_count',
+        'counters', 'occupation', 'nickname', 'relatives', 'relation',
+        'relation_partner', 'personal', 'connections', 'twitter', 'livejornal',
+        'instagram', 'skype', 'facebook', 'exports', 'wall_comments',
+        'activities', 'interests', 'music', 'movies', 'tv', 'books', 'games',
+        'about', 'quotes', 'can_post', 'can_see_all_posts', 'can_see_audio',
         'can_write_private_message', 'can_send_friend_request', 'is_favorite',
         'timezone', 'screen_name', 'maiden_name', 'crop_photo', 'is_friend',
         'friend_status')
@@ -1477,6 +1477,20 @@ class User(VKObject):
                             " of type `%s', `str' expected" % x.__class__.__name__)
 
     @property
+    def status_audio(self):
+        if self._status_audio is None:
+            self._status_audio = self._fetch_field('status_audio')
+        return self._status_audio
+
+    @status_audio.setter
+    def status_audio(self, x):
+        if type(x) is Audio:
+            self._status_audio = x
+        else:
+            raise TypeError("User.status_audio: cannot set attribute with value"
+                            " of type `%s', `Audio' expected" % x.__class__.__name__)
+
+    @property
     def last_seen(self):
         if self._last_seen is None:
             self._last_seen = self._fetch_field('last_seen')
@@ -1582,10 +1596,24 @@ class User(VKObject):
 
     @relation.setter
     def relation(self, x):
-        if type(x) is Relation:
+        if test_relation_int(x):
             self._relation = x
         else:
             raise TypeError("User.relation: cannot set attribute with value"
+                            " of type `%s', `relation_int' expected" % x.__class__.__name__)
+
+    @property
+    def relation_partner(self):
+        if self._relation_partner is None:
+            self._relation_partner = self._fetch_field('relation_partner')
+        return self._relation_partner
+
+    @relation_partner.setter
+    def relation_partner(self, x):
+        if type(x) is Relation:
+            self._relation_partner = x
+        else:
+            raise TypeError("User.relation_partner: cannot set attribute with value"
                             " of type `%s', `Relation' expected" % x.__class__.__name__)
 
     @property
@@ -2696,47 +2724,10 @@ class Occupation(PlainObject):
 class Relation(PlainObject):
 
     def __init__(self, **kwargs):
-        self.__attrs__ = ('relation', 'relation_partner')
-        self.__attrs_required__ = set()
+        self.__attrs__ = ('id', 'first_name', 'last_name')
+        self.__attrs_required__ = set(['id', 'first_name', 'last_name'])
 
         super(Relation, self).__init__(**kwargs)
-
-    @property
-    def relation(self):
-        if self._relation is None:
-            self._relation = self._fetch_field('relation')
-        return self._relation
-
-    @relation.setter
-    def relation(self, x):
-        if test_relation_int(x):
-            self._relation = x
-        else:
-            raise TypeError("Relation.relation: cannot set attribute with value"
-                            " of type `%s', `relation_int' expected" % x.__class__.__name__)
-
-    @property
-    def relation_partner(self):
-        if self._relation_partner is None:
-            self._relation_partner = self._fetch_field('relation_partner')
-        return self._relation_partner
-
-    @relation_partner.setter
-    def relation_partner(self, x):
-        if type(x) is Person:
-            self._relation_partner = x
-        else:
-            raise TypeError("Relation.relation_partner: cannot set attribute with value"
-                            " of type `%s', `Person' expected" % x.__class__.__name__)
-
-
-class Person(PlainObject):
-
-    def __init__(self, **kwargs):
-        self.__attrs__ = ('id', 'name')
-        self.__attrs_required__ = set(['id'])
-
-        super(Person, self).__init__(**kwargs)
 
     @property
     def id(self):
@@ -2749,8 +2740,59 @@ class Person(PlainObject):
         if test_intp(x):
             self._id = x
         else:
-            raise TypeError("Person.id: cannot set attribute with value"
+            raise TypeError("Relation.id: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
+
+    @property
+    def first_name(self):
+        if self._first_name is None:
+            self._first_name = self._fetch_field('first_name')
+        return self._first_name
+
+    @first_name.setter
+    def first_name(self, x):
+        if type(x) is str:
+            self._first_name = x
+        else:
+            raise TypeError("Relation.first_name: cannot set attribute with value"
+                            " of type `%s', `str' expected" % x.__class__.__name__)
+
+    @property
+    def last_name(self):
+        if self._last_name is None:
+            self._last_name = self._fetch_field('last_name')
+        return self._last_name
+
+    @last_name.setter
+    def last_name(self, x):
+        if type(x) is str:
+            self._last_name = x
+        else:
+            raise TypeError("Relation.last_name: cannot set attribute with value"
+                            " of type `%s', `str' expected" % x.__class__.__name__)
+
+
+class Relative(PlainObject):
+
+    def __init__(self, **kwargs):
+        self.__attrs__ = ('id', 'name', 'type')
+        self.__attrs_required__ = set(['id', 'type'])
+
+        super(Relative, self).__init__(**kwargs)
+
+    @property
+    def id(self):
+        if self._id is None:
+            self._id = self._fetch_field('id')
+        return self._id
+
+    @id.setter
+    def id(self, x):
+        if type(x) is int:
+            self._id = x
+        else:
+            raise TypeError("Relative.id: cannot set attribute with value"
+                            " of type `%s', `int' expected" % x.__class__.__name__)
 
     @property
     def name(self):
@@ -2763,8 +2805,22 @@ class Person(PlainObject):
         if type(x) is str:
             self._name = x
         else:
-            raise TypeError("Person.name: cannot set attribute with value"
+            raise TypeError("Relative.name: cannot set attribute with value"
                             " of type `%s', `str' expected" % x.__class__.__name__)
+
+    @property
+    def type(self):
+        if self._type is None:
+            self._type = self._fetch_field('type')
+        return self._type
+
+    @type.setter
+    def type(self, x):
+        if test_relative_type(x):
+            self._type = x
+        else:
+            raise TypeError("Relative.type: cannot set attribute with value"
+                            " of type `%s', `relative_type' expected" % x.__class__.__name__)
 
 
 class Personal(PlainObject):
@@ -5942,4 +5998,10 @@ def test_privacy_view(x):
 
     else:
         return type(x) is int
+
+
+## Relative
+
+def test_relative_type(x):
+    return x in ('parent', 'sibling', 'child', 'grandchild', 'grandparent')
 
