@@ -7,29 +7,36 @@ import lxml.html
 from urllib.parse import urlparse, ParseResult, parse_qs, urlencode
 
 import settings
-from auth_cache import auth_cache
 import requests
+import objects as vko
+from time import sleep
+import pickle
+from hashlib import md5
 
 
 class VK(object):
+
     def __init__(self, api_id, permissions, username=None, password=None,
                  token=None, cache_dir=None):
 
         self.http = requests.Session()
 
-        self.cache_dir = cache_dir or settings.cache_dir
+        cache_dir = cache_dir or settings.cache_dir
 
-        if not os.path.exists(self.cache_dir):
+        if not os.path.exists(cache_dir):
             # `exist_ok' is not used for compatibility.
-            os.makedirs(self.cache_dir)
+            os.makedirs(cache_dir)
 
-        elif not os.access(self.cache_dir, os.W_OK)\
-                or not os.access(self.cache_dir, os.R_OK):
+        elif not os.access(cache_dir, os.W_OK)\
+                or not os.access(cache_dir, os.R_OK):
             raise IOError('Cannot write or read from cache directory %s' %
-                          self.cache_dir)
+                          cache_dir)
 
-        self.username = username or prompt.ask_user()
+        self.username = username or Prompt.ask_user()
         self.api_id = api_id
+
+        self.cache_file = os.path.normpath(cache_dir) + os.sep +\
+            md5(self.username.encode('utf-8')).hexdigest()
 
         if isinstance(permissions, int):
             # Integer value of mask.
@@ -44,16 +51,17 @@ class VK(object):
 
         if self.username and password:
             # Password authorisation.
-            log_message('Warning: it\'s not safe to use password '
+            log_message('Warning: it\'s NOT SAFE to use password '
                         'authorisation')
-            self.token = self._auth(start_state='login')
+            self.token = self._auth(start_state='auth_page')
 
         elif token:
             # Token authorisation.
             if self._test_token(token):
                 self.token = token
             else:
-                log_message('Given token is expired or wrong, trying to get a new one...')
+                log_message('Given token is expired or wrong, trying to get '
+                            'a new one...')
 
         if not self.token:
             # Try to get net token.
@@ -68,44 +76,64 @@ class VK(object):
         args['access_token'] = self.token
         args['v'] = settings.api_version
 
-        r = self.http.get('https://api.vk.com/method/%s?%s' % (method, urlencode(args)),
-                          timeout=settings.timeout)
-        result = r.json()
+        r = Request(method, args, error_handling, self.http)
 
-        # Error handling
-        # TODO: MOAR ERORRS!
+        for attempt in range(settings.MAX_ATTEMPTS):
+            try:
+                response = r.run()
+                return response
 
-        if error_handling and 'error' in result:
-            error_code = result['error']['error_code']
-            error_msg = result['error']['error_msg']
-
-            # User authorization failed.
-            if error_code == 5:
-                log_message('It seems that current token is unavailable' +
-                            'now. Trying to renew...')
-
+            except ReAuthNeeded:
                 # Trying to renew access token
                 self.token = None
-                self.token = self._auth()
-                if not self.token:
-                    log_message('Cannot renew access token... good bye...')
+                self.token = self._auth('auth_page')
+                if self.token:
+                    log_message('Access token succesfully renewed, '
+                                'repeating the request...')
+                    r.args['access_token'] = self.token
 
                 else:
-                    log_message('Access token succesfully renewed, ' +
-                                'repeating the request...')
-                    result = self.req(method, options)
-            else:
-                raise ReqError(error_msg)
+                    log_message('Cannot renew access token... good bye...')
+                    raise AuthError('Cannot renew token.')
 
-        return result
+        else:
+            raise ReqError('Request failed after all attempts.')
+
+    def reqn(self, method, args={}, n=-1):
+
+        if n == 0:
+            return []
+
+        step = 1000
+
+        items = []
+        remain = n if n > 0 else step
+        offset = 0
+
+        while remain:
+
+            cstep = min(step, remain)
+
+            r = self.req(method, dict(args, **{'count': cstep, 'offset': offset}))
+
+            if n < 0:
+                n = r['count']
+                remain = n
+
+            assert len(r['items']) == cstep
+
+            items += r['items']
+            remain -= cstep
+            offset += cstep
+
+            assert remain >= 0
+
+        return items
 
     def _auth(self, start_state=None, password=None):
 
-        # Read cache with cookies and previous token
-        cache = auth_cache(self.username, self.cache_dir)
-
-        auth = Auth(self.username, self.api_id, self.mask, cache,
-                    password=password)
+        auth = Auth(self.username, self.api_id, self.mask, self.cache_file,
+                    password=password, start_state=start_state)
 
         return auth.token
 
@@ -114,17 +142,17 @@ class VK(object):
         self.token = token
         test = self.req('isAppUser', error_handling=False)
         self.token = tmp
-        return True if 'error' not in test else False
+        return False if 'error' in test else True
 
     def _calc_mask(self, categories):
         '''
         Convert set with categories of permissions to numerical access mask.
         '''
 
-        categories = ['notify', 'friends', 'photos', 'audio', 'video', 'offers',
-                      'questions', 'pages', 'leftmenu', '', 'status', 'notes',
-                      'messages', 'wall', '', 'ads', 'offline', 'docs',
-                      'groups', 'notifications', 'stats', '', 'email']
+        categories = ['notify', 'friends', 'photos', 'audio', 'video',
+                      'offers', 'questions', 'pages', 'leftmenu', '', 'status',
+                      'notes', 'messages', 'wall', '', 'ads', 'offline',
+                      'docs', 'groups', 'notifications', 'stats', '', 'email']
 
         masks = {c: 2**i for i, c in enumerate(categories) if c}
 
@@ -135,27 +163,130 @@ class VK(object):
         return mask
 
 
+class Request(object):
+
+    def __init__(self, method, args, error_handling, __http__):
+        self.method = method
+        self.args = args
+        self.error_handling = error_handling
+        self.http = __http__
+
+    def run(self):
+
+        for attempt in range(settings.MAX_ATTEMPTS):
+
+            url = 'https://api.vk.com/method/%s?%s' \
+                % (self.method, urlencode(self.args))
+            r = self.http.get(url, timeout=settings.timeout)
+
+            # TODO: is it necessary?
+            result = None
+
+            try:
+                result = r.json()
+
+            except ValueError as e:
+                raise ReqError('Response is not a valid JSON') from e
+
+            assert(isinstance(result, dict))
+
+            # TODO: add exceptions.
+            if 'response' in result:
+                return result['response']
+
+            elif 'error' in result:
+
+                if self.error_handling:
+
+                    err_code, err_msg = (result['error'].get(k, None) for k in
+                                         ('error_code', 'error_msg'))
+
+                    if err_code and err_msg:
+
+                        # Handle the error and...
+                        if self._handle_error(err_code, result['error'], attempt):
+                            # ... retry, or...
+                            continue
+
+                        else:
+                            # ... give up and raise an exception.
+                            raise APIError(err_msg, err_code)
+
+                    else:
+                        raise ReqError('Error response from API is malformed')
+
+                else:
+                    return result['error']
+
+        else:
+            raise ReqError('Request failed after all attempts.')
+
+    def _handle_error(self, error_code, error_data, attempt):
+
+        # User authorisation failed.
+        if error_code == 5 or (error_code == 10 and attempt < 2):
+            log_message('It seems that current token is unavailable '
+                        'now. Trying to renew...')
+            raise ReAuthNeeded()
+
+            return True
+
+        # Too many requests.
+        elif error_code in (6, 9):
+
+            t = 0.3 * (attempt + 1)
+            log_message('Too many requests per second. Wait %.1f sec and retry.' % t)
+            sleep(t)
+
+            return True
+
+        # Captcha needed.
+        elif error_code == 14:
+
+            if 'captcha_sid' in error_data and 'captcha_img' in error_data:
+                self.args['captcha_sid'] = error_data['captcha_sid']
+
+                key = Prompt.ask_captcha(error_data['captcha_img'])
+                self.args['captcha_key'] = key
+
+                return True
+
+            else:
+                raise ReqError('Error response from API is malformed')
+
+        # Default: don't retry the method, raise an API exception.
+        return False
+
+
 class Auth(object):
 
-    def __init__(self, username, api_id, mask, cache, password=None, start_state=None):
+    def __init__(self, username, api_id, mask, cache_file, password=None,
+                 start_state=None):
 
         self.http = requests.Session()
+        self.cache_file = cache_file
 
         self.mask = mask
         self.api_id = api_id
         self.username = username
         self.password = password
 
-        self.cache = cache
+        try:
+            with open(self.cache_file, 'rb') as cf:
+                self.cache = pickle.load(cf)
+
+        except (OSError, EOFError, pickle.PickleError):
+            log_message('Auth cache is corrupted or unreadable, start with '
+                        'an empty cache.')
+            self.cache = {}
 
         self.token = None
         self.state = None
 
-        #----------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # Start state initialisation.
 
-        cookies = cache.get_unpacked('API_COOKIES')\
-            if ('API_COOKIES' in cache) else dict()
+        cookies = self.cache.get('cookies', {})
         self.http.cookies.update(cookies)
 
         args = ()
@@ -164,41 +295,36 @@ class Auth(object):
             self.state = start_state
 
         else:
+            self.state = 'cached_token' \
+                if ('token' in self.cache) else 'auth_page'
 
-            if self.cache['API_TOKEN']:
-                self.state = 'cached_token'
-
-            else:
-                # Start authorisation from the beginning.
-                self.state = 'auth_page'
-
-        #----------------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # Run DFA.
 
         while self.state != 'exit':
 
             fname = '_s_%s' % self.state
-            if hasattr(self, fname):
-                f = getattr(self, fname)
-                self.state, *args = f(*args)
 
-            else:
-                raise RuntimeError('State `%s\' not found in auth DFA!' %
-                                   self.state)
+            assert hasattr(self, fname), 'State `%s\' not in DFA!' % self.state
 
-    #--------------------------------------------------------------------------
+            f = getattr(self, fname)
+            self.state, *args = f(*args)
+
+    # -------------------------------------------------------------------------
     # States.
 
     def _s_cached_token(self):
 
+        assert(all(k in self.cache for k in ('token_time', 'mask', 'token')))
+
         # Age of the cached token
-        time_diff = int(time.time()) - int(self.cache['API_TOKEN_TIME'])
+        time_diff = int(time.time()) - int(self.cache['token_time'])
 
         # For the cached token to be valid it has to have the same mask
         # as requested and age less than expiration time.  If these
         # conditions are satisfied, check the token by simple API req.
-        if time_diff < 24 * 3600 and int(self.cache['API_MASK']) == self.mask:
-            self.token = self.cache['API_TOKEN']
+        if time_diff < 24 * 3600 and int(self.cache['mask']) == self.mask:
+            self.token = self.cache['token']
             return ('exit', )
 
         else:
@@ -242,14 +368,14 @@ class Auth(object):
                 return ('grant_access', form.action)
 
             else:
-                raise RuntimeError('#Error: unpredictable behavior 1')
+                raise AuthError('Unpredictable behavior 1')
 
     def _s_login(self, action_url, fields):
 
         # Collect post data from the form and fill user-defined fields
         post_data = fields
         post_data['email'] = self.username
-        post_data['pass'] = self.password or prompt.ask_pw()
+        post_data['pass'] = self.password or Prompt.ask_pw()
 
         r = self.http.post(action_url, data=post_data, timeout=settings.timeout)
 
@@ -259,7 +385,7 @@ class Auth(object):
         errors = doc.find_class('service_msg_warning')
 
         if errors:
-            print('#Error: email or password may be wrong')
+            log_message('Email or password may be wrong')
             # TODO: print error text from page
             return ('login', action_url, fields)
 
@@ -282,15 +408,15 @@ class Auth(object):
             return ('authcheck', action_url, dict(form.fields))
 
         else:
-            raise RuntimeError('#Error: login response has unexpected formatting.')
+            raise AuthError('Login response has unexpected formatting.')
 
     def _s_authcheck(self, action_url, fields):
 
-        if not ('remember' in fields and 'code' in fields):
-            raise RuntimeError('#Error: authcheck page has unexpected formatting.')
+        if not all(k in fields for k in ('remember', 'code')):
+            raise AuthError('Authcheck page has unexpected formatting.')
 
         fields['remember'] = 0
-        fields['code'] = prompt.ask_code()
+        fields['code'] = Prompt.ask_code()
 
         r = self.http.post(action_url, data=fields, timeout=settings.timeout)
 
@@ -300,7 +426,7 @@ class Auth(object):
         errors = doc.find_class('service_msg_warning')
 
         if errors:
-            print('#Error: secret code may be incorrect.')
+            log_message('Secret code may be incorrect.')
             # TODO: print error text from page
             return ('authcheck', action_url, fields)
 
@@ -319,7 +445,7 @@ class Auth(object):
             return ('grant_access', form.action)
 
         else:
-            raise RuntimeError('#Error: response has unexpected formatting.')
+            raise AuthError('Response has unexpected formatting.')
 
     def _s_grant_access(self, action_url):
 
@@ -332,7 +458,7 @@ class Auth(object):
             return ('get_token', url)
 
         else:
-            raise RuntimeError('#Error: unpredictable behavior 3')
+            raise AuthError('Unpredictable behavior 3')
 
     def _s_get_token(self, url):
 
@@ -342,13 +468,12 @@ class Auth(object):
         self.token = parse_qs(url.fragment)['access_token'][0]
 
         # Prepare cache for cookies and token
-        self.cache['API_TOKEN'] = self.token
-        self.cache['API_TOKEN_TIME'] = int(time.time())
-        self.cache['API_MASK'] = self.mask
-        self.cache.set_packed('API_COOKIES', dict(self.http.cookies))
+        self.cache = {'token': self.token, 'token_time': int(time.time()),
+                      'mask': self.mask, 'cookies': dict(self.http.cookies)}
 
         # Write to cache file
-        self.cache.write()
+        with open(self.cache_file, 'wb') as cf:
+            pickle.dump(self.cache, cf)
 
         return ('exit', )
 
@@ -360,7 +485,8 @@ def log_message(text, file=None):
             log.write(text)
 
 
-class prompt:
+class Prompt:
+
     def ask_pw():
         print()
         return getpass.getpass()
@@ -380,16 +506,44 @@ class prompt:
 
         return int(code)
 
+    def ask_captcha(url):
 
-class AuthError(Exception):
+        print(url)
+        key = input('Enter symbols from the picture: ').strip()
+
+        return key
+
+
+# -----------------------------------------------------------------------------
+
+class VKError(Exception):
+    pass
+
+
+class AuthError(VKError):
     def __init__(self, value):
         self.value = value
 
 
-class ReqError(Exception):
+class ReAuthNeeded(VKError):
+    def __init__(self):
+        pass
+
+
+class ReqError(VKError):
 
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
         return repr(self.value)
+
+
+class APIError(VKError):
+
+    def __init__(self, msg, code):
+        self.code = code
+        self.msg = msg
+
+    def __str__(self):
+        return 'Error #%d: %s' % (self.code, self.msg)

@@ -46,7 +46,7 @@ class Post(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -60,7 +60,7 @@ class Post(VKObject):
     @property
     def owner_id(self):
         if self._owner_id is None:
-            self._owner_id = self._fetch_field('owner_id')
+            self._fetch_fields('owner_id')
         return self._owner_id
 
     @owner_id.setter
@@ -74,7 +74,7 @@ class Post(VKObject):
     @property
     def from_id(self):
         if self._from_id is None:
-            self._from_id = self._fetch_field('from_id')
+            self._fetch_fields('from_id')
         return self._from_id
 
     @from_id.setter
@@ -88,7 +88,7 @@ class Post(VKObject):
     @property
     def date(self):
         if self._date is None:
-            self._date = self._fetch_field('date')
+            self._fetch_fields('date')
         return self._date
 
     @date.setter
@@ -102,7 +102,7 @@ class Post(VKObject):
     @property
     def text(self):
         if self._text is None:
-            self._text = self._fetch_field('text')
+            self._fetch_fields('text')
         return self._text
 
     @text.setter
@@ -116,7 +116,7 @@ class Post(VKObject):
     @property
     def reply_owner_id(self):
         if self._reply_owner_id is None:
-            self._reply_owner_id = self._fetch_field('reply_owner_id')
+            self._fetch_fields('reply_owner_id')
         return self._reply_owner_id
 
     @reply_owner_id.setter
@@ -130,7 +130,7 @@ class Post(VKObject):
     @property
     def reply_post_id(self):
         if self._reply_post_id is None:
-            self._reply_post_id = self._fetch_field('reply_post_id')
+            self._fetch_fields('reply_post_id')
         return self._reply_post_id
 
     @reply_post_id.setter
@@ -144,7 +144,7 @@ class Post(VKObject):
     @property
     def friends_only(self):
         if self._friends_only is None:
-            self._friends_only = self._fetch_field('friends_only')
+            self._fetch_fields('friends_only')
         return self._friends_only
 
     @friends_only.setter
@@ -158,7 +158,7 @@ class Post(VKObject):
     @property
     def comments(self):
         if self._comments is None:
-            self._comments = self._fetch_field('comments')
+            self._fetch_fields('comments')
         return self._comments
 
     @comments.setter
@@ -172,7 +172,7 @@ class Post(VKObject):
     @property
     def likes(self):
         if self._likes is None:
-            self._likes = self._fetch_field('likes')
+            self._fetch_fields('likes')
         return self._likes
 
     @likes.setter
@@ -186,7 +186,7 @@ class Post(VKObject):
     @property
     def reposts(self):
         if self._reposts is None:
-            self._reposts = self._fetch_field('reposts')
+            self._fetch_fields('reposts')
         return self._reposts
 
     @reposts.setter
@@ -200,7 +200,7 @@ class Post(VKObject):
     @property
     def post_type(self):
         if self._post_type is None:
-            self._post_type = self._fetch_field('post_type')
+            self._fetch_fields('post_type')
         return self._post_type
 
     @post_type.setter
@@ -214,7 +214,7 @@ class Post(VKObject):
     @property
     def post_source(self):
         if self._post_source is None:
-            self._post_source = self._fetch_field('post_source')
+            self._fetch_fields('post_source')
         return self._post_source
 
     @post_source.setter
@@ -228,7 +228,7 @@ class Post(VKObject):
     @property
     def attachments(self):
         if self._attachments is None:
-            self._attachments = self._fetch_field('attachments')
+            self._fetch_fields('attachments')
         return self._attachments
 
     @attachments.setter
@@ -242,7 +242,7 @@ class Post(VKObject):
     @property
     def geo(self):
         if self._geo is None:
-            self._geo = self._fetch_field('geo')
+            self._fetch_fields('geo')
         return self._geo
 
     @geo.setter
@@ -256,7 +256,7 @@ class Post(VKObject):
     @property
     def signer_id(self):
         if self._signer_id is None:
-            self._signer_id = self._fetch_field('signer_id')
+            self._fetch_fields('signer_id')
         return self._signer_id
 
     @signer_id.setter
@@ -270,7 +270,7 @@ class Post(VKObject):
     @property
     def copy_history(self):
         if self._copy_history is None:
-            self._copy_history = self._fetch_field('copy_history')
+            self._fetch_fields('copy_history')
         return self._copy_history
 
     @copy_history.setter
@@ -284,7 +284,7 @@ class Post(VKObject):
     @property
     def can_pin(self):
         if self._can_pin is None:
-            self._can_pin = self._fetch_field('can_pin')
+            self._fetch_fields('can_pin')
         return self._can_pin
 
     @can_pin.setter
@@ -298,7 +298,7 @@ class Post(VKObject):
     @property
     def is_pinned(self):
         if self._is_pinned is None:
-            self._is_pinned = self._fetch_field('is_pinned')
+            self._fetch_fields('is_pinned')
         return self._is_pinned
 
     @is_pinned.setter
@@ -321,7 +321,7 @@ class CommentsInfo(PlainObject):
     @property
     def count(self):
         if self._count is None:
-            self._count = self._fetch_field('count')
+            self._fetch_fields('count')
         return self._count
 
     @count.setter
@@ -335,7 +335,7 @@ class CommentsInfo(PlainObject):
     @property
     def can_post(self):
         if self._can_post is None:
-            self._can_post = self._fetch_field('can_post')
+            self._fetch_fields('can_post')
         return self._can_post
 
     @can_post.setter
@@ -358,7 +358,7 @@ class LikesInfo(PlainObject):
     @property
     def count(self):
         if self._count is None:
-            self._count = self._fetch_field('count')
+            self._fetch_fields('count')
         return self._count
 
     @count.setter
@@ -372,7 +372,7 @@ class LikesInfo(PlainObject):
     @property
     def user_likes(self):
         if self._user_likes is None:
-            self._user_likes = self._fetch_field('user_likes')
+            self._fetch_fields('user_likes')
         return self._user_likes
 
     @user_likes.setter
@@ -386,7 +386,7 @@ class LikesInfo(PlainObject):
     @property
     def can_like(self):
         if self._can_like is None:
-            self._can_like = self._fetch_field('can_like')
+            self._fetch_fields('can_like')
         return self._can_like
 
     @can_like.setter
@@ -400,7 +400,7 @@ class LikesInfo(PlainObject):
     @property
     def can_publish(self):
         if self._can_publish is None:
-            self._can_publish = self._fetch_field('can_publish')
+            self._fetch_fields('can_publish')
         return self._can_publish
 
     @can_publish.setter
@@ -423,7 +423,7 @@ class RepostsInfo(PlainObject):
     @property
     def count(self):
         if self._count is None:
-            self._count = self._fetch_field('count')
+            self._fetch_fields('count')
         return self._count
 
     @count.setter
@@ -437,7 +437,7 @@ class RepostsInfo(PlainObject):
     @property
     def user_reposted(self):
         if self._user_reposted is None:
-            self._user_reposted = self._fetch_field('user_reposted')
+            self._fetch_fields('user_reposted')
         return self._user_reposted
 
     @user_reposted.setter
@@ -460,7 +460,7 @@ class Source(PlainObject):
     @property
     def type(self):
         if self._type is None:
-            self._type = self._fetch_field('type')
+            self._fetch_fields('type')
         return self._type
 
     @type.setter
@@ -474,7 +474,7 @@ class Source(PlainObject):
     @property
     def platform(self):
         if self._platform is None:
-            self._platform = self._fetch_field('platform')
+            self._fetch_fields('platform')
         return self._platform
 
     @platform.setter
@@ -488,7 +488,7 @@ class Source(PlainObject):
     @property
     def data(self):
         if self._data is None:
-            self._data = self._fetch_field('data')
+            self._fetch_fields('data')
         return self._data
 
     @data.setter
@@ -502,7 +502,7 @@ class Source(PlainObject):
     @property
     def url(self):
         if self._url is None:
-            self._url = self._fetch_field('url')
+            self._fetch_fields('url')
         return self._url
 
     @url.setter
@@ -532,7 +532,7 @@ class Group(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -546,7 +546,7 @@ class Group(VKObject):
     @property
     def name(self):
         if self._name is None:
-            self._name = self._fetch_field('name')
+            self._fetch_fields('name')
         return self._name
 
     @name.setter
@@ -560,7 +560,7 @@ class Group(VKObject):
     @property
     def screen_name(self):
         if self._screen_name is None:
-            self._screen_name = self._fetch_field('screen_name')
+            self._fetch_fields('screen_name')
         return self._screen_name
 
     @screen_name.setter
@@ -574,7 +574,7 @@ class Group(VKObject):
     @property
     def is_closed(self):
         if self._is_closed is None:
-            self._is_closed = self._fetch_field('is_closed')
+            self._fetch_fields('is_closed')
         return self._is_closed
 
     @is_closed.setter
@@ -588,7 +588,7 @@ class Group(VKObject):
     @property
     def deactivated(self):
         if self._deactivated is None:
-            self._deactivated = self._fetch_field('deactivated')
+            self._fetch_fields('deactivated')
         return self._deactivated
 
     @deactivated.setter
@@ -602,7 +602,7 @@ class Group(VKObject):
     @property
     def is_admin(self):
         if self._is_admin is None:
-            self._is_admin = self._fetch_field('is_admin')
+            self._fetch_fields('is_admin')
         return self._is_admin
 
     @is_admin.setter
@@ -616,7 +616,7 @@ class Group(VKObject):
     @property
     def admin_level(self):
         if self._admin_level is None:
-            self._admin_level = self._fetch_field('admin_level')
+            self._fetch_fields('admin_level')
         return self._admin_level
 
     @admin_level.setter
@@ -630,7 +630,7 @@ class Group(VKObject):
     @property
     def is_member(self):
         if self._is_member is None:
-            self._is_member = self._fetch_field('is_member')
+            self._fetch_fields('is_member')
         return self._is_member
 
     @is_member.setter
@@ -644,7 +644,7 @@ class Group(VKObject):
     @property
     def type(self):
         if self._type is None:
-            self._type = self._fetch_field('type')
+            self._fetch_fields('type')
         return self._type
 
     @type.setter
@@ -658,7 +658,7 @@ class Group(VKObject):
     @property
     def photo_50(self):
         if self._photo_50 is None:
-            self._photo_50 = self._fetch_field('photo_50')
+            self._fetch_fields('photo_50')
         return self._photo_50
 
     @photo_50.setter
@@ -672,7 +672,7 @@ class Group(VKObject):
     @property
     def photo_100(self):
         if self._photo_100 is None:
-            self._photo_100 = self._fetch_field('photo_100')
+            self._fetch_fields('photo_100')
         return self._photo_100
 
     @photo_100.setter
@@ -686,7 +686,7 @@ class Group(VKObject):
     @property
     def photo_200(self):
         if self._photo_200 is None:
-            self._photo_200 = self._fetch_field('photo_200')
+            self._fetch_fields('photo_200')
         return self._photo_200
 
     @photo_200.setter
@@ -700,7 +700,7 @@ class Group(VKObject):
     @property
     def ban_info(self):
         if self._ban_info is None:
-            self._ban_info = self._fetch_field('ban_info')
+            self._fetch_fields('ban_info')
         return self._ban_info
 
     @ban_info.setter
@@ -714,7 +714,7 @@ class Group(VKObject):
     @property
     def city(self):
         if self._city is None:
-            self._city = self._fetch_field('city')
+            self._fetch_fields('city')
         return self._city
 
     @city.setter
@@ -728,7 +728,7 @@ class Group(VKObject):
     @property
     def country(self):
         if self._country is None:
-            self._country = self._fetch_field('country')
+            self._fetch_fields('country')
         return self._country
 
     @country.setter
@@ -742,7 +742,7 @@ class Group(VKObject):
     @property
     def place(self):
         if self._place is None:
-            self._place = self._fetch_field('place')
+            self._fetch_fields('place')
         return self._place
 
     @place.setter
@@ -756,7 +756,7 @@ class Group(VKObject):
     @property
     def description(self):
         if self._description is None:
-            self._description = self._fetch_field('description')
+            self._fetch_fields('description')
         return self._description
 
     @description.setter
@@ -770,7 +770,7 @@ class Group(VKObject):
     @property
     def wiki_page(self):
         if self._wiki_page is None:
-            self._wiki_page = self._fetch_field('wiki_page')
+            self._fetch_fields('wiki_page')
         return self._wiki_page
 
     @wiki_page.setter
@@ -784,7 +784,7 @@ class Group(VKObject):
     @property
     def members_count(self):
         if self._members_count is None:
-            self._members_count = self._fetch_field('members_count')
+            self._fetch_fields('members_count')
         return self._members_count
 
     @members_count.setter
@@ -798,7 +798,7 @@ class Group(VKObject):
     @property
     def counters(self):
         if self._counters is None:
-            self._counters = self._fetch_field('counters')
+            self._fetch_fields('counters')
         return self._counters
 
     @counters.setter
@@ -812,7 +812,7 @@ class Group(VKObject):
     @property
     def start_date(self):
         if self._start_date is None:
-            self._start_date = self._fetch_field('start_date')
+            self._fetch_fields('start_date')
         return self._start_date
 
     @start_date.setter
@@ -826,7 +826,7 @@ class Group(VKObject):
     @property
     def finish_date(self):
         if self._finish_date is None:
-            self._finish_date = self._fetch_field('finish_date')
+            self._fetch_fields('finish_date')
         return self._finish_date
 
     @finish_date.setter
@@ -840,7 +840,7 @@ class Group(VKObject):
     @property
     def can_post(self):
         if self._can_post is None:
-            self._can_post = self._fetch_field('can_post')
+            self._fetch_fields('can_post')
         return self._can_post
 
     @can_post.setter
@@ -854,7 +854,7 @@ class Group(VKObject):
     @property
     def can_see_all_posts(self):
         if self._can_see_all_posts is None:
-            self._can_see_all_posts = self._fetch_field('can_see_all_posts')
+            self._fetch_fields('can_see_all_posts')
         return self._can_see_all_posts
 
     @can_see_all_posts.setter
@@ -868,7 +868,7 @@ class Group(VKObject):
     @property
     def can_upload_doc(self):
         if self._can_upload_doc is None:
-            self._can_upload_doc = self._fetch_field('can_upload_doc')
+            self._fetch_fields('can_upload_doc')
         return self._can_upload_doc
 
     @can_upload_doc.setter
@@ -882,7 +882,7 @@ class Group(VKObject):
     @property
     def can_upload_video(self):
         if self._can_upload_video is None:
-            self._can_upload_video = self._fetch_field('can_upload_video')
+            self._fetch_fields('can_upload_video')
         return self._can_upload_video
 
     @can_upload_video.setter
@@ -896,7 +896,7 @@ class Group(VKObject):
     @property
     def can_create_topic(self):
         if self._can_create_topic is None:
-            self._can_create_topic = self._fetch_field('can_create_topic')
+            self._fetch_fields('can_create_topic')
         return self._can_create_topic
 
     @can_create_topic.setter
@@ -910,7 +910,7 @@ class Group(VKObject):
     @property
     def activity(self):
         if self._activity is None:
-            self._activity = self._fetch_field('activity')
+            self._fetch_fields('activity')
         return self._activity
 
     @activity.setter
@@ -924,7 +924,7 @@ class Group(VKObject):
     @property
     def status(self):
         if self._status is None:
-            self._status = self._fetch_field('status')
+            self._fetch_fields('status')
         return self._status
 
     @status.setter
@@ -938,7 +938,7 @@ class Group(VKObject):
     @property
     def contacts(self):
         if self._contacts is None:
-            self._contacts = self._fetch_field('contacts')
+            self._fetch_fields('contacts')
         return self._contacts
 
     @contacts.setter
@@ -952,7 +952,7 @@ class Group(VKObject):
     @property
     def links(self):
         if self._links is None:
-            self._links = self._fetch_field('links')
+            self._fetch_fields('links')
         return self._links
 
     @links.setter
@@ -966,7 +966,7 @@ class Group(VKObject):
     @property
     def fixed_post(self):
         if self._fixed_post is None:
-            self._fixed_post = self._fetch_field('fixed_post')
+            self._fetch_fields('fixed_post')
         return self._fixed_post
 
     @fixed_post.setter
@@ -980,7 +980,7 @@ class Group(VKObject):
     @property
     def verified(self):
         if self._verified is None:
-            self._verified = self._fetch_field('verified')
+            self._fetch_fields('verified')
         return self._verified
 
     @verified.setter
@@ -994,7 +994,7 @@ class Group(VKObject):
     @property
     def site(self):
         if self._site is None:
-            self._site = self._fetch_field('site')
+            self._fetch_fields('site')
         return self._site
 
     @site.setter
@@ -1008,7 +1008,7 @@ class Group(VKObject):
     @property
     def main_album_id(self):
         if self._main_album_id is None:
-            self._main_album_id = self._fetch_field('main_album_id')
+            self._fetch_fields('main_album_id')
         return self._main_album_id
 
     @main_album_id.setter
@@ -1022,7 +1022,7 @@ class Group(VKObject):
     @property
     def is_favorite(self):
         if self._is_favorite is None:
-            self._is_favorite = self._fetch_field('is_favorite')
+            self._fetch_fields('is_favorite')
         return self._is_favorite
 
     @is_favorite.setter
@@ -1052,14 +1052,14 @@ class User(VKObject):
         'can_write_private_message', 'can_send_friend_request', 'is_favorite',
         'timezone', 'screen_name', 'maiden_name', 'crop_photo', 'is_friend',
         'friend_status')
-        self.__attrs_required__ = set(['id', 'first_name', 'last_name', 'sex'])
+        self.__attrs_required__ = set(['id'])
 
         super(User, self).__init__(**kwargs)
 
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -1073,7 +1073,7 @@ class User(VKObject):
     @property
     def first_name(self):
         if self._first_name is None:
-            self._first_name = self._fetch_field('first_name')
+            self._fetch_fields('first_name')
         return self._first_name
 
     @first_name.setter
@@ -1087,7 +1087,7 @@ class User(VKObject):
     @property
     def last_name(self):
         if self._last_name is None:
-            self._last_name = self._fetch_field('last_name')
+            self._fetch_fields('last_name')
         return self._last_name
 
     @last_name.setter
@@ -1101,7 +1101,7 @@ class User(VKObject):
     @property
     def deactivated(self):
         if self._deactivated is None:
-            self._deactivated = self._fetch_field('deactivated')
+            self._fetch_fields('deactivated')
         return self._deactivated
 
     @deactivated.setter
@@ -1115,7 +1115,7 @@ class User(VKObject):
     @property
     def hidden(self):
         if self._hidden is None:
-            self._hidden = self._fetch_field('hidden')
+            self._fetch_fields('hidden')
         return self._hidden
 
     @hidden.setter
@@ -1129,7 +1129,7 @@ class User(VKObject):
     @property
     def photo_id(self):
         if self._photo_id is None:
-            self._photo_id = self._fetch_field('photo_id')
+            self._fetch_fields('photo_id')
         return self._photo_id
 
     @photo_id.setter
@@ -1143,7 +1143,7 @@ class User(VKObject):
     @property
     def verified(self):
         if self._verified is None:
-            self._verified = self._fetch_field('verified')
+            self._fetch_fields('verified')
         return self._verified
 
     @verified.setter
@@ -1157,7 +1157,7 @@ class User(VKObject):
     @property
     def blacklisted(self):
         if self._blacklisted is None:
-            self._blacklisted = self._fetch_field('blacklisted')
+            self._fetch_fields('blacklisted')
         return self._blacklisted
 
     @blacklisted.setter
@@ -1171,7 +1171,7 @@ class User(VKObject):
     @property
     def sex(self):
         if self._sex is None:
-            self._sex = self._fetch_field('sex')
+            self._fetch_fields('sex')
         return self._sex
 
     @sex.setter
@@ -1185,7 +1185,7 @@ class User(VKObject):
     @property
     def bdate(self):
         if self._bdate is None:
-            self._bdate = self._fetch_field('bdate')
+            self._fetch_fields('bdate')
         return self._bdate
 
     @bdate.setter
@@ -1199,35 +1199,35 @@ class User(VKObject):
     @property
     def city(self):
         if self._city is None:
-            self._city = self._fetch_field('city')
+            self._fetch_fields('city')
         return self._city
 
     @city.setter
     def city(self, x):
-        if type(x) is Place:
+        if type(x) is City:
             self._city = x
         else:
             raise TypeError("User.city: cannot set attribute with value"
-                            " of type `%s', `Place' expected" % x.__class__.__name__)
+                            " of type `%s', `City' expected" % x.__class__.__name__)
 
     @property
     def country(self):
         if self._country is None:
-            self._country = self._fetch_field('country')
+            self._fetch_fields('country')
         return self._country
 
     @country.setter
     def country(self, x):
-        if type(x) is Place:
+        if type(x) is Country:
             self._country = x
         else:
             raise TypeError("User.country: cannot set attribute with value"
-                            " of type `%s', `Place' expected" % x.__class__.__name__)
+                            " of type `%s', `Country' expected" % x.__class__.__name__)
 
     @property
     def home_town(self):
         if self._home_town is None:
-            self._home_town = self._fetch_field('home_town')
+            self._fetch_fields('home_town')
         return self._home_town
 
     @home_town.setter
@@ -1241,7 +1241,7 @@ class User(VKObject):
     @property
     def photo_50(self):
         if self._photo_50 is None:
-            self._photo_50 = self._fetch_field('photo_50')
+            self._fetch_fields('photo_50')
         return self._photo_50
 
     @photo_50.setter
@@ -1255,7 +1255,7 @@ class User(VKObject):
     @property
     def photo_100(self):
         if self._photo_100 is None:
-            self._photo_100 = self._fetch_field('photo_100')
+            self._fetch_fields('photo_100')
         return self._photo_100
 
     @photo_100.setter
@@ -1269,7 +1269,7 @@ class User(VKObject):
     @property
     def photo_200_orig(self):
         if self._photo_200_orig is None:
-            self._photo_200_orig = self._fetch_field('photo_200_orig')
+            self._fetch_fields('photo_200_orig')
         return self._photo_200_orig
 
     @photo_200_orig.setter
@@ -1283,7 +1283,7 @@ class User(VKObject):
     @property
     def photo_200(self):
         if self._photo_200 is None:
-            self._photo_200 = self._fetch_field('photo_200')
+            self._fetch_fields('photo_200')
         return self._photo_200
 
     @photo_200.setter
@@ -1297,7 +1297,7 @@ class User(VKObject):
     @property
     def photo_400_orig(self):
         if self._photo_400_orig is None:
-            self._photo_400_orig = self._fetch_field('photo_400_orig')
+            self._fetch_fields('photo_400_orig')
         return self._photo_400_orig
 
     @photo_400_orig.setter
@@ -1311,7 +1311,7 @@ class User(VKObject):
     @property
     def photo_max(self):
         if self._photo_max is None:
-            self._photo_max = self._fetch_field('photo_max')
+            self._fetch_fields('photo_max')
         return self._photo_max
 
     @photo_max.setter
@@ -1325,7 +1325,7 @@ class User(VKObject):
     @property
     def photo_max_orig(self):
         if self._photo_max_orig is None:
-            self._photo_max_orig = self._fetch_field('photo_max_orig')
+            self._fetch_fields('photo_max_orig')
         return self._photo_max_orig
 
     @photo_max_orig.setter
@@ -1339,7 +1339,7 @@ class User(VKObject):
     @property
     def online(self):
         if self._online is None:
-            self._online = self._fetch_field('online')
+            self._fetch_fields('online')
         return self._online
 
     @online.setter
@@ -1353,7 +1353,7 @@ class User(VKObject):
     @property
     def lists(self):
         if self._lists is None:
-            self._lists = self._fetch_field('lists')
+            self._fetch_fields('lists')
         return self._lists
 
     @lists.setter
@@ -1367,7 +1367,7 @@ class User(VKObject):
     @property
     def domain(self):
         if self._domain is None:
-            self._domain = self._fetch_field('domain')
+            self._fetch_fields('domain')
         return self._domain
 
     @domain.setter
@@ -1381,7 +1381,7 @@ class User(VKObject):
     @property
     def has_mobile(self):
         if self._has_mobile is None:
-            self._has_mobile = self._fetch_field('has_mobile')
+            self._fetch_fields('has_mobile')
         return self._has_mobile
 
     @has_mobile.setter
@@ -1395,7 +1395,7 @@ class User(VKObject):
     @property
     def contacts(self):
         if self._contacts is None:
-            self._contacts = self._fetch_field('contacts')
+            self._fetch_fields('contacts')
         return self._contacts
 
     @contacts.setter
@@ -1409,7 +1409,7 @@ class User(VKObject):
     @property
     def site(self):
         if self._site is None:
-            self._site = self._fetch_field('site')
+            self._fetch_fields('site')
         return self._site
 
     @site.setter
@@ -1423,7 +1423,7 @@ class User(VKObject):
     @property
     def education(self):
         if self._education is None:
-            self._education = self._fetch_field('education')
+            self._fetch_fields('education')
         return self._education
 
     @education.setter
@@ -1437,7 +1437,7 @@ class User(VKObject):
     @property
     def universities(self):
         if self._universities is None:
-            self._universities = self._fetch_field('universities')
+            self._fetch_fields('universities')
         return self._universities
 
     @universities.setter
@@ -1451,7 +1451,7 @@ class User(VKObject):
     @property
     def schools(self):
         if self._schools is None:
-            self._schools = self._fetch_field('schools')
+            self._fetch_fields('schools')
         return self._schools
 
     @schools.setter
@@ -1465,7 +1465,7 @@ class User(VKObject):
     @property
     def status(self):
         if self._status is None:
-            self._status = self._fetch_field('status')
+            self._fetch_fields('status')
         return self._status
 
     @status.setter
@@ -1479,7 +1479,7 @@ class User(VKObject):
     @property
     def status_audio(self):
         if self._status_audio is None:
-            self._status_audio = self._fetch_field('status_audio')
+            self._fetch_fields('status_audio')
         return self._status_audio
 
     @status_audio.setter
@@ -1493,7 +1493,7 @@ class User(VKObject):
     @property
     def last_seen(self):
         if self._last_seen is None:
-            self._last_seen = self._fetch_field('last_seen')
+            self._fetch_fields('last_seen')
         return self._last_seen
 
     @last_seen.setter
@@ -1507,7 +1507,7 @@ class User(VKObject):
     @property
     def followers_count(self):
         if self._followers_count is None:
-            self._followers_count = self._fetch_field('followers_count')
+            self._fetch_fields('followers_count')
         return self._followers_count
 
     @followers_count.setter
@@ -1521,7 +1521,7 @@ class User(VKObject):
     @property
     def common_count(self):
         if self._common_count is None:
-            self._common_count = self._fetch_field('common_count')
+            self._fetch_fields('common_count')
         return self._common_count
 
     @common_count.setter
@@ -1535,21 +1535,21 @@ class User(VKObject):
     @property
     def counters(self):
         if self._counters is None:
-            self._counters = self._fetch_field('counters')
+            self._fetch_fields('counters')
         return self._counters
 
     @counters.setter
     def counters(self, x):
-        if type(x) is Counter:
+        if type(x) is Counters:
             self._counters = x
         else:
             raise TypeError("User.counters: cannot set attribute with value"
-                            " of type `%s', `Counter' expected" % x.__class__.__name__)
+                            " of type `%s', `Counters' expected" % x.__class__.__name__)
 
     @property
     def occupation(self):
         if self._occupation is None:
-            self._occupation = self._fetch_field('occupation')
+            self._fetch_fields('occupation')
         return self._occupation
 
     @occupation.setter
@@ -1563,7 +1563,7 @@ class User(VKObject):
     @property
     def nickname(self):
         if self._nickname is None:
-            self._nickname = self._fetch_field('nickname')
+            self._fetch_fields('nickname')
         return self._nickname
 
     @nickname.setter
@@ -1577,7 +1577,7 @@ class User(VKObject):
     @property
     def relatives(self):
         if self._relatives is None:
-            self._relatives = self._fetch_field('relatives')
+            self._fetch_fields('relatives')
         return self._relatives
 
     @relatives.setter
@@ -1591,7 +1591,7 @@ class User(VKObject):
     @property
     def relation(self):
         if self._relation is None:
-            self._relation = self._fetch_field('relation')
+            self._fetch_fields('relation')
         return self._relation
 
     @relation.setter
@@ -1605,7 +1605,7 @@ class User(VKObject):
     @property
     def relation_partner(self):
         if self._relation_partner is None:
-            self._relation_partner = self._fetch_field('relation_partner')
+            self._fetch_fields('relation_partner')
         return self._relation_partner
 
     @relation_partner.setter
@@ -1619,7 +1619,7 @@ class User(VKObject):
     @property
     def personal(self):
         if self._personal is None:
-            self._personal = self._fetch_field('personal')
+            self._fetch_fields('personal')
         return self._personal
 
     @personal.setter
@@ -1633,7 +1633,7 @@ class User(VKObject):
     @property
     def connections(self):
         if self._connections is None:
-            self._connections = self._fetch_field('connections')
+            self._fetch_fields('connections')
         return self._connections
 
     @connections.setter
@@ -1647,7 +1647,7 @@ class User(VKObject):
     @property
     def twitter(self):
         if self._twitter is None:
-            self._twitter = self._fetch_field('twitter')
+            self._fetch_fields('twitter')
         return self._twitter
 
     @twitter.setter
@@ -1661,7 +1661,7 @@ class User(VKObject):
     @property
     def livejornal(self):
         if self._livejornal is None:
-            self._livejornal = self._fetch_field('livejornal')
+            self._fetch_fields('livejornal')
         return self._livejornal
 
     @livejornal.setter
@@ -1675,7 +1675,7 @@ class User(VKObject):
     @property
     def instagram(self):
         if self._instagram is None:
-            self._instagram = self._fetch_field('instagram')
+            self._fetch_fields('instagram')
         return self._instagram
 
     @instagram.setter
@@ -1689,7 +1689,7 @@ class User(VKObject):
     @property
     def skype(self):
         if self._skype is None:
-            self._skype = self._fetch_field('skype')
+            self._fetch_fields('skype')
         return self._skype
 
     @skype.setter
@@ -1703,7 +1703,7 @@ class User(VKObject):
     @property
     def facebook(self):
         if self._facebook is None:
-            self._facebook = self._fetch_field('facebook')
+            self._fetch_fields('facebook')
         return self._facebook
 
     @facebook.setter
@@ -1717,21 +1717,21 @@ class User(VKObject):
     @property
     def exports(self):
         if self._exports is None:
-            self._exports = self._fetch_field('exports')
+            self._fetch_fields('exports')
         return self._exports
 
     @exports.setter
     def exports(self, x):
-        if type(x) is Export:
+        if type(x) is Exports:
             self._exports = x
         else:
             raise TypeError("User.exports: cannot set attribute with value"
-                            " of type `%s', `Export' expected" % x.__class__.__name__)
+                            " of type `%s', `Exports' expected" % x.__class__.__name__)
 
     @property
     def wall_comments(self):
         if self._wall_comments is None:
-            self._wall_comments = self._fetch_field('wall_comments')
+            self._fetch_fields('wall_comments')
         return self._wall_comments
 
     @wall_comments.setter
@@ -1745,7 +1745,7 @@ class User(VKObject):
     @property
     def activities(self):
         if self._activities is None:
-            self._activities = self._fetch_field('activities')
+            self._fetch_fields('activities')
         return self._activities
 
     @activities.setter
@@ -1759,7 +1759,7 @@ class User(VKObject):
     @property
     def interests(self):
         if self._interests is None:
-            self._interests = self._fetch_field('interests')
+            self._fetch_fields('interests')
         return self._interests
 
     @interests.setter
@@ -1773,7 +1773,7 @@ class User(VKObject):
     @property
     def music(self):
         if self._music is None:
-            self._music = self._fetch_field('music')
+            self._fetch_fields('music')
         return self._music
 
     @music.setter
@@ -1787,7 +1787,7 @@ class User(VKObject):
     @property
     def movies(self):
         if self._movies is None:
-            self._movies = self._fetch_field('movies')
+            self._fetch_fields('movies')
         return self._movies
 
     @movies.setter
@@ -1801,7 +1801,7 @@ class User(VKObject):
     @property
     def tv(self):
         if self._tv is None:
-            self._tv = self._fetch_field('tv')
+            self._fetch_fields('tv')
         return self._tv
 
     @tv.setter
@@ -1815,7 +1815,7 @@ class User(VKObject):
     @property
     def books(self):
         if self._books is None:
-            self._books = self._fetch_field('books')
+            self._fetch_fields('books')
         return self._books
 
     @books.setter
@@ -1829,7 +1829,7 @@ class User(VKObject):
     @property
     def games(self):
         if self._games is None:
-            self._games = self._fetch_field('games')
+            self._fetch_fields('games')
         return self._games
 
     @games.setter
@@ -1843,7 +1843,7 @@ class User(VKObject):
     @property
     def about(self):
         if self._about is None:
-            self._about = self._fetch_field('about')
+            self._fetch_fields('about')
         return self._about
 
     @about.setter
@@ -1857,7 +1857,7 @@ class User(VKObject):
     @property
     def quotes(self):
         if self._quotes is None:
-            self._quotes = self._fetch_field('quotes')
+            self._fetch_fields('quotes')
         return self._quotes
 
     @quotes.setter
@@ -1871,7 +1871,7 @@ class User(VKObject):
     @property
     def can_post(self):
         if self._can_post is None:
-            self._can_post = self._fetch_field('can_post')
+            self._fetch_fields('can_post')
         return self._can_post
 
     @can_post.setter
@@ -1885,7 +1885,7 @@ class User(VKObject):
     @property
     def can_see_all_posts(self):
         if self._can_see_all_posts is None:
-            self._can_see_all_posts = self._fetch_field('can_see_all_posts')
+            self._fetch_fields('can_see_all_posts')
         return self._can_see_all_posts
 
     @can_see_all_posts.setter
@@ -1899,7 +1899,7 @@ class User(VKObject):
     @property
     def can_see_audio(self):
         if self._can_see_audio is None:
-            self._can_see_audio = self._fetch_field('can_see_audio')
+            self._fetch_fields('can_see_audio')
         return self._can_see_audio
 
     @can_see_audio.setter
@@ -1913,7 +1913,7 @@ class User(VKObject):
     @property
     def can_write_private_message(self):
         if self._can_write_private_message is None:
-            self._can_write_private_message = self._fetch_field('can_write_private_message')
+            self._fetch_fields('can_write_private_message')
         return self._can_write_private_message
 
     @can_write_private_message.setter
@@ -1927,7 +1927,7 @@ class User(VKObject):
     @property
     def can_send_friend_request(self):
         if self._can_send_friend_request is None:
-            self._can_send_friend_request = self._fetch_field('can_send_friend_request')
+            self._fetch_fields('can_send_friend_request')
         return self._can_send_friend_request
 
     @can_send_friend_request.setter
@@ -1941,7 +1941,7 @@ class User(VKObject):
     @property
     def is_favorite(self):
         if self._is_favorite is None:
-            self._is_favorite = self._fetch_field('is_favorite')
+            self._fetch_fields('is_favorite')
         return self._is_favorite
 
     @is_favorite.setter
@@ -1955,7 +1955,7 @@ class User(VKObject):
     @property
     def timezone(self):
         if self._timezone is None:
-            self._timezone = self._fetch_field('timezone')
+            self._fetch_fields('timezone')
         return self._timezone
 
     @timezone.setter
@@ -1969,7 +1969,7 @@ class User(VKObject):
     @property
     def screen_name(self):
         if self._screen_name is None:
-            self._screen_name = self._fetch_field('screen_name')
+            self._fetch_fields('screen_name')
         return self._screen_name
 
     @screen_name.setter
@@ -1983,7 +1983,7 @@ class User(VKObject):
     @property
     def maiden_name(self):
         if self._maiden_name is None:
-            self._maiden_name = self._fetch_field('maiden_name')
+            self._fetch_fields('maiden_name')
         return self._maiden_name
 
     @maiden_name.setter
@@ -1997,7 +1997,7 @@ class User(VKObject):
     @property
     def crop_photo(self):
         if self._crop_photo is None:
-            self._crop_photo = self._fetch_field('crop_photo')
+            self._fetch_fields('crop_photo')
         return self._crop_photo
 
     @crop_photo.setter
@@ -2011,7 +2011,7 @@ class User(VKObject):
     @property
     def is_friend(self):
         if self._is_friend is None:
-            self._is_friend = self._fetch_field('is_friend')
+            self._fetch_fields('is_friend')
         return self._is_friend
 
     @is_friend.setter
@@ -2025,7 +2025,7 @@ class User(VKObject):
     @property
     def friend_status(self):
         if self._friend_status is None:
-            self._friend_status = self._fetch_field('friend_status')
+            self._fetch_fields('friend_status')
         return self._friend_status
 
     @friend_status.setter
@@ -2037,18 +2037,18 @@ class User(VKObject):
                             " of type `%s', `int_0_1_2_3' expected" % x.__class__.__name__)
 
 
-class Place(PlainObject):
+class City(PlainObject):
 
     def __init__(self, **kwargs):
         self.__attrs__ = ('id', 'title')
         self.__attrs_required__ = set(['id', 'title'])
 
-        super(Place, self).__init__(**kwargs)
+        super(City, self).__init__(**kwargs)
 
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -2056,13 +2056,13 @@ class Place(PlainObject):
         if test_intp(x):
             self._id = x
         else:
-            raise TypeError("Place.id: cannot set attribute with value"
+            raise TypeError("City.id: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def title(self):
         if self._title is None:
-            self._title = self._fetch_field('title')
+            self._fetch_fields('title')
         return self._title
 
     @title.setter
@@ -2070,7 +2070,44 @@ class Place(PlainObject):
         if type(x) is str:
             self._title = x
         else:
-            raise TypeError("Place.title: cannot set attribute with value"
+            raise TypeError("City.title: cannot set attribute with value"
+                            " of type `%s', `str' expected" % x.__class__.__name__)
+
+
+class Country(PlainObject):
+
+    def __init__(self, **kwargs):
+        self.__attrs__ = ('id', 'title')
+        self.__attrs_required__ = set(['id', 'title'])
+
+        super(Country, self).__init__(**kwargs)
+
+    @property
+    def id(self):
+        if self._id is None:
+            self._fetch_fields('id')
+        return self._id
+
+    @id.setter
+    def id(self, x):
+        if test_intp(x):
+            self._id = x
+        else:
+            raise TypeError("Country.id: cannot set attribute with value"
+                            " of type `%s', `intp' expected" % x.__class__.__name__)
+
+    @property
+    def title(self):
+        if self._title is None:
+            self._fetch_fields('title')
+        return self._title
+
+    @title.setter
+    def title(self, x):
+        if type(x) is str:
+            self._title = x
+        else:
+            raise TypeError("Country.title: cannot set attribute with value"
                             " of type `%s', `str' expected" % x.__class__.__name__)
 
 
@@ -2085,7 +2122,7 @@ class Contacts(PlainObject):
     @property
     def mobile_phone(self):
         if self._mobile_phone is None:
-            self._mobile_phone = self._fetch_field('mobile_phone')
+            self._fetch_fields('mobile_phone')
         return self._mobile_phone
 
     @mobile_phone.setter
@@ -2099,7 +2136,7 @@ class Contacts(PlainObject):
     @property
     def home_phone(self):
         if self._home_phone is None:
-            self._home_phone = self._fetch_field('home_phone')
+            self._fetch_fields('home_phone')
         return self._home_phone
 
     @home_phone.setter
@@ -2123,7 +2160,7 @@ class Education(PlainObject):
     @property
     def unversity(self):
         if self._unversity is None:
-            self._unversity = self._fetch_field('unversity')
+            self._fetch_fields('unversity')
         return self._unversity
 
     @unversity.setter
@@ -2137,7 +2174,7 @@ class Education(PlainObject):
     @property
     def unversity_name(self):
         if self._unversity_name is None:
-            self._unversity_name = self._fetch_field('unversity_name')
+            self._fetch_fields('unversity_name')
         return self._unversity_name
 
     @unversity_name.setter
@@ -2151,7 +2188,7 @@ class Education(PlainObject):
     @property
     def faculty(self):
         if self._faculty is None:
-            self._faculty = self._fetch_field('faculty')
+            self._fetch_fields('faculty')
         return self._faculty
 
     @faculty.setter
@@ -2165,7 +2202,7 @@ class Education(PlainObject):
     @property
     def faculty_name(self):
         if self._faculty_name is None:
-            self._faculty_name = self._fetch_field('faculty_name')
+            self._fetch_fields('faculty_name')
         return self._faculty_name
 
     @faculty_name.setter
@@ -2179,7 +2216,7 @@ class Education(PlainObject):
     @property
     def graduation(self):
         if self._graduation is None:
-            self._graduation = self._fetch_field('graduation')
+            self._fetch_fields('graduation')
         return self._graduation
 
     @graduation.setter
@@ -2203,7 +2240,7 @@ class University(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -2217,7 +2254,7 @@ class University(PlainObject):
     @property
     def country(self):
         if self._country is None:
-            self._country = self._fetch_field('country')
+            self._fetch_fields('country')
         return self._country
 
     @country.setter
@@ -2231,7 +2268,7 @@ class University(PlainObject):
     @property
     def city(self):
         if self._city is None:
-            self._city = self._fetch_field('city')
+            self._fetch_fields('city')
         return self._city
 
     @city.setter
@@ -2245,7 +2282,7 @@ class University(PlainObject):
     @property
     def name(self):
         if self._name is None:
-            self._name = self._fetch_field('name')
+            self._fetch_fields('name')
         return self._name
 
     @name.setter
@@ -2259,7 +2296,7 @@ class University(PlainObject):
     @property
     def faculty(self):
         if self._faculty is None:
-            self._faculty = self._fetch_field('faculty')
+            self._fetch_fields('faculty')
         return self._faculty
 
     @faculty.setter
@@ -2273,7 +2310,7 @@ class University(PlainObject):
     @property
     def faculty_name(self):
         if self._faculty_name is None:
-            self._faculty_name = self._fetch_field('faculty_name')
+            self._fetch_fields('faculty_name')
         return self._faculty_name
 
     @faculty_name.setter
@@ -2287,7 +2324,7 @@ class University(PlainObject):
     @property
     def chair(self):
         if self._chair is None:
-            self._chair = self._fetch_field('chair')
+            self._fetch_fields('chair')
         return self._chair
 
     @chair.setter
@@ -2301,7 +2338,7 @@ class University(PlainObject):
     @property
     def chair_name(self):
         if self._chair_name is None:
-            self._chair_name = self._fetch_field('chair_name')
+            self._fetch_fields('chair_name')
         return self._chair_name
 
     @chair_name.setter
@@ -2315,7 +2352,7 @@ class University(PlainObject):
     @property
     def graduation(self):
         if self._graduation is None:
-            self._graduation = self._fetch_field('graduation')
+            self._fetch_fields('graduation')
         return self._graduation
 
     @graduation.setter
@@ -2339,7 +2376,7 @@ class School(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -2353,7 +2390,7 @@ class School(PlainObject):
     @property
     def country(self):
         if self._country is None:
-            self._country = self._fetch_field('country')
+            self._fetch_fields('country')
         return self._country
 
     @country.setter
@@ -2367,7 +2404,7 @@ class School(PlainObject):
     @property
     def city(self):
         if self._city is None:
-            self._city = self._fetch_field('city')
+            self._fetch_fields('city')
         return self._city
 
     @city.setter
@@ -2381,7 +2418,7 @@ class School(PlainObject):
     @property
     def name(self):
         if self._name is None:
-            self._name = self._fetch_field('name')
+            self._fetch_fields('name')
         return self._name
 
     @name.setter
@@ -2395,7 +2432,7 @@ class School(PlainObject):
     @property
     def year_from(self):
         if self._year_from is None:
-            self._year_from = self._fetch_field('year_from')
+            self._fetch_fields('year_from')
         return self._year_from
 
     @year_from.setter
@@ -2409,7 +2446,7 @@ class School(PlainObject):
     @property
     def year_to(self):
         if self._year_to is None:
-            self._year_to = self._fetch_field('year_to')
+            self._fetch_fields('year_to')
         return self._year_to
 
     @year_to.setter
@@ -2423,7 +2460,7 @@ class School(PlainObject):
     @property
     def year_graduated(self):
         if self._year_graduated is None:
-            self._year_graduated = self._fetch_field('year_graduated')
+            self._fetch_fields('year_graduated')
         return self._year_graduated
 
     @year_graduated.setter
@@ -2437,7 +2474,7 @@ class School(PlainObject):
     @property
     def class_letter(self):
         if self._class_letter is None:
-            self._class_letter = self._fetch_field('class_letter')
+            self._fetch_fields('class_letter')
         return self._class_letter
 
     @class_letter.setter
@@ -2451,7 +2488,7 @@ class School(PlainObject):
     @property
     def type(self):
         if self._type is None:
-            self._type = self._fetch_field('type')
+            self._fetch_fields('type')
         return self._type
 
     @type.setter
@@ -2465,7 +2502,7 @@ class School(PlainObject):
     @property
     def type_str(self):
         if self._type_str is None:
-            self._type_str = self._fetch_field('type_str')
+            self._fetch_fields('type_str')
         return self._type_str
 
     @type_str.setter
@@ -2477,7 +2514,7 @@ class School(PlainObject):
                             " of type `%s', `str' expected" % x.__class__.__name__)
 
 
-class Counter(PlainObject):
+class Counters(PlainObject):
 
     def __init__(self, **kwargs):
         self.__attrs__ = ('albums', 'videos', 'audios', 'photos', 'notes',
@@ -2485,12 +2522,12 @@ class Counter(PlainObject):
         'followers', 'user_photos', 'subscriptions')
         self.__attrs_required__ = set()
 
-        super(Counter, self).__init__(**kwargs)
+        super(Counters, self).__init__(**kwargs)
 
     @property
     def albums(self):
         if self._albums is None:
-            self._albums = self._fetch_field('albums')
+            self._fetch_fields('albums')
         return self._albums
 
     @albums.setter
@@ -2498,13 +2535,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._albums = x
         else:
-            raise TypeError("Counter.albums: cannot set attribute with value"
+            raise TypeError("Counters.albums: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def videos(self):
         if self._videos is None:
-            self._videos = self._fetch_field('videos')
+            self._fetch_fields('videos')
         return self._videos
 
     @videos.setter
@@ -2512,13 +2549,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._videos = x
         else:
-            raise TypeError("Counter.videos: cannot set attribute with value"
+            raise TypeError("Counters.videos: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def audios(self):
         if self._audios is None:
-            self._audios = self._fetch_field('audios')
+            self._fetch_fields('audios')
         return self._audios
 
     @audios.setter
@@ -2526,13 +2563,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._audios = x
         else:
-            raise TypeError("Counter.audios: cannot set attribute with value"
+            raise TypeError("Counters.audios: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def photos(self):
         if self._photos is None:
-            self._photos = self._fetch_field('photos')
+            self._fetch_fields('photos')
         return self._photos
 
     @photos.setter
@@ -2540,13 +2577,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._photos = x
         else:
-            raise TypeError("Counter.photos: cannot set attribute with value"
+            raise TypeError("Counters.photos: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def notes(self):
         if self._notes is None:
-            self._notes = self._fetch_field('notes')
+            self._fetch_fields('notes')
         return self._notes
 
     @notes.setter
@@ -2554,13 +2591,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._notes = x
         else:
-            raise TypeError("Counter.notes: cannot set attribute with value"
+            raise TypeError("Counters.notes: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def friends(self):
         if self._friends is None:
-            self._friends = self._fetch_field('friends')
+            self._fetch_fields('friends')
         return self._friends
 
     @friends.setter
@@ -2568,13 +2605,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._friends = x
         else:
-            raise TypeError("Counter.friends: cannot set attribute with value"
+            raise TypeError("Counters.friends: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def groups(self):
         if self._groups is None:
-            self._groups = self._fetch_field('groups')
+            self._fetch_fields('groups')
         return self._groups
 
     @groups.setter
@@ -2582,13 +2619,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._groups = x
         else:
-            raise TypeError("Counter.groups: cannot set attribute with value"
+            raise TypeError("Counters.groups: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def online_friends(self):
         if self._online_friends is None:
-            self._online_friends = self._fetch_field('online_friends')
+            self._fetch_fields('online_friends')
         return self._online_friends
 
     @online_friends.setter
@@ -2596,13 +2633,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._online_friends = x
         else:
-            raise TypeError("Counter.online_friends: cannot set attribute with value"
+            raise TypeError("Counters.online_friends: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def mutual_friends(self):
         if self._mutual_friends is None:
-            self._mutual_friends = self._fetch_field('mutual_friends')
+            self._fetch_fields('mutual_friends')
         return self._mutual_friends
 
     @mutual_friends.setter
@@ -2610,13 +2647,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._mutual_friends = x
         else:
-            raise TypeError("Counter.mutual_friends: cannot set attribute with value"
+            raise TypeError("Counters.mutual_friends: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def user_videos(self):
         if self._user_videos is None:
-            self._user_videos = self._fetch_field('user_videos')
+            self._fetch_fields('user_videos')
         return self._user_videos
 
     @user_videos.setter
@@ -2624,13 +2661,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._user_videos = x
         else:
-            raise TypeError("Counter.user_videos: cannot set attribute with value"
+            raise TypeError("Counters.user_videos: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def followers(self):
         if self._followers is None:
-            self._followers = self._fetch_field('followers')
+            self._fetch_fields('followers')
         return self._followers
 
     @followers.setter
@@ -2638,13 +2675,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._followers = x
         else:
-            raise TypeError("Counter.followers: cannot set attribute with value"
+            raise TypeError("Counters.followers: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def user_photos(self):
         if self._user_photos is None:
-            self._user_photos = self._fetch_field('user_photos')
+            self._fetch_fields('user_photos')
         return self._user_photos
 
     @user_photos.setter
@@ -2652,13 +2689,13 @@ class Counter(PlainObject):
         if test_intp(x):
             self._user_photos = x
         else:
-            raise TypeError("Counter.user_photos: cannot set attribute with value"
+            raise TypeError("Counters.user_photos: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
     @property
     def subscriptions(self):
         if self._subscriptions is None:
-            self._subscriptions = self._fetch_field('subscriptions')
+            self._fetch_fields('subscriptions')
         return self._subscriptions
 
     @subscriptions.setter
@@ -2666,7 +2703,7 @@ class Counter(PlainObject):
         if test_intp(x):
             self._subscriptions = x
         else:
-            raise TypeError("Counter.subscriptions: cannot set attribute with value"
+            raise TypeError("Counters.subscriptions: cannot set attribute with value"
                             " of type `%s', `intp' expected" % x.__class__.__name__)
 
 
@@ -2681,7 +2718,7 @@ class Occupation(PlainObject):
     @property
     def type(self):
         if self._type is None:
-            self._type = self._fetch_field('type')
+            self._fetch_fields('type')
         return self._type
 
     @type.setter
@@ -2695,7 +2732,7 @@ class Occupation(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -2709,7 +2746,7 @@ class Occupation(PlainObject):
     @property
     def name(self):
         if self._name is None:
-            self._name = self._fetch_field('name')
+            self._fetch_fields('name')
         return self._name
 
     @name.setter
@@ -2732,7 +2769,7 @@ class Relation(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -2746,7 +2783,7 @@ class Relation(PlainObject):
     @property
     def first_name(self):
         if self._first_name is None:
-            self._first_name = self._fetch_field('first_name')
+            self._fetch_fields('first_name')
         return self._first_name
 
     @first_name.setter
@@ -2760,7 +2797,7 @@ class Relation(PlainObject):
     @property
     def last_name(self):
         if self._last_name is None:
-            self._last_name = self._fetch_field('last_name')
+            self._fetch_fields('last_name')
         return self._last_name
 
     @last_name.setter
@@ -2783,7 +2820,7 @@ class Relative(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -2797,7 +2834,7 @@ class Relative(PlainObject):
     @property
     def name(self):
         if self._name is None:
-            self._name = self._fetch_field('name')
+            self._fetch_fields('name')
         return self._name
 
     @name.setter
@@ -2811,7 +2848,7 @@ class Relative(PlainObject):
     @property
     def type(self):
         if self._type is None:
-            self._type = self._fetch_field('type')
+            self._fetch_fields('type')
         return self._type
 
     @type.setter
@@ -2835,7 +2872,7 @@ class Personal(PlainObject):
     @property
     def political(self):
         if self._political is None:
-            self._political = self._fetch_field('political')
+            self._fetch_fields('political')
         return self._political
 
     @political.setter
@@ -2849,7 +2886,7 @@ class Personal(PlainObject):
     @property
     def langs(self):
         if self._langs is None:
-            self._langs = self._fetch_field('langs')
+            self._fetch_fields('langs')
         return self._langs
 
     @langs.setter
@@ -2863,7 +2900,7 @@ class Personal(PlainObject):
     @property
     def religion(self):
         if self._religion is None:
-            self._religion = self._fetch_field('religion')
+            self._fetch_fields('religion')
         return self._religion
 
     @religion.setter
@@ -2877,7 +2914,7 @@ class Personal(PlainObject):
     @property
     def inspired_by(self):
         if self._inspired_by is None:
-            self._inspired_by = self._fetch_field('inspired_by')
+            self._fetch_fields('inspired_by')
         return self._inspired_by
 
     @inspired_by.setter
@@ -2891,7 +2928,7 @@ class Personal(PlainObject):
     @property
     def people_main(self):
         if self._people_main is None:
-            self._people_main = self._fetch_field('people_main')
+            self._fetch_fields('people_main')
         return self._people_main
 
     @people_main.setter
@@ -2905,7 +2942,7 @@ class Personal(PlainObject):
     @property
     def life_main(self):
         if self._life_main is None:
-            self._life_main = self._fetch_field('life_main')
+            self._fetch_fields('life_main')
         return self._life_main
 
     @life_main.setter
@@ -2919,7 +2956,7 @@ class Personal(PlainObject):
     @property
     def smoking(self):
         if self._smoking is None:
-            self._smoking = self._fetch_field('smoking')
+            self._fetch_fields('smoking')
         return self._smoking
 
     @smoking.setter
@@ -2933,7 +2970,7 @@ class Personal(PlainObject):
     @property
     def alkochol(self):
         if self._alkochol is None:
-            self._alkochol = self._fetch_field('alkochol')
+            self._fetch_fields('alkochol')
         return self._alkochol
 
     @alkochol.setter
@@ -2945,18 +2982,55 @@ class Personal(PlainObject):
                             " of type `%s', `view' expected" % x.__class__.__name__)
 
 
-class Export(PlainObject):
+class LastSeen(PlainObject):
+
+    def __init__(self, **kwargs):
+        self.__attrs__ = ('time', 'platform')
+        self.__attrs_required__ = set()
+
+        super(LastSeen, self).__init__(**kwargs)
+
+    @property
+    def time(self):
+        if self._time is None:
+            self._fetch_fields('time')
+        return self._time
+
+    @time.setter
+    def time(self, x):
+        if test_intp(x):
+            self._time = x
+        else:
+            raise TypeError("LastSeen.time: cannot set attribute with value"
+                            " of type `%s', `intp' expected" % x.__class__.__name__)
+
+    @property
+    def platform(self):
+        if self._platform is None:
+            self._fetch_fields('platform')
+        return self._platform
+
+    @platform.setter
+    def platform(self, x):
+        if test_intp(x):
+            self._platform = x
+        else:
+            raise TypeError("LastSeen.platform: cannot set attribute with value"
+                            " of type `%s', `intp' expected" % x.__class__.__name__)
+
+
+class Exports(PlainObject):
 
     def __init__(self, **kwargs):
         self.__attrs__ = ('twitter', 'instagram', 'facebook', 'livejournal')
         self.__attrs_required__ = set()
 
-        super(Export, self).__init__(**kwargs)
+        super(Exports, self).__init__(**kwargs)
 
     @property
     def twitter(self):
         if self._twitter is None:
-            self._twitter = self._fetch_field('twitter')
+            self._fetch_fields('twitter')
         return self._twitter
 
     @twitter.setter
@@ -2964,13 +3038,13 @@ class Export(PlainObject):
         if test_flag(x):
             self._twitter = x
         else:
-            raise TypeError("Export.twitter: cannot set attribute with value"
+            raise TypeError("Exports.twitter: cannot set attribute with value"
                             " of type `%s', `flag' expected" % x.__class__.__name__)
 
     @property
     def instagram(self):
         if self._instagram is None:
-            self._instagram = self._fetch_field('instagram')
+            self._fetch_fields('instagram')
         return self._instagram
 
     @instagram.setter
@@ -2978,13 +3052,13 @@ class Export(PlainObject):
         if test_flag(x):
             self._instagram = x
         else:
-            raise TypeError("Export.instagram: cannot set attribute with value"
+            raise TypeError("Exports.instagram: cannot set attribute with value"
                             " of type `%s', `flag' expected" % x.__class__.__name__)
 
     @property
     def facebook(self):
         if self._facebook is None:
-            self._facebook = self._fetch_field('facebook')
+            self._fetch_fields('facebook')
         return self._facebook
 
     @facebook.setter
@@ -2992,13 +3066,13 @@ class Export(PlainObject):
         if test_flag(x):
             self._facebook = x
         else:
-            raise TypeError("Export.facebook: cannot set attribute with value"
+            raise TypeError("Exports.facebook: cannot set attribute with value"
                             " of type `%s', `flag' expected" % x.__class__.__name__)
 
     @property
     def livejournal(self):
         if self._livejournal is None:
-            self._livejournal = self._fetch_field('livejournal')
+            self._fetch_fields('livejournal')
         return self._livejournal
 
     @livejournal.setter
@@ -3006,7 +3080,7 @@ class Export(PlainObject):
         if test_flag(x):
             self._livejournal = x
         else:
-            raise TypeError("Export.livejournal: cannot set attribute with value"
+            raise TypeError("Exports.livejournal: cannot set attribute with value"
                             " of type `%s', `flag' expected" % x.__class__.__name__)
 
 
@@ -3021,7 +3095,7 @@ class Crop(PlainObject):
     @property
     def photo(self):
         if self._photo is None:
-            self._photo = self._fetch_field('photo')
+            self._fetch_fields('photo')
         return self._photo
 
     @photo.setter
@@ -3035,7 +3109,7 @@ class Crop(PlainObject):
     @property
     def crop(self):
         if self._crop is None:
-            self._crop = self._fetch_field('crop')
+            self._fetch_fields('crop')
         return self._crop
 
     @crop.setter
@@ -3049,7 +3123,7 @@ class Crop(PlainObject):
     @property
     def rect(self):
         if self._rect is None:
-            self._rect = self._fetch_field('rect')
+            self._fetch_fields('rect')
         return self._rect
 
     @rect.setter
@@ -3072,7 +3146,7 @@ class Coordinate(PlainObject):
     @property
     def x(self):
         if self._x is None:
-            self._x = self._fetch_field('x')
+            self._fetch_fields('x')
         return self._x
 
     @x.setter
@@ -3086,7 +3160,7 @@ class Coordinate(PlainObject):
     @property
     def y(self):
         if self._y is None:
-            self._y = self._fetch_field('y')
+            self._fetch_fields('y')
         return self._y
 
     @y.setter
@@ -3100,7 +3174,7 @@ class Coordinate(PlainObject):
     @property
     def y1(self):
         if self._y1 is None:
-            self._y1 = self._fetch_field('y1')
+            self._fetch_fields('y1')
         return self._y1
 
     @y1.setter
@@ -3114,7 +3188,7 @@ class Coordinate(PlainObject):
     @property
     def y2(self):
         if self._y2 is None:
-            self._y2 = self._fetch_field('y2')
+            self._fetch_fields('y2')
         return self._y2
 
     @y2.setter
@@ -3139,7 +3213,7 @@ class Photo(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -3153,7 +3227,7 @@ class Photo(VKObject):
     @property
     def album_id(self):
         if self._album_id is None:
-            self._album_id = self._fetch_field('album_id')
+            self._fetch_fields('album_id')
         return self._album_id
 
     @album_id.setter
@@ -3167,7 +3241,7 @@ class Photo(VKObject):
     @property
     def owner_id(self):
         if self._owner_id is None:
-            self._owner_id = self._fetch_field('owner_id')
+            self._fetch_fields('owner_id')
         return self._owner_id
 
     @owner_id.setter
@@ -3181,7 +3255,7 @@ class Photo(VKObject):
     @property
     def user_id(self):
         if self._user_id is None:
-            self._user_id = self._fetch_field('user_id')
+            self._fetch_fields('user_id')
         return self._user_id
 
     @user_id.setter
@@ -3195,7 +3269,7 @@ class Photo(VKObject):
     @property
     def photo_75(self):
         if self._photo_75 is None:
-            self._photo_75 = self._fetch_field('photo_75')
+            self._fetch_fields('photo_75')
         return self._photo_75
 
     @photo_75.setter
@@ -3209,7 +3283,7 @@ class Photo(VKObject):
     @property
     def photo_130(self):
         if self._photo_130 is None:
-            self._photo_130 = self._fetch_field('photo_130')
+            self._fetch_fields('photo_130')
         return self._photo_130
 
     @photo_130.setter
@@ -3223,7 +3297,7 @@ class Photo(VKObject):
     @property
     def photo_604(self):
         if self._photo_604 is None:
-            self._photo_604 = self._fetch_field('photo_604')
+            self._fetch_fields('photo_604')
         return self._photo_604
 
     @photo_604.setter
@@ -3237,7 +3311,7 @@ class Photo(VKObject):
     @property
     def photo_807(self):
         if self._photo_807 is None:
-            self._photo_807 = self._fetch_field('photo_807')
+            self._fetch_fields('photo_807')
         return self._photo_807
 
     @photo_807.setter
@@ -3251,7 +3325,7 @@ class Photo(VKObject):
     @property
     def photo_1280(self):
         if self._photo_1280 is None:
-            self._photo_1280 = self._fetch_field('photo_1280')
+            self._fetch_fields('photo_1280')
         return self._photo_1280
 
     @photo_1280.setter
@@ -3265,7 +3339,7 @@ class Photo(VKObject):
     @property
     def photo_2560(self):
         if self._photo_2560 is None:
-            self._photo_2560 = self._fetch_field('photo_2560')
+            self._fetch_fields('photo_2560')
         return self._photo_2560
 
     @photo_2560.setter
@@ -3279,7 +3353,7 @@ class Photo(VKObject):
     @property
     def width(self):
         if self._width is None:
-            self._width = self._fetch_field('width')
+            self._fetch_fields('width')
         return self._width
 
     @width.setter
@@ -3293,7 +3367,7 @@ class Photo(VKObject):
     @property
     def height(self):
         if self._height is None:
-            self._height = self._fetch_field('height')
+            self._fetch_fields('height')
         return self._height
 
     @height.setter
@@ -3307,7 +3381,7 @@ class Photo(VKObject):
     @property
     def text(self):
         if self._text is None:
-            self._text = self._fetch_field('text')
+            self._fetch_fields('text')
         return self._text
 
     @text.setter
@@ -3321,7 +3395,7 @@ class Photo(VKObject):
     @property
     def date(self):
         if self._date is None:
-            self._date = self._fetch_field('date')
+            self._fetch_fields('date')
         return self._date
 
     @date.setter
@@ -3345,7 +3419,7 @@ class Audio(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -3359,7 +3433,7 @@ class Audio(VKObject):
     @property
     def owner_id(self):
         if self._owner_id is None:
-            self._owner_id = self._fetch_field('owner_id')
+            self._fetch_fields('owner_id')
         return self._owner_id
 
     @owner_id.setter
@@ -3373,7 +3447,7 @@ class Audio(VKObject):
     @property
     def artist(self):
         if self._artist is None:
-            self._artist = self._fetch_field('artist')
+            self._fetch_fields('artist')
         return self._artist
 
     @artist.setter
@@ -3387,7 +3461,7 @@ class Audio(VKObject):
     @property
     def title(self):
         if self._title is None:
-            self._title = self._fetch_field('title')
+            self._fetch_fields('title')
         return self._title
 
     @title.setter
@@ -3401,7 +3475,7 @@ class Audio(VKObject):
     @property
     def duration(self):
         if self._duration is None:
-            self._duration = self._fetch_field('duration')
+            self._fetch_fields('duration')
         return self._duration
 
     @duration.setter
@@ -3415,7 +3489,7 @@ class Audio(VKObject):
     @property
     def url(self):
         if self._url is None:
-            self._url = self._fetch_field('url')
+            self._fetch_fields('url')
         return self._url
 
     @url.setter
@@ -3429,7 +3503,7 @@ class Audio(VKObject):
     @property
     def lyrics_id(self):
         if self._lyrics_id is None:
-            self._lyrics_id = self._fetch_field('lyrics_id')
+            self._fetch_fields('lyrics_id')
         return self._lyrics_id
 
     @lyrics_id.setter
@@ -3443,7 +3517,7 @@ class Audio(VKObject):
     @property
     def album_id(self):
         if self._album_id is None:
-            self._album_id = self._fetch_field('album_id')
+            self._fetch_fields('album_id')
         return self._album_id
 
     @album_id.setter
@@ -3457,7 +3531,7 @@ class Audio(VKObject):
     @property
     def genre_id(self):
         if self._genre_id is None:
-            self._genre_id = self._fetch_field('genre_id')
+            self._fetch_fields('genre_id')
         return self._genre_id
 
     @genre_id.setter
@@ -3482,7 +3556,7 @@ class Video(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -3496,7 +3570,7 @@ class Video(VKObject):
     @property
     def owner_id(self):
         if self._owner_id is None:
-            self._owner_id = self._fetch_field('owner_id')
+            self._fetch_fields('owner_id')
         return self._owner_id
 
     @owner_id.setter
@@ -3510,7 +3584,7 @@ class Video(VKObject):
     @property
     def title(self):
         if self._title is None:
-            self._title = self._fetch_field('title')
+            self._fetch_fields('title')
         return self._title
 
     @title.setter
@@ -3524,7 +3598,7 @@ class Video(VKObject):
     @property
     def description(self):
         if self._description is None:
-            self._description = self._fetch_field('description')
+            self._fetch_fields('description')
         return self._description
 
     @description.setter
@@ -3538,7 +3612,7 @@ class Video(VKObject):
     @property
     def duration(self):
         if self._duration is None:
-            self._duration = self._fetch_field('duration')
+            self._fetch_fields('duration')
         return self._duration
 
     @duration.setter
@@ -3552,7 +3626,7 @@ class Video(VKObject):
     @property
     def link(self):
         if self._link is None:
-            self._link = self._fetch_field('link')
+            self._fetch_fields('link')
         return self._link
 
     @link.setter
@@ -3566,7 +3640,7 @@ class Video(VKObject):
     @property
     def photo_130(self):
         if self._photo_130 is None:
-            self._photo_130 = self._fetch_field('photo_130')
+            self._fetch_fields('photo_130')
         return self._photo_130
 
     @photo_130.setter
@@ -3580,7 +3654,7 @@ class Video(VKObject):
     @property
     def photo_320(self):
         if self._photo_320 is None:
-            self._photo_320 = self._fetch_field('photo_320')
+            self._fetch_fields('photo_320')
         return self._photo_320
 
     @photo_320.setter
@@ -3594,7 +3668,7 @@ class Video(VKObject):
     @property
     def photo_640(self):
         if self._photo_640 is None:
-            self._photo_640 = self._fetch_field('photo_640')
+            self._fetch_fields('photo_640')
         return self._photo_640
 
     @photo_640.setter
@@ -3608,7 +3682,7 @@ class Video(VKObject):
     @property
     def date(self):
         if self._date is None:
-            self._date = self._fetch_field('date')
+            self._fetch_fields('date')
         return self._date
 
     @date.setter
@@ -3622,7 +3696,7 @@ class Video(VKObject):
     @property
     def adding_date(self):
         if self._adding_date is None:
-            self._adding_date = self._fetch_field('adding_date')
+            self._fetch_fields('adding_date')
         return self._adding_date
 
     @adding_date.setter
@@ -3636,7 +3710,7 @@ class Video(VKObject):
     @property
     def views(self):
         if self._views is None:
-            self._views = self._fetch_field('views')
+            self._fetch_fields('views')
         return self._views
 
     @views.setter
@@ -3650,7 +3724,7 @@ class Video(VKObject):
     @property
     def comments(self):
         if self._comments is None:
-            self._comments = self._fetch_field('comments')
+            self._fetch_fields('comments')
         return self._comments
 
     @comments.setter
@@ -3664,7 +3738,7 @@ class Video(VKObject):
     @property
     def player(self):
         if self._player is None:
-            self._player = self._fetch_field('player')
+            self._fetch_fields('player')
         return self._player
 
     @player.setter
@@ -3678,7 +3752,7 @@ class Video(VKObject):
     @property
     def processing(self):
         if self._processing is None:
-            self._processing = self._fetch_field('processing')
+            self._fetch_fields('processing')
         return self._processing
 
     @processing.setter
@@ -3702,7 +3776,7 @@ class Document(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -3716,7 +3790,7 @@ class Document(VKObject):
     @property
     def owner_id(self):
         if self._owner_id is None:
-            self._owner_id = self._fetch_field('owner_id')
+            self._fetch_fields('owner_id')
         return self._owner_id
 
     @owner_id.setter
@@ -3730,7 +3804,7 @@ class Document(VKObject):
     @property
     def title(self):
         if self._title is None:
-            self._title = self._fetch_field('title')
+            self._fetch_fields('title')
         return self._title
 
     @title.setter
@@ -3744,7 +3818,7 @@ class Document(VKObject):
     @property
     def size(self):
         if self._size is None:
-            self._size = self._fetch_field('size')
+            self._fetch_fields('size')
         return self._size
 
     @size.setter
@@ -3758,7 +3832,7 @@ class Document(VKObject):
     @property
     def ext(self):
         if self._ext is None:
-            self._ext = self._fetch_field('ext')
+            self._fetch_fields('ext')
         return self._ext
 
     @ext.setter
@@ -3772,7 +3846,7 @@ class Document(VKObject):
     @property
     def url(self):
         if self._url is None:
-            self._url = self._fetch_field('url')
+            self._fetch_fields('url')
         return self._url
 
     @url.setter
@@ -3786,7 +3860,7 @@ class Document(VKObject):
     @property
     def photo_100(self):
         if self._photo_100 is None:
-            self._photo_100 = self._fetch_field('photo_100')
+            self._fetch_fields('photo_100')
         return self._photo_100
 
     @photo_100.setter
@@ -3800,7 +3874,7 @@ class Document(VKObject):
     @property
     def photo_130(self):
         if self._photo_130 is None:
-            self._photo_130 = self._fetch_field('photo_130')
+            self._fetch_fields('photo_130')
         return self._photo_130
 
     @photo_130.setter
@@ -3827,7 +3901,7 @@ class Message(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -3841,7 +3915,7 @@ class Message(VKObject):
     @property
     def user_id(self):
         if self._user_id is None:
-            self._user_id = self._fetch_field('user_id')
+            self._fetch_fields('user_id')
         return self._user_id
 
     @user_id.setter
@@ -3855,7 +3929,7 @@ class Message(VKObject):
     @property
     def from_id(self):
         if self._from_id is None:
-            self._from_id = self._fetch_field('from_id')
+            self._fetch_fields('from_id')
         return self._from_id
 
     @from_id.setter
@@ -3869,7 +3943,7 @@ class Message(VKObject):
     @property
     def date(self):
         if self._date is None:
-            self._date = self._fetch_field('date')
+            self._fetch_fields('date')
         return self._date
 
     @date.setter
@@ -3883,7 +3957,7 @@ class Message(VKObject):
     @property
     def read_state(self):
         if self._read_state is None:
-            self._read_state = self._fetch_field('read_state')
+            self._fetch_fields('read_state')
         return self._read_state
 
     @read_state.setter
@@ -3897,7 +3971,7 @@ class Message(VKObject):
     @property
     def out(self):
         if self._out is None:
-            self._out = self._fetch_field('out')
+            self._fetch_fields('out')
         return self._out
 
     @out.setter
@@ -3911,7 +3985,7 @@ class Message(VKObject):
     @property
     def title(self):
         if self._title is None:
-            self._title = self._fetch_field('title')
+            self._fetch_fields('title')
         return self._title
 
     @title.setter
@@ -3925,7 +3999,7 @@ class Message(VKObject):
     @property
     def body(self):
         if self._body is None:
-            self._body = self._fetch_field('body')
+            self._fetch_fields('body')
         return self._body
 
     @body.setter
@@ -3939,7 +4013,7 @@ class Message(VKObject):
     @property
     def geo(self):
         if self._geo is None:
-            self._geo = self._fetch_field('geo')
+            self._fetch_fields('geo')
         return self._geo
 
     @geo.setter
@@ -3953,7 +4027,7 @@ class Message(VKObject):
     @property
     def attachments(self):
         if self._attachments is None:
-            self._attachments = self._fetch_field('attachments')
+            self._fetch_fields('attachments')
         return self._attachments
 
     @attachments.setter
@@ -3967,7 +4041,7 @@ class Message(VKObject):
     @property
     def fwd_messages(self):
         if self._fwd_messages is None:
-            self._fwd_messages = self._fetch_field('fwd_messages')
+            self._fetch_fields('fwd_messages')
         return self._fwd_messages
 
     @fwd_messages.setter
@@ -3981,7 +4055,7 @@ class Message(VKObject):
     @property
     def emoji(self):
         if self._emoji is None:
-            self._emoji = self._fetch_field('emoji')
+            self._fetch_fields('emoji')
         return self._emoji
 
     @emoji.setter
@@ -3995,7 +4069,7 @@ class Message(VKObject):
     @property
     def important(self):
         if self._important is None:
-            self._important = self._fetch_field('important')
+            self._fetch_fields('important')
         return self._important
 
     @important.setter
@@ -4009,7 +4083,7 @@ class Message(VKObject):
     @property
     def deleted(self):
         if self._deleted is None:
-            self._deleted = self._fetch_field('deleted')
+            self._fetch_fields('deleted')
         return self._deleted
 
     @deleted.setter
@@ -4023,7 +4097,7 @@ class Message(VKObject):
     @property
     def chat_id(self):
         if self._chat_id is None:
-            self._chat_id = self._fetch_field('chat_id')
+            self._fetch_fields('chat_id')
         return self._chat_id
 
     @chat_id.setter
@@ -4037,7 +4111,7 @@ class Message(VKObject):
     @property
     def chat_active(self):
         if self._chat_active is None:
-            self._chat_active = self._fetch_field('chat_active')
+            self._fetch_fields('chat_active')
         return self._chat_active
 
     @chat_active.setter
@@ -4051,7 +4125,7 @@ class Message(VKObject):
     @property
     def push_settings(self):
         if self._push_settings is None:
-            self._push_settings = self._fetch_field('push_settings')
+            self._fetch_fields('push_settings')
         return self._push_settings
 
     @push_settings.setter
@@ -4065,7 +4139,7 @@ class Message(VKObject):
     @property
     def users_count(self):
         if self._users_count is None:
-            self._users_count = self._fetch_field('users_count')
+            self._fetch_fields('users_count')
         return self._users_count
 
     @users_count.setter
@@ -4079,7 +4153,7 @@ class Message(VKObject):
     @property
     def admin_id(self):
         if self._admin_id is None:
-            self._admin_id = self._fetch_field('admin_id')
+            self._fetch_fields('admin_id')
         return self._admin_id
 
     @admin_id.setter
@@ -4093,7 +4167,7 @@ class Message(VKObject):
     @property
     def action(self):
         if self._action is None:
-            self._action = self._fetch_field('action')
+            self._fetch_fields('action')
         return self._action
 
     @action.setter
@@ -4107,7 +4181,7 @@ class Message(VKObject):
     @property
     def action_mid(self):
         if self._action_mid is None:
-            self._action_mid = self._fetch_field('action_mid')
+            self._fetch_fields('action_mid')
         return self._action_mid
 
     @action_mid.setter
@@ -4121,7 +4195,7 @@ class Message(VKObject):
     @property
     def action_email(self):
         if self._action_email is None:
-            self._action_email = self._fetch_field('action_email')
+            self._fetch_fields('action_email')
         return self._action_email
 
     @action_email.setter
@@ -4135,7 +4209,7 @@ class Message(VKObject):
     @property
     def action_text(self):
         if self._action_text is None:
-            self._action_text = self._fetch_field('action_text')
+            self._fetch_fields('action_text')
         return self._action_text
 
     @action_text.setter
@@ -4149,7 +4223,7 @@ class Message(VKObject):
     @property
     def photo_50(self):
         if self._photo_50 is None:
-            self._photo_50 = self._fetch_field('photo_50')
+            self._fetch_fields('photo_50')
         return self._photo_50
 
     @photo_50.setter
@@ -4163,7 +4237,7 @@ class Message(VKObject):
     @property
     def photo_100(self):
         if self._photo_100 is None:
-            self._photo_100 = self._fetch_field('photo_100')
+            self._fetch_fields('photo_100')
         return self._photo_100
 
     @photo_100.setter
@@ -4177,7 +4251,7 @@ class Message(VKObject):
     @property
     def photo_200(self):
         if self._photo_200 is None:
-            self._photo_200 = self._fetch_field('photo_200')
+            self._fetch_fields('photo_200')
         return self._photo_200
 
     @photo_200.setter
@@ -4200,7 +4274,7 @@ class Chat(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -4214,7 +4288,7 @@ class Chat(VKObject):
     @property
     def type(self):
         if self._type is None:
-            self._type = self._fetch_field('type')
+            self._fetch_fields('type')
         return self._type
 
     @type.setter
@@ -4228,7 +4302,7 @@ class Chat(VKObject):
     @property
     def title(self):
         if self._title is None:
-            self._title = self._fetch_field('title')
+            self._fetch_fields('title')
         return self._title
 
     @title.setter
@@ -4242,7 +4316,7 @@ class Chat(VKObject):
     @property
     def admin_id(self):
         if self._admin_id is None:
-            self._admin_id = self._fetch_field('admin_id')
+            self._fetch_fields('admin_id')
         return self._admin_id
 
     @admin_id.setter
@@ -4256,7 +4330,7 @@ class Chat(VKObject):
     @property
     def users(self):
         if self._users is None:
-            self._users = self._fetch_field('users')
+            self._fetch_fields('users')
         return self._users
 
     @users.setter
@@ -4280,7 +4354,7 @@ class Comment(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -4294,7 +4368,7 @@ class Comment(VKObject):
     @property
     def from_id(self):
         if self._from_id is None:
-            self._from_id = self._fetch_field('from_id')
+            self._fetch_fields('from_id')
         return self._from_id
 
     @from_id.setter
@@ -4308,7 +4382,7 @@ class Comment(VKObject):
     @property
     def date(self):
         if self._date is None:
-            self._date = self._fetch_field('date')
+            self._fetch_fields('date')
         return self._date
 
     @date.setter
@@ -4322,7 +4396,7 @@ class Comment(VKObject):
     @property
     def text(self):
         if self._text is None:
-            self._text = self._fetch_field('text')
+            self._fetch_fields('text')
         return self._text
 
     @text.setter
@@ -4336,7 +4410,7 @@ class Comment(VKObject):
     @property
     def reply_to_user(self):
         if self._reply_to_user is None:
-            self._reply_to_user = self._fetch_field('reply_to_user')
+            self._fetch_fields('reply_to_user')
         return self._reply_to_user
 
     @reply_to_user.setter
@@ -4350,7 +4424,7 @@ class Comment(VKObject):
     @property
     def reply_to_comment(self):
         if self._reply_to_comment is None:
-            self._reply_to_comment = self._fetch_field('reply_to_comment')
+            self._fetch_fields('reply_to_comment')
         return self._reply_to_comment
 
     @reply_to_comment.setter
@@ -4364,7 +4438,7 @@ class Comment(VKObject):
     @property
     def attachments(self):
         if self._attachments is None:
-            self._attachments = self._fetch_field('attachments')
+            self._fetch_fields('attachments')
         return self._attachments
 
     @attachments.setter
@@ -4388,7 +4462,7 @@ class Note(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -4402,7 +4476,7 @@ class Note(VKObject):
     @property
     def user_id(self):
         if self._user_id is None:
-            self._user_id = self._fetch_field('user_id')
+            self._fetch_fields('user_id')
         return self._user_id
 
     @user_id.setter
@@ -4416,7 +4490,7 @@ class Note(VKObject):
     @property
     def title(self):
         if self._title is None:
-            self._title = self._fetch_field('title')
+            self._fetch_fields('title')
         return self._title
 
     @title.setter
@@ -4430,7 +4504,7 @@ class Note(VKObject):
     @property
     def text(self):
         if self._text is None:
-            self._text = self._fetch_field('text')
+            self._fetch_fields('text')
         return self._text
 
     @text.setter
@@ -4444,7 +4518,7 @@ class Note(VKObject):
     @property
     def date(self):
         if self._date is None:
-            self._date = self._fetch_field('date')
+            self._fetch_fields('date')
         return self._date
 
     @date.setter
@@ -4458,7 +4532,7 @@ class Note(VKObject):
     @property
     def comments(self):
         if self._comments is None:
-            self._comments = self._fetch_field('comments')
+            self._fetch_fields('comments')
         return self._comments
 
     @comments.setter
@@ -4472,7 +4546,7 @@ class Note(VKObject):
     @property
     def read_comments(self):
         if self._read_comments is None:
-            self._read_comments = self._fetch_field('read_comments')
+            self._fetch_fields('read_comments')
         return self._read_comments
 
     @read_comments.setter
@@ -4486,7 +4560,7 @@ class Note(VKObject):
     @property
     def view_url(self):
         if self._view_url is None:
-            self._view_url = self._fetch_field('view_url')
+            self._fetch_fields('view_url')
         return self._view_url
 
     @view_url.setter
@@ -4512,7 +4586,7 @@ class Page(VKObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -4526,7 +4600,7 @@ class Page(VKObject):
     @property
     def group_id(self):
         if self._group_id is None:
-            self._group_id = self._fetch_field('group_id')
+            self._fetch_fields('group_id')
         return self._group_id
 
     @group_id.setter
@@ -4540,7 +4614,7 @@ class Page(VKObject):
     @property
     def creator_id(self):
         if self._creator_id is None:
-            self._creator_id = self._fetch_field('creator_id')
+            self._fetch_fields('creator_id')
         return self._creator_id
 
     @creator_id.setter
@@ -4554,7 +4628,7 @@ class Page(VKObject):
     @property
     def title(self):
         if self._title is None:
-            self._title = self._fetch_field('title')
+            self._fetch_fields('title')
         return self._title
 
     @title.setter
@@ -4568,7 +4642,7 @@ class Page(VKObject):
     @property
     def current_user_can_edit(self):
         if self._current_user_can_edit is None:
-            self._current_user_can_edit = self._fetch_field('current_user_can_edit')
+            self._fetch_fields('current_user_can_edit')
         return self._current_user_can_edit
 
     @current_user_can_edit.setter
@@ -4582,7 +4656,7 @@ class Page(VKObject):
     @property
     def current_user_can_edit_access(self):
         if self._current_user_can_edit_access is None:
-            self._current_user_can_edit_access = self._fetch_field('current_user_can_edit_access')
+            self._fetch_fields('current_user_can_edit_access')
         return self._current_user_can_edit_access
 
     @current_user_can_edit_access.setter
@@ -4596,7 +4670,7 @@ class Page(VKObject):
     @property
     def who_can_view(self):
         if self._who_can_view is None:
-            self._who_can_view = self._fetch_field('who_can_view')
+            self._fetch_fields('who_can_view')
         return self._who_can_view
 
     @who_can_view.setter
@@ -4610,7 +4684,7 @@ class Page(VKObject):
     @property
     def who_can_edit(self):
         if self._who_can_edit is None:
-            self._who_can_edit = self._fetch_field('who_can_edit')
+            self._fetch_fields('who_can_edit')
         return self._who_can_edit
 
     @who_can_edit.setter
@@ -4624,7 +4698,7 @@ class Page(VKObject):
     @property
     def edited(self):
         if self._edited is None:
-            self._edited = self._fetch_field('edited')
+            self._fetch_fields('edited')
         return self._edited
 
     @edited.setter
@@ -4638,7 +4712,7 @@ class Page(VKObject):
     @property
     def created(self):
         if self._created is None:
-            self._created = self._fetch_field('created')
+            self._fetch_fields('created')
         return self._created
 
     @created.setter
@@ -4652,7 +4726,7 @@ class Page(VKObject):
     @property
     def editor_id(self):
         if self._editor_id is None:
-            self._editor_id = self._fetch_field('editor_id')
+            self._fetch_fields('editor_id')
         return self._editor_id
 
     @editor_id.setter
@@ -4666,7 +4740,7 @@ class Page(VKObject):
     @property
     def views(self):
         if self._views is None:
-            self._views = self._fetch_field('views')
+            self._fetch_fields('views')
         return self._views
 
     @views.setter
@@ -4680,7 +4754,7 @@ class Page(VKObject):
     @property
     def parent(self):
         if self._parent is None:
-            self._parent = self._fetch_field('parent')
+            self._fetch_fields('parent')
         return self._parent
 
     @parent.setter
@@ -4694,7 +4768,7 @@ class Page(VKObject):
     @property
     def parent2(self):
         if self._parent2 is None:
-            self._parent2 = self._fetch_field('parent2')
+            self._fetch_fields('parent2')
         return self._parent2
 
     @parent2.setter
@@ -4708,7 +4782,7 @@ class Page(VKObject):
     @property
     def source(self):
         if self._source is None:
-            self._source = self._fetch_field('source')
+            self._fetch_fields('source')
         return self._source
 
     @source.setter
@@ -4722,7 +4796,7 @@ class Page(VKObject):
     @property
     def html(self):
         if self._html is None:
-            self._html = self._fetch_field('html')
+            self._fetch_fields('html')
         return self._html
 
     @html.setter
@@ -4736,7 +4810,7 @@ class Page(VKObject):
     @property
     def view_url(self):
         if self._view_url is None:
-            self._view_url = self._fetch_field('view_url')
+            self._fetch_fields('view_url')
         return self._view_url
 
     @view_url.setter
@@ -4760,7 +4834,7 @@ class Attachment_m(VKObject):
     @property
     def type(self):
         if self._type is None:
-            self._type = self._fetch_field('type')
+            self._fetch_fields('type')
         return self._type
 
     @type.setter
@@ -4774,7 +4848,7 @@ class Attachment_m(VKObject):
     @property
     def photo(self):
         if self._photo is None:
-            self._photo = self._fetch_field('photo')
+            self._fetch_fields('photo')
         return self._photo
 
     @photo.setter
@@ -4788,7 +4862,7 @@ class Attachment_m(VKObject):
     @property
     def video(self):
         if self._video is None:
-            self._video = self._fetch_field('video')
+            self._fetch_fields('video')
         return self._video
 
     @video.setter
@@ -4802,7 +4876,7 @@ class Attachment_m(VKObject):
     @property
     def audio(self):
         if self._audio is None:
-            self._audio = self._fetch_field('audio')
+            self._fetch_fields('audio')
         return self._audio
 
     @audio.setter
@@ -4816,7 +4890,7 @@ class Attachment_m(VKObject):
     @property
     def doc(self):
         if self._doc is None:
-            self._doc = self._fetch_field('doc')
+            self._fetch_fields('doc')
         return self._doc
 
     @doc.setter
@@ -4830,7 +4904,7 @@ class Attachment_m(VKObject):
     @property
     def wall(self):
         if self._wall is None:
-            self._wall = self._fetch_field('wall')
+            self._fetch_fields('wall')
         return self._wall
 
     @wall.setter
@@ -4844,7 +4918,7 @@ class Attachment_m(VKObject):
     @property
     def wall_reply(self):
         if self._wall_reply is None:
-            self._wall_reply = self._fetch_field('wall_reply')
+            self._fetch_fields('wall_reply')
         return self._wall_reply
 
     @wall_reply.setter
@@ -4869,7 +4943,7 @@ class Wall(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -4883,7 +4957,7 @@ class Wall(PlainObject):
     @property
     def to_id(self):
         if self._to_id is None:
-            self._to_id = self._fetch_field('to_id')
+            self._fetch_fields('to_id')
         return self._to_id
 
     @to_id.setter
@@ -4897,7 +4971,7 @@ class Wall(PlainObject):
     @property
     def from_id(self):
         if self._from_id is None:
-            self._from_id = self._fetch_field('from_id')
+            self._fetch_fields('from_id')
         return self._from_id
 
     @from_id.setter
@@ -4911,7 +4985,7 @@ class Wall(PlainObject):
     @property
     def date(self):
         if self._date is None:
-            self._date = self._fetch_field('date')
+            self._fetch_fields('date')
         return self._date
 
     @date.setter
@@ -4925,7 +4999,7 @@ class Wall(PlainObject):
     @property
     def text(self):
         if self._text is None:
-            self._text = self._fetch_field('text')
+            self._fetch_fields('text')
         return self._text
 
     @text.setter
@@ -4939,7 +5013,7 @@ class Wall(PlainObject):
     @property
     def comments(self):
         if self._comments is None:
-            self._comments = self._fetch_field('comments')
+            self._fetch_fields('comments')
         return self._comments
 
     @comments.setter
@@ -4953,7 +5027,7 @@ class Wall(PlainObject):
     @property
     def likes(self):
         if self._likes is None:
-            self._likes = self._fetch_field('likes')
+            self._fetch_fields('likes')
         return self._likes
 
     @likes.setter
@@ -4967,7 +5041,7 @@ class Wall(PlainObject):
     @property
     def reposts(self):
         if self._reposts is None:
-            self._reposts = self._fetch_field('reposts')
+            self._fetch_fields('reposts')
         return self._reposts
 
     @reposts.setter
@@ -4981,7 +5055,7 @@ class Wall(PlainObject):
     @property
     def attachments(self):
         if self._attachments is None:
-            self._attachments = self._fetch_field('attachments')
+            self._fetch_fields('attachments')
         return self._attachments
 
     @attachments.setter
@@ -4995,7 +5069,7 @@ class Wall(PlainObject):
     @property
     def geo(self):
         if self._geo is None:
-            self._geo = self._fetch_field('geo')
+            self._fetch_fields('geo')
         return self._geo
 
     @geo.setter
@@ -5009,7 +5083,7 @@ class Wall(PlainObject):
     @property
     def post_source(self):
         if self._post_source is None:
-            self._post_source = self._fetch_field('post_source')
+            self._fetch_fields('post_source')
         return self._post_source
 
     @post_source.setter
@@ -5023,7 +5097,7 @@ class Wall(PlainObject):
     @property
     def signer_id(self):
         if self._signer_id is None:
-            self._signer_id = self._fetch_field('signer_id')
+            self._fetch_fields('signer_id')
         return self._signer_id
 
     @signer_id.setter
@@ -5037,7 +5111,7 @@ class Wall(PlainObject):
     @property
     def copy_owner_id(self):
         if self._copy_owner_id is None:
-            self._copy_owner_id = self._fetch_field('copy_owner_id')
+            self._fetch_fields('copy_owner_id')
         return self._copy_owner_id
 
     @copy_owner_id.setter
@@ -5051,7 +5125,7 @@ class Wall(PlainObject):
     @property
     def copy_post_id(self):
         if self._copy_post_id is None:
-            self._copy_post_id = self._fetch_field('copy_post_id')
+            self._fetch_fields('copy_post_id')
         return self._copy_post_id
 
     @copy_post_id.setter
@@ -5065,7 +5139,7 @@ class Wall(PlainObject):
     @property
     def copy_text(self):
         if self._copy_text is None:
-            self._copy_text = self._fetch_field('copy_text')
+            self._fetch_fields('copy_text')
         return self._copy_text
 
     @copy_text.setter
@@ -5089,7 +5163,7 @@ class WallReply(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -5103,7 +5177,7 @@ class WallReply(PlainObject):
     @property
     def to_id(self):
         if self._to_id is None:
-            self._to_id = self._fetch_field('to_id')
+            self._fetch_fields('to_id')
         return self._to_id
 
     @to_id.setter
@@ -5117,7 +5191,7 @@ class WallReply(PlainObject):
     @property
     def from_id(self):
         if self._from_id is None:
-            self._from_id = self._fetch_field('from_id')
+            self._fetch_fields('from_id')
         return self._from_id
 
     @from_id.setter
@@ -5131,7 +5205,7 @@ class WallReply(PlainObject):
     @property
     def date(self):
         if self._date is None:
-            self._date = self._fetch_field('date')
+            self._fetch_fields('date')
         return self._date
 
     @date.setter
@@ -5145,7 +5219,7 @@ class WallReply(PlainObject):
     @property
     def text(self):
         if self._text is None:
-            self._text = self._fetch_field('text')
+            self._fetch_fields('text')
         return self._text
 
     @text.setter
@@ -5159,7 +5233,7 @@ class WallReply(PlainObject):
     @property
     def likes(self):
         if self._likes is None:
-            self._likes = self._fetch_field('likes')
+            self._fetch_fields('likes')
         return self._likes
 
     @likes.setter
@@ -5173,7 +5247,7 @@ class WallReply(PlainObject):
     @property
     def reply_to_uid(self):
         if self._reply_to_uid is None:
-            self._reply_to_uid = self._fetch_field('reply_to_uid')
+            self._fetch_fields('reply_to_uid')
         return self._reply_to_uid
 
     @reply_to_uid.setter
@@ -5187,7 +5261,7 @@ class WallReply(PlainObject):
     @property
     def reply_to_cid(self):
         if self._reply_to_cid is None:
-            self._reply_to_cid = self._fetch_field('reply_to_cid')
+            self._fetch_fields('reply_to_cid')
         return self._reply_to_cid
 
     @reply_to_cid.setter
@@ -5211,7 +5285,7 @@ class Attachment_w(VKObject):
     @property
     def type(self):
         if self._type is None:
-            self._type = self._fetch_field('type')
+            self._fetch_fields('type')
         return self._type
 
     @type.setter
@@ -5225,7 +5299,7 @@ class Attachment_w(VKObject):
     @property
     def photo(self):
         if self._photo is None:
-            self._photo = self._fetch_field('photo')
+            self._fetch_fields('photo')
         return self._photo
 
     @photo.setter
@@ -5239,7 +5313,7 @@ class Attachment_w(VKObject):
     @property
     def posted_photo(self):
         if self._posted_photo is None:
-            self._posted_photo = self._fetch_field('posted_photo')
+            self._fetch_fields('posted_photo')
         return self._posted_photo
 
     @posted_photo.setter
@@ -5253,7 +5327,7 @@ class Attachment_w(VKObject):
     @property
     def video(self):
         if self._video is None:
-            self._video = self._fetch_field('video')
+            self._fetch_fields('video')
         return self._video
 
     @video.setter
@@ -5267,7 +5341,7 @@ class Attachment_w(VKObject):
     @property
     def audio(self):
         if self._audio is None:
-            self._audio = self._fetch_field('audio')
+            self._fetch_fields('audio')
         return self._audio
 
     @audio.setter
@@ -5281,7 +5355,7 @@ class Attachment_w(VKObject):
     @property
     def doc(self):
         if self._doc is None:
-            self._doc = self._fetch_field('doc')
+            self._fetch_fields('doc')
         return self._doc
 
     @doc.setter
@@ -5295,7 +5369,7 @@ class Attachment_w(VKObject):
     @property
     def graffiti(self):
         if self._graffiti is None:
-            self._graffiti = self._fetch_field('graffiti')
+            self._fetch_fields('graffiti')
         return self._graffiti
 
     @graffiti.setter
@@ -5309,7 +5383,7 @@ class Attachment_w(VKObject):
     @property
     def link(self):
         if self._link is None:
-            self._link = self._fetch_field('link')
+            self._fetch_fields('link')
         return self._link
 
     @link.setter
@@ -5323,7 +5397,7 @@ class Attachment_w(VKObject):
     @property
     def note(self):
         if self._note is None:
-            self._note = self._fetch_field('note')
+            self._fetch_fields('note')
         return self._note
 
     @note.setter
@@ -5337,7 +5411,7 @@ class Attachment_w(VKObject):
     @property
     def app(self):
         if self._app is None:
-            self._app = self._fetch_field('app')
+            self._fetch_fields('app')
         return self._app
 
     @app.setter
@@ -5351,7 +5425,7 @@ class Attachment_w(VKObject):
     @property
     def poll(self):
         if self._poll is None:
-            self._poll = self._fetch_field('poll')
+            self._fetch_fields('poll')
         return self._poll
 
     @poll.setter
@@ -5365,7 +5439,7 @@ class Attachment_w(VKObject):
     @property
     def page(self):
         if self._page is None:
-            self._page = self._fetch_field('page')
+            self._fetch_fields('page')
         return self._page
 
     @page.setter
@@ -5379,7 +5453,7 @@ class Attachment_w(VKObject):
     @property
     def album(self):
         if self._album is None:
-            self._album = self._fetch_field('album')
+            self._fetch_fields('album')
         return self._album
 
     @album.setter
@@ -5402,7 +5476,7 @@ class PostedPhoto(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -5416,7 +5490,7 @@ class PostedPhoto(PlainObject):
     @property
     def owner_id(self):
         if self._owner_id is None:
-            self._owner_id = self._fetch_field('owner_id')
+            self._fetch_fields('owner_id')
         return self._owner_id
 
     @owner_id.setter
@@ -5430,7 +5504,7 @@ class PostedPhoto(PlainObject):
     @property
     def photo_130(self):
         if self._photo_130 is None:
-            self._photo_130 = self._fetch_field('photo_130')
+            self._fetch_fields('photo_130')
         return self._photo_130
 
     @photo_130.setter
@@ -5444,7 +5518,7 @@ class PostedPhoto(PlainObject):
     @property
     def photo_604(self):
         if self._photo_604 is None:
-            self._photo_604 = self._fetch_field('photo_604')
+            self._fetch_fields('photo_604')
         return self._photo_604
 
     @photo_604.setter
@@ -5467,7 +5541,7 @@ class Graffiti(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -5481,7 +5555,7 @@ class Graffiti(PlainObject):
     @property
     def owner_id(self):
         if self._owner_id is None:
-            self._owner_id = self._fetch_field('owner_id')
+            self._fetch_fields('owner_id')
         return self._owner_id
 
     @owner_id.setter
@@ -5495,7 +5569,7 @@ class Graffiti(PlainObject):
     @property
     def photo_200(self):
         if self._photo_200 is None:
-            self._photo_200 = self._fetch_field('photo_200')
+            self._fetch_fields('photo_200')
         return self._photo_200
 
     @photo_200.setter
@@ -5509,7 +5583,7 @@ class Graffiti(PlainObject):
     @property
     def photo_586(self):
         if self._photo_586 is None:
-            self._photo_586 = self._fetch_field('photo_586')
+            self._fetch_fields('photo_586')
         return self._photo_586
 
     @photo_586.setter
@@ -5533,7 +5607,7 @@ class Link(PlainObject):
     @property
     def url(self):
         if self._url is None:
-            self._url = self._fetch_field('url')
+            self._fetch_fields('url')
         return self._url
 
     @url.setter
@@ -5547,7 +5621,7 @@ class Link(PlainObject):
     @property
     def title(self):
         if self._title is None:
-            self._title = self._fetch_field('title')
+            self._fetch_fields('title')
         return self._title
 
     @title.setter
@@ -5561,7 +5635,7 @@ class Link(PlainObject):
     @property
     def description(self):
         if self._description is None:
-            self._description = self._fetch_field('description')
+            self._fetch_fields('description')
         return self._description
 
     @description.setter
@@ -5575,7 +5649,7 @@ class Link(PlainObject):
     @property
     def image_src(self):
         if self._image_src is None:
-            self._image_src = self._fetch_field('image_src')
+            self._fetch_fields('image_src')
         return self._image_src
 
     @image_src.setter
@@ -5589,7 +5663,7 @@ class Link(PlainObject):
     @property
     def preview_page(self):
         if self._preview_page is None:
-            self._preview_page = self._fetch_field('preview_page')
+            self._fetch_fields('preview_page')
         return self._preview_page
 
     @preview_page.setter
@@ -5603,7 +5677,7 @@ class Link(PlainObject):
     @property
     def preview_url(self):
         if self._preview_url is None:
-            self._preview_url = self._fetch_field('preview_url')
+            self._fetch_fields('preview_url')
         return self._preview_url
 
     @preview_url.setter
@@ -5626,7 +5700,7 @@ class App(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -5640,7 +5714,7 @@ class App(PlainObject):
     @property
     def owner_id(self):
         if self._owner_id is None:
-            self._owner_id = self._fetch_field('owner_id')
+            self._fetch_fields('owner_id')
         return self._owner_id
 
     @owner_id.setter
@@ -5654,7 +5728,7 @@ class App(PlainObject):
     @property
     def photo_130(self):
         if self._photo_130 is None:
-            self._photo_130 = self._fetch_field('photo_130')
+            self._fetch_fields('photo_130')
         return self._photo_130
 
     @photo_130.setter
@@ -5668,7 +5742,7 @@ class App(PlainObject):
     @property
     def photo_604(self):
         if self._photo_604 is None:
-            self._photo_604 = self._fetch_field('photo_604')
+            self._fetch_fields('photo_604')
         return self._photo_604
 
     @photo_604.setter
@@ -5692,7 +5766,7 @@ class Poll(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -5706,7 +5780,7 @@ class Poll(PlainObject):
     @property
     def owner_id(self):
         if self._owner_id is None:
-            self._owner_id = self._fetch_field('owner_id')
+            self._fetch_fields('owner_id')
         return self._owner_id
 
     @owner_id.setter
@@ -5720,7 +5794,7 @@ class Poll(PlainObject):
     @property
     def created(self):
         if self._created is None:
-            self._created = self._fetch_field('created')
+            self._fetch_fields('created')
         return self._created
 
     @created.setter
@@ -5734,7 +5808,7 @@ class Poll(PlainObject):
     @property
     def question(self):
         if self._question is None:
-            self._question = self._fetch_field('question')
+            self._fetch_fields('question')
         return self._question
 
     @question.setter
@@ -5748,7 +5822,7 @@ class Poll(PlainObject):
     @property
     def votes(self):
         if self._votes is None:
-            self._votes = self._fetch_field('votes')
+            self._fetch_fields('votes')
         return self._votes
 
     @votes.setter
@@ -5762,7 +5836,7 @@ class Poll(PlainObject):
     @property
     def answer_id(self):
         if self._answer_id is None:
-            self._answer_id = self._fetch_field('answer_id')
+            self._fetch_fields('answer_id')
         return self._answer_id
 
     @answer_id.setter
@@ -5776,7 +5850,7 @@ class Poll(PlainObject):
     @property
     def answers(self):
         if self._answers is None:
-            self._answers = self._fetch_field('answers')
+            self._fetch_fields('answers')
         return self._answers
 
     @answers.setter
@@ -5799,7 +5873,7 @@ class Answer(PlainObject):
     @property
     def id(self):
         if self._id is None:
-            self._id = self._fetch_field('id')
+            self._fetch_fields('id')
         return self._id
 
     @id.setter
@@ -5813,7 +5887,7 @@ class Answer(PlainObject):
     @property
     def text(self):
         if self._text is None:
-            self._text = self._fetch_field('text')
+            self._fetch_fields('text')
         return self._text
 
     @text.setter
@@ -5827,7 +5901,7 @@ class Answer(PlainObject):
     @property
     def votes(self):
         if self._votes is None:
-            self._votes = self._fetch_field('votes')
+            self._fetch_fields('votes')
         return self._votes
 
     @votes.setter
@@ -5841,7 +5915,7 @@ class Answer(PlainObject):
     @property
     def rate(self):
         if self._rate is None:
-            self._rate = self._fetch_field('rate')
+            self._fetch_fields('rate')
         return self._rate
 
     @rate.setter
@@ -5864,7 +5938,7 @@ class Privacy(VKObject):
     @property
     def privacy_view(self):
         if self._privacy_view is None:
-            self._privacy_view = self._fetch_field('privacy_view')
+            self._fetch_fields('privacy_view')
         return self._privacy_view
 
     @privacy_view.setter

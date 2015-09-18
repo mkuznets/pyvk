@@ -124,7 +124,7 @@ class Builder(ast.NodeVisitor):
             '@property',
             'def {name}(self):',
             '    if self._{name} is None:',
-            '        self._{name} = self._fetch_field(\'{name}\')',
+            '        self._fetch_fields(\'{name}\')',
             '    return self._{name}'
         ]
 
