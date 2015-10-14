@@ -71,12 +71,12 @@ class VK(object):
             # If nothing helped
             raise AuthError('Cannot get an access token')
 
-    def req(self, method, args={}, error_handling=True):
+    def req(self, method, **args):
 
         args['access_token'] = self.token
         args['v'] = settings.api_version
 
-        r = Request(method, args, error_handling, self.http)
+        r = Request(method, args, self.http)
 
         for attempt in range(settings.MAX_ATTEMPTS):
             try:
@@ -99,7 +99,7 @@ class VK(object):
         else:
             raise ReqError('Request failed after all attempts.')
 
-    def reqn(self, method, args={}, n=-1):
+    def reqn(self, method, n=-1, **args):
 
         if n == 0:
             return []
@@ -113,8 +113,7 @@ class VK(object):
         while remain:
 
             cstep = min(step, remain)
-
-            r = self.req(method, dict(args, **{'count': cstep, 'offset': offset}))
+            r = self.req(method, count=cstep, offset=offset, **args)
 
             if n < 0:
                 n = r['count']
@@ -140,7 +139,7 @@ class VK(object):
     def _test_token(self, token):
         tmp = self.token
         self.token = token
-        test = self.req('isAppUser', error_handling=False)
+        test = self.req('isAppUser', __eh__=False)
         self.token = tmp
         return False if 'error' in test else True
 
@@ -165,11 +164,15 @@ class VK(object):
 
 class Request(object):
 
-    def __init__(self, method, args, error_handling, __http__):
+    def __init__(self, method, args,  __http__):
         self.method = method
         self.args = args
-        self.error_handling = error_handling
+        self.error_handling = args.pop('__eh__', True)
         self.http = __http__
+
+        # Transform lists into comma-separated strings.
+        self.args = {k: ','.join(str(i) for i in v) if type(v) is list else v
+                     for k,v in self.args.items()}
 
     def run(self):
 
