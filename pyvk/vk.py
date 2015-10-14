@@ -6,12 +6,12 @@ import getpass
 import lxml.html
 from urllib.parse import urlparse, ParseResult, parse_qs, urlencode
 
-import settings
 import requests
-import objects as vko
 from time import sleep
 import pickle
 from hashlib import md5
+
+from . import settings
 
 
 class VK(object):
