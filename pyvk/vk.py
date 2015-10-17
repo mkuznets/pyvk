@@ -141,7 +141,7 @@ class VK(object):
         self.token = token
         test = self.req('isAppUser', __eh__=False)
         self.token = tmp
-        return False if 'error' in test else True
+        return 'error' not in test
 
     def _calc_mask(self, categories):
         '''
