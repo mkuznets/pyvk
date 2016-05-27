@@ -1,4 +1,12 @@
-#!/usr/bin/env python3
+# -----------------------------------------------------------------------------
+# pyvk: vk.py
+#
+# Defines classes for VK API public interface, requests, and authorisation.
+#
+# Copyright (c) 2013-2016, Max Kuznetsov
+# Licence: MIT
+# -----------------------------------------------------------------------------
+
 
 import os
 import time
