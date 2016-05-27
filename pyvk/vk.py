@@ -107,36 +107,6 @@ class VK(object):
         else:
             raise ReqError('Request failed after all attempts.')
 
-    def reqn(self, method, n=-1, **args):
-
-        if n == 0:
-            return []
-
-        step = 1000
-
-        items = []
-        remain = n if n > 0 else step
-        offset = 0
-
-        while remain:
-
-            cstep = min(step, remain)
-            r = self.req(method, count=cstep, offset=offset, **args)
-
-            if n < 0:
-                n = r['count']
-                remain = n
-
-            assert len(r['items']) == cstep
-
-            items += r['items']
-            remain -= cstep
-            offset += cstep
-
-            assert remain >= 0
-
-        return items
-
     def _auth(self, start_state=None, password=None):
 
         auth = Auth(self.username, self.api_id, self.mask, self.cache_file,
