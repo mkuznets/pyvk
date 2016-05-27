@@ -18,6 +18,7 @@ import requests
 from time import sleep
 import pickle
 from hashlib import md5
+from appdirs import AppDirs
 
 from . import settings
 
@@ -25,11 +26,11 @@ from . import settings
 class VK(object):
 
     def __init__(self, api_id, permissions, username=None, password=None,
-                 token=None, cache_dir=None):
+                 token=None):
 
         self.http = requests.Session()
 
-        cache_dir = cache_dir or settings.cache_dir
+        cache_dir = AppDirs('pyvk').user_cache_dir
 
         if not os.path.exists(cache_dir):
             # `exist_ok' is not used for compatibility.
