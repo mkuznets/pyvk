@@ -83,7 +83,7 @@ class API(object):
                     # Captcha needed.
 
                     try:
-                        self.args['captcha_sid'] = e.error['captcha_sid']
+                        args['captcha_sid'] = e.error['captcha_sid']
                         img = e.error['captcha_img']
 
                     except KeyError:
@@ -92,7 +92,7 @@ class API(object):
 
                     else:
                         key = self.prompt.ask_captcha(img)
-                        self.args['captcha_key'] = key
+                        args['captcha_key'] = key
 
                 else:
                     # Don't handle the error, raise it as is.
