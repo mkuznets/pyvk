@@ -119,7 +119,7 @@ class Auth(object):
 
                 # For the cached token to be valid it has to have the same mask
                 # as requested and age less than expiration time.
-                if time_diff < 24 * 3600 and cached['scope'] <= self.scope:
+                if time_diff < 24 * 3600 and self.scope <= cached['scope']:
                     try:
                         real_scope = self.test_token(cached['token'])
                     except PyVKError as e:
