@@ -11,12 +11,16 @@ from __future__ import generators, with_statement, print_function, \
     unicode_literals, absolute_import
 
 from time import sleep
+import logging
 
 from . import settings
 from .auth import Auth
 from .exceptions import APIError, ReqError, AuthError
 from .request import Request
-from .utils import Prompt, log_message, Continuation
+from .utils import Prompt, Continuation
+
+
+logger = logging.getLogger(__name__)
 
 
 class API(object):
@@ -25,6 +29,10 @@ class API(object):
 
         for name, default in settings.options('ui'):
             setattr(self, name, kwargs.get(name, default))
+
+        log_file = {'filename': self.log_file} if self.log_file else {}
+        logging.basicConfig(format=self.log_format, level=self.log_level,
+                            **log_file)
 
         self.prompt = kwargs.get('prompt', Prompt)
 
@@ -56,7 +64,7 @@ class API(object):
 
                 if (e.code == 5 or e.code == 10) and self.auto_reauth:
                     # User authorisation failed, try to reauthorise.
-                    log_message('It seems that current token is unavailable '
+                    logger.info('It seems that current token is unavailable '
                                 'now. Trying to renew...')
                     try:
                         self.auth.auth()
@@ -69,13 +77,13 @@ class API(object):
                         assert self.auth.token
                         r.args['access_token'] = self.auth.token
 
-                        log_message('Access token succesfully renewed, '
+                        logger.info('Access token succesfully renewed, '
                                     'repeating the request...')
 
                 elif e.code in (6, 9):
                     # Requests are too ofter.
                     t = 0.3 * (attempt + 1)
-                    log_message('Too many requests per second. '
+                    logger.info('Too many requests per second. '
                                 'Wait %.1f sec and retry.' % t)
                     sleep(t)
 

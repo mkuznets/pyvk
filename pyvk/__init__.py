@@ -9,7 +9,7 @@
 
 
 from .api import API
+from . import settings
 
-from . import auth
-globals().update({k: v for k, v in auth.__dict__.items()
+globals().update({k: v for k, v in settings.__dict__.items()
                   if k.startswith('p_')})

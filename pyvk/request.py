@@ -11,6 +11,7 @@ from __future__ import generators, with_statement, print_function, \
     unicode_literals, absolute_import
 
 import requests
+import logging
 from requests.exceptions import RequestException
 
 from . import settings
@@ -21,6 +22,10 @@ if PY2:
     from urllib import urlencode
 else:
     from urllib.parse import urlencode
+
+
+logger = logging.getLogger(__name__)
+logging.getLogger('requests').setLevel(logging.WARNING)
 
 
 class Request(object):
@@ -46,6 +51,7 @@ class Request(object):
 
         try:
             response = requests.get(url, timeout=self.timeout)
+            logger.debug('GET %s' % url)
 
         except RequestException as e:
             raise ReqError('Network error', exc=e)

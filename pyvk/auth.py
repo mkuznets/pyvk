@@ -18,12 +18,14 @@ import lxml.html
 import requests
 import pickle
 import binascii
+import logging
 from appdirs import AppDirs
+from requests.exceptions import RequestException
 
 from . import settings
 from .exceptions import AuthError, PyVKError
 from .request import Request
-from .utils import Prompt, log_message
+from .utils import Prompt
 
 
 if PY2:
@@ -33,76 +35,52 @@ else:
     from urllib.parse import urlparse, ParseResult, parse_qs, urlencode
 
 
-p_notify = 1
-p_friends = 2
-p_photos = 4
-p_audio = 8
-p_video = 16
-p_offers = 32
-p_questions = 64
-p_pages = 128
-p_leftmenu = 256
-p_status = 1024
-p_notes = 2048
-p_messages = 4096
-p_wall = 8192
-p_ads = 32768
-p_offline = 65536
-p_docs = 131072
-p_groups = 262144
-p_notifications = 524288
-p_stats = 1048576
-p_email = 4194304
-p_market = 134217728
-
-
-p_all = p_notify | p_friends | p_photos | p_audio | p_video \
-    | p_offers | p_questions | p_pages | p_leftmenu | p_status \
-    | p_notes | p_messages | p_wall | p_ads | p_offline | p_docs \
-    | p_groups | p_notifications | p_stats | p_email | p_market
-
-
-p_basic = p_friends | p_photos | p_audio | p_video | p_status | p_messages \
-    | p_wall | p_groups
+logger = logging.getLogger(__name__)
+logging.getLogger('requests').setLevel(logging.WARNING)
 
 
 class Auth(object):
 
     def __init__(self, api_id, **kwargs):
 
+        for name, default in settings.options('auth'):
+            setattr(self, name, kwargs.get(name, default))
+
+        # ---------------------------------------------------------------------
+
         self.http = requests.Session()
 
         self.api_id = api_id
-        self.scope = kwargs.get('scope', p_basic)
-
         self.username = None
         self.token = None
 
         # ---------------------------------------------------------------------
 
         if 'token' in kwargs:
+            logger.debug('Testing the token provided...')
             try:
-                self.test_token(kwargs['token'])
+                self.scope = self.test_token(kwargs['token'])
 
             except PyVKError as e:
                 raise AuthError('Invalid token', **e.attrs)
 
             else:
+                logger.debug('Token is valid.')
                 self.token = kwargs['token']
                 return
 
         # ---------------------------------------------------------------------
 
-        for name, default in settings.options('auth'):
-            setattr(self, name, kwargs.get(name, default))
-
         self.prompt = kwargs.get('prompt', Prompt)
+        self._state = None
 
         self.username = kwargs.get('username', None)
         if not self.username:
+            logger.debug('Username is not provided. Awaiting input...')
             self.username = self.prompt.ask_username()
 
         if not self.disable_cache:
+            logger.debug('Reading authorisation cache')
 
             self.cache = Cache(self.username)
             cached = self.cache.read()
@@ -120,42 +98,52 @@ class Auth(object):
                 # For the cached token to be valid it has to have the same mask
                 # as requested and age less than expiration time.
                 if time_diff < 24 * 3600 and self.scope <= cached['scope']:
+                    logger.debug('Testing the cached token...')
                     try:
-                        real_scope = self.test_token(cached['token'])
+                        self.scope = self.test_token(cached['token'])
                     except PyVKError as e:
                         pass
                     else:
+                        logger.debug('Cached token is valid.')
                         self.token = cached['token']
-                        self.scope = real_scope
+                else:
+                    logger.debug('Cached token is expired or do not match '
+                                 'requested permissions.')
+            else:
+                logger.debug('Cache is empty.')
+        else:
+            logger.debug('Cache is disabled. Authorisation needed.')
 
-
-    def test_token(self, token):
+    @staticmethod
+    def test_token(token: str):
         req = Request('account.getAppPermissions', token=token)
         data = req.run()
         return data
 
     def auth(self):
 
-        if not self.username:
-            raise AuthError('Cannot authorise: username is not given')
-
-        self.state = 'auth_page'
+        self._state = 'auth_page'
         args = ()
 
-        while self.state != 'exit':
+        while self._state != 'exit':
 
-            fname = '_s_%s' % self.state
+            logger.debug('Auth stage: %s' % self._state)
+            fname = '_s_%s' % self._state
 
-            assert hasattr(self, fname), 'State `%s\' not in DFA!' % self.state
+            assert hasattr(self, fname), 'State `%s\' not in DFA!' % self._state
 
             f = getattr(self, fname)
 
             # Cannot use pattern matching due to PY2 compatibility.
             result = f(*args)
-            self.state = result[0]
+            self._state = result[0]
             args = result[1:]
 
+    # --------------------------------------------------------------------------
+
     def _s_auth_page(self):
+
+        exc_data = {'state': self._state}
 
         q = {'client_id': self.api_id, 'scope': self.scope,
              'redirect_uri': 'https://oauth.vk.com/blank.html',
@@ -165,7 +153,11 @@ class Auth(object):
         auth_url = 'https://oauth.vk.com/authorize?%s' % urlencode(q)
 
         # Start auth URL
-        r = self.http.get(auth_url, timeout=self.timeout)
+        try:
+            r = self.http.get(auth_url, timeout=self.timeout)
+        except RequestException as e:
+            raise AuthError('Network error', exc=e, **exc_data)
+
         url = urlparse(r.url)
 
         # Token page
@@ -174,8 +166,7 @@ class Auth(object):
 
         # Error page, try to repeat with empty cookies
         elif 'err' in url.path:
-            log_message('cookies corrupted, trying to repeat...')
-
+            logger.info('Cookies corrupted, trying to repeat...')
             self.http.cookies.clear()
             return ('auth_page', )
 
@@ -188,22 +179,27 @@ class Auth(object):
 
             if act == 'login':
                 return ('login', form.action, dict(form.fields))
-
             elif act == 'grant_access':
                 return ('grant_access', form.action)
-
             else:
-                raise AuthError('Unpredictable behavior 1')
+                raise AuthError('Unknown form action on auth page',
+                                response=r, **exc_data)
 
     def _s_login(self, action_url, fields):
+
+        exc_data = {'state': self._state, 'action_url': action_url,
+                    'fields': fields}
 
         # Collect post data from the form and fill user-defined fields
         post_data = fields
         post_data['email'] = self.username
         post_data['pass'] = self.prompt.ask_password()
 
-        r = self.http.post(action_url, data=post_data,
-                           timeout=self.timeout)
+        try:
+            r = self.http.post(action_url, data=post_data,
+                               timeout=self.timeout)
+        except RequestException as e:
+            raise AuthError('Network error', exc=e, **exc_data)
 
         doc = lxml.html.document_fromstring(r.text.encode('utf-8'))
 
@@ -211,8 +207,8 @@ class Auth(object):
         errors = doc.find_class('service_msg_warning')
 
         if errors:
-            raise AuthError('Wrong email or password',
-                            msg=errors[0].text, response=r)
+            raise AuthError('Wrong email or password', msg=errors[0].text,
+                            response=r, **exc_data)
 
         url = urlparse(r.url)
 
@@ -233,17 +229,25 @@ class Auth(object):
             return ('authcheck', action_url, dict(form.fields))
 
         else:
-            raise AuthError('Login response has unexpected formatting.')
+            raise AuthError('Unknown form action on login page.',
+                            response=r, **exc_data)
 
     def _s_authcheck(self, action_url, fields):
 
+        exc_data = {'state': self._state, 'action_url': action_url,
+                    'fields': fields}
+
         if not all(k in fields for k in ('remember', 'code')):
-            raise AuthError('Authcheck page has unexpected formatting.')
+            raise AuthError('Authcheck page has unexpected formatting.',
+                            **exc_data)
 
         fields['remember'] = 0
         fields['code'] = self.prompt.ask_secret_code()
 
-        r = self.http.post(action_url, data=fields, timeout=self.timeout)
+        try:
+            r = self.http.post(action_url, data=fields, timeout=self.timeout)
+        except RequestException as e:
+            raise AuthError('Network error', exc=e, **exc_data)
 
         doc = lxml.html.document_fromstring(r.text.encode('utf-8'))
 
@@ -252,7 +256,7 @@ class Auth(object):
 
         if errors:
             raise AuthError('Wrong secret code',
-                            msg=errors[0].text, response=r)
+                            msg=errors[0].text, response=r, **exc_data)
 
         url = urlparse(r.url)
 
@@ -269,11 +273,17 @@ class Auth(object):
             return ('grant_access', form.action)
 
         else:
-            raise AuthError('Response has unexpected formatting.')
+            raise AuthError('Unknown form action on authcheck page.',
+                            response=r, **exc_data)
 
     def _s_grant_access(self, action_url):
 
-        r = self.http.post(action_url, timeout=self.timeout)
+        exc_data = {'state': self._state, 'action_url': action_url}
+
+        try:
+            r = self.http.post(action_url, timeout=self.timeout)
+        except RequestException as e:
+            raise AuthError('Network error', exc=e, **exc_data)
 
         url = urlparse(r.url)
 
@@ -282,7 +292,7 @@ class Auth(object):
             return ('get_token', url)
 
         else:
-            raise AuthError('Unpredictable behavior 3')
+            raise AuthError('Token fetch URL is not found', url=url, **exc_data)
 
     def _s_get_token(self, url):
 
@@ -295,8 +305,9 @@ class Auth(object):
             self.cache.write(token=self.token, scope=self.scope,
                              token_time=int(time.time()),
                              cookies=self.http.cookies.get_dict())
-
         return ('exit', )
+
+    # --------------------------------------------------------------------------
 
 
 class Cache(object):
