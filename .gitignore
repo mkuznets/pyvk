@@ -6,3 +6,4 @@ __pycache__
 *.rt
 *.ini
 *.bak
+.idea
