@@ -1,11 +1,13 @@
-# -----------------------------------------------------------------------------
-# pyvk: settings.py
-#
-# Global parameters for network requests and user data storage.
-#
-# Copyright (c) 2013-2016, Max Kuznetsov
-# Licence: MIT
-# -----------------------------------------------------------------------------
+# -*- coding: utf-8 -*-
+"""
+    pyvk.settings
+    ~~~~~~~~~~~~~
+
+    Defines constants, parameters, and their default values.
+
+    :copyright: (c) 2013-2016 by Max Kuznetsov.
+    :license: MIT, see LICENSE for more details.
+"""
 
 import logging
 

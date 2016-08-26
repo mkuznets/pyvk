@@ -1,11 +1,13 @@
-# -----------------------------------------------------------------------------
-# pyvk: utils.py
-#
-#
-#
-# Copyright (c) 2013-2016, Max Kuznetsov
-# Licence: MIT
-# -----------------------------------------------------------------------------
+# -*- coding: utf-8 -*-
+"""
+    pyvk.utils
+    ~~~~~~~~~~
+
+    Implements various utility classes and functions.
+
+    :copyright: (c) 2013-2016 by Max Kuznetsov.
+    :license: MIT, see LICENSE for more details.
+"""
 
 import getpass
 import sys

@@ -1,11 +1,12 @@
-# -----------------------------------------------------------------------------
-# pyvk: auth.py
-#
-#
-#
-# Copyright (c) 2013-2016, Max Kuznetsov
-# Licence: MIT
-# -----------------------------------------------------------------------------
+"""
+    pyvk.auth
+    ~~~~~~~~~
+
+    Implements VK authentication and cookie storage.
+
+    :copyright: (c) 2013-2016, Max Kuznetsov
+    :license: MIT, see LICENSE for more details.
+"""
 
 from __future__ import generators, with_statement, print_function, \
     unicode_literals, absolute_import

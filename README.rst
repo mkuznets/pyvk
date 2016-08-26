@@ -60,7 +60,11 @@ Method Calls
     >>> {a['title'] for a in albums['items']}
     {'Zuglói képek', 'In the arboretum of the Horticulture University in Budapest'}
 
-See `list of methods`_ at VK developers section. Note that pythonic integers and lists can be used where the official API documentation specify numbers (including negative) and comma-separated lists.
+See `list of methods`_ at VK developers section.
+Note that pythonic integers and lists can be used
+where the official API documentation specify
+numbers (including negative)
+and comma-separated lists.
 
 .. _list of methods: https://new.vk.com/dev/methods
 
@@ -68,6 +72,7 @@ See `list of methods`_ at VK developers section. Note that pythonic integers and
 Credits
 -------
 
-Some ideas (such as first-class queryset-like methods) are inspired by `vk-requests`_.
+Some ideas (such as first-class queryset-like methods)
+are inspired by `vk-requests`_.
 
 .. _vk-requests: https://github.com/prawn-cake/vk-requests

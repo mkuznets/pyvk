@@ -1,11 +1,13 @@
-# -----------------------------------------------------------------------------
-# pyvk: __init__.py
-#
-# Package file.
-#
-# Copyright (c) 2013-2016, Max Kuznetsov
-# Licence: MIT
-# -----------------------------------------------------------------------------
+# -*- coding: utf-8 -*-
+"""
+    pyvk
+    ~~~~
+
+    VK API for Python
+
+    :copyright: (c) 2013-2016 by Max Kuznetsov.
+    :license: MIT, see LICENSE for more details.
+"""
 
 
 from .api import API

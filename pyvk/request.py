@@ -1,11 +1,13 @@
-# -----------------------------------------------------------------------------
-# pyvk: request.py
-#
-#
-#
-# Copyright (c) 2013-2016, Max Kuznetsov
-# Licence: MIT
-# -----------------------------------------------------------------------------
+"""
+    pyvk.request
+    ~~~~~~~~~~~~
+
+    Implements VK API request object ready to be sent.
+
+    :copyright: (c) 2013-2016, Max Kuznetsov
+    :license: MIT, see LICENSE for more details.
+"""
+
 
 from __future__ import generators, with_statement, print_function, \
     unicode_literals, absolute_import

@@ -1,11 +1,13 @@
-# -----------------------------------------------------------------------------
-# pyvk: vk.py
-#
-# Defines classes for VK API public interface, requests, and authorisation.
-#
-# Copyright (c) 2013-2016, Max Kuznetsov
-# Licence: MIT
-# -----------------------------------------------------------------------------
+"""
+    pyvk.api
+    ~~~~~~~~
+
+    Defines classes for VK API public interface, requests, and authorisation.
+
+    :copyright: (c) 2013-2016, Max Kuznetsov
+    :license: MIT, see LICENSE for more details.
+"""
+
 
 from __future__ import generators, with_statement, print_function, \
     unicode_literals, absolute_import
