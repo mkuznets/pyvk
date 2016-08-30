@@ -42,7 +42,7 @@ may also be requested during the initial authorisation.
 
 .. _API token: https://new.vk.com/dev/access_token
 
-One can also directly specify an API token obtained somewhere else:
+One can also directly specify an API token obtained elsewhere:
 
 .. code-block:: python
 
