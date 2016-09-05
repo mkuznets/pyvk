@@ -12,6 +12,7 @@
 from __future__ import generators, with_statement, print_function, \
     unicode_literals, absolute_import
 
+
 class PyVKError(Exception):
 
     def __init__(self, err_text, **attrs):
@@ -29,11 +30,14 @@ class PyVKError(Exception):
 class AuthError(PyVKError):
     pass
 
+
 class ReAuthNeeded(PyVKError):
     pass
 
+
 class ReqError(PyVKError):
     pass
+
 
 class APIError(PyVKError):
     pass
