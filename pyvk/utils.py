@@ -43,22 +43,3 @@ class Prompt(object):
     def ask_captcha(img):
         text = "%s\nEnter text from the picture above" % img
         return Prompt.ask_text(text)
-
-
-class Continuation(object):
-    def __init__(self, req, attr):
-        self.method = attr
-        self.req = req
-
-    def __getattr__(self, attr):
-        return Continuation(self.req, '%s.%s' % (self.method, attr))
-
-    def __call__(self, *args, **kwargs):
-        return self.req(self.method, *args, **kwargs)
-
-
-def log_message(text, file=None):
-    print('Note:', text)
-    if file:
-        with open(file, 'a') as log:
-            log.write(text)

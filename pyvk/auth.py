@@ -23,9 +23,8 @@ import logging
 from appdirs import AppDirs
 from requests.exceptions import RequestException
 
-from . import settings
+from .config import AuthConfig
 from .exceptions import AuthError, PyVKError
-from .request import Request
 from .utils import Prompt
 
 
@@ -43,9 +42,7 @@ logging.getLogger('requests').setLevel(logging.WARNING)
 class Auth(object):
 
     def __init__(self, api_id, **kwargs):
-
-        for name, default in settings.options('auth'):
-            setattr(self, name, kwargs.get(name, default))
+        self.config = AuthConfig(**kwargs)
 
         # ---------------------------------------------------------------------
 
@@ -54,6 +51,7 @@ class Auth(object):
         self.api_id = api_id
         self.username = None
         self.token = None
+        self.scope = self.config.scope
 
         # ---------------------------------------------------------------------
 
@@ -80,7 +78,7 @@ class Auth(object):
             logger.debug('Username is not provided. Awaiting input...')
             self.username = self.prompt.ask_username()
 
-        if not self.disable_cache:
+        if not self.config.disable_cache:
             logger.debug('Reading authorisation cache')
 
             self.cache = Cache(self.username)
@@ -102,7 +100,7 @@ class Auth(object):
                     logger.debug('Testing the cached token...')
                     try:
                         self.scope = self.test_token(cached['token'])
-                    except PyVKError as e:
+                    except PyVKError:
                         pass
                     else:
                         logger.debug('Cached token is valid.')
@@ -117,9 +115,12 @@ class Auth(object):
 
     @staticmethod
     def test_token(token: str):
-        req = Request('account.getAppPermissions', token=token)
-        data = req.run()
-        return data
+        r = requests.get('https://api.vk.com/method/account.getAppPermissions'
+                         'access_token=%s' % token)
+        try:
+            return r.json()['response']
+        except Exception:
+            return None
 
     def auth(self):
 
@@ -148,14 +149,14 @@ class Auth(object):
 
         q = {'client_id': self.api_id, 'scope': self.scope,
              'redirect_uri': 'https://oauth.vk.com/blank.html',
-             'display': 'mobile', 'v': self.version,
+             'display': 'mobile', 'v': self.config.version,
              'response_type': 'token'}
 
         auth_url = 'https://oauth.vk.com/authorize?%s' % urlencode(q)
 
         # Start auth URL
         try:
-            r = self.http.get(auth_url, timeout=self.timeout)
+            r = self.http.get(auth_url, timeout=self.config.timeout)
         except RequestException as e:
             raise AuthError('Network error', exc=e, **exc_data)
 
@@ -198,7 +199,7 @@ class Auth(object):
 
         try:
             r = self.http.post(action_url, data=post_data,
-                               timeout=self.timeout)
+                               timeout=self.config.timeout)
         except RequestException as e:
             raise AuthError('Network error', exc=e, **exc_data)
 
@@ -246,7 +247,8 @@ class Auth(object):
         fields['code'] = self.prompt.ask_secret_code()
 
         try:
-            r = self.http.post(action_url, data=fields, timeout=self.timeout)
+            r = self.http.post(action_url, data=fields,
+                               timeout=self.config.timeout)
         except RequestException as e:
             raise AuthError('Network error', exc=e, **exc_data)
 
@@ -282,7 +284,7 @@ class Auth(object):
         exc_data = {'state': self._state, 'action_url': action_url}
 
         try:
-            r = self.http.post(action_url, timeout=self.timeout)
+            r = self.http.post(action_url, timeout=self.config.timeout)
         except RequestException as e:
             raise AuthError('Network error', exc=e, **exc_data)
 
@@ -302,7 +304,7 @@ class Auth(object):
         # Final token
         self.token = parse_qs(url.fragment)['access_token'][0]
 
-        if not self.disable_cache:
+        if not self.config.disable_cache:
             self.cache.write(token=self.token, scope=self.scope,
                              token_time=int(time.time()),
                              cookies=self.http.cookies.get_dict())
