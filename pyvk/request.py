@@ -29,11 +29,11 @@ logging.getLogger('requests').setLevel(logging.WARNING)
 
 
 class PartialRequest(object):
-    def __init__(self, prefix: list, aux: dict):
+    def __init__(self, prefix, aux):
         self._prefix = prefix
         self._aux = aux
 
-    def __getattr__(self, suffix: str):
+    def __getattr__(self, suffix):
         return PartialRequest(self._prefix + [suffix], self._aux)
 
     def __call__(self, **args):
@@ -57,7 +57,7 @@ class Request(object):
                       for k, v in args.items()}
         self._config = config
 
-    def _fetch_response(self) -> dict:
+    def _fetch_response(self):
 
         args = self._args.copy()
         args['access_token'] = self._auth.token
@@ -101,7 +101,7 @@ class Request(object):
             raise ReqError('Error response from API is malformed',
                            response=response, data=data, exc=e)
 
-    def send(self) -> dict:
+    def send(self):
 
         for attempt in range(self._config.max_attempts):
             try:

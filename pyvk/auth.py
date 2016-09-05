@@ -114,7 +114,7 @@ class Auth(object):
             logger.debug('Cache is disabled. Authorisation needed.')
 
     @staticmethod
-    def test_token(token: str):
+    def test_token(token):
         r = requests.get('https://api.vk.com/method/account.getAppPermissions'
                          'access_token=%s' % token)
         try:
