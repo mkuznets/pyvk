@@ -1,4 +1,7 @@
 __pycache__
+.DS_Store
+*.pyc
+*.pyo
 *.swp
 *.swn
 *.swo
@@ -6,4 +9,8 @@ __pycache__
 *.rt
 *.ini
 *.bak
+dist
+build
+*.egg
+*.egg-info
 .idea
