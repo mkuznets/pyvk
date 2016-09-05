@@ -74,6 +74,9 @@ class GlobalConfig(Config):
     log_file = None             # type: str
     prompt = Prompt             # type: Prompt
 
+    timeout = 6.05      # type: float
+    version = '5.52'    # type: str
+
 
 class AuthConfig(GlobalConfig):
     scope = p_basic         # type: int
@@ -81,8 +84,6 @@ class AuthConfig(GlobalConfig):
 
 
 class RequestConfig(GlobalConfig):
-    timeout = 6.05      # type: float
-    version = '5.52'    # type: str
     auto_reauth = True  # type: bool
     slow_down = False   # type: bool
     max_attempts = 5    # type: int
