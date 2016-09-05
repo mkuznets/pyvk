@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    pyvk.settings
+    pyvk.config
     ~~~~~~~~~~~~~
 
     Defines constants, parameters, and their default values.
