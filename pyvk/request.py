@@ -37,12 +37,13 @@ class PartialRequest(object):
         return PartialRequest(self._prefix + [suffix], self._aux)
 
     def __call__(self, **args):
-        method_name = '.'.join(self._prefix)
-        return Request(method_name, args, **self._aux).send()
+        return Request(self.method_name(), args, **self._aux).send()
 
     def __repr__(self):
-        method_name = '.'.join(self._prefix)
-        return '<VK API PartialRequest | prefix=%s>' % repr(method_name)
+        return '<VK API PartialRequest | prefix=%s>' % repr(self.method_name())
+
+    def method_name(self):
+        return '.'.join(self._prefix)
 
 
 class Request(object):
