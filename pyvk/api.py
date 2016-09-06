@@ -15,7 +15,7 @@ import logging
 
 from .config import RequestConfig
 from .auth import Auth
-from .request import Request, PartialRequest
+from .request import PartialRequest
 
 logger = logging.getLogger(__name__)
 
