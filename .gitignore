@@ -13,4 +13,4 @@ dist
 build
 *.egg
 *.egg-info
-.idea
+.*/
