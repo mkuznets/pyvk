@@ -64,7 +64,10 @@ def reqn(partial_req, n=None, **api_method_args):
                      % (method_name, offset, size))
         data = partial_req(**dict(api_method_args, offset=offset, count=size))
 
-        if result.is_new_items(data):
+        n_items = result.count_new_items(data)
+        logger.debug('Fetched %d new items' % n_items)
+
+        if n_items:
             result.update(data)
         else:
             break

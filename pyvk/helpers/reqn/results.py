@@ -40,7 +40,7 @@ class ResultWallGet(_Result):
             self.result.update({'profiles': [], 'groups': []})
             self.extended = True
 
-    def is_new_items(self, data):
+    def count_new_items(self, data):
         return len(data['items'])
 
     def update(self, data):
@@ -50,3 +50,18 @@ class ResultWallGet(_Result):
         if self.extended:
             self._merge_indexed_objects(data, 'profiles')
             self._merge_indexed_objects(data, 'groups')
+
+
+class ResultUsersSearch(_Result):
+    method_name = 'users.search'
+
+    def __init__(self, args):
+        self.result = {'count': 0, 'items': []}
+        self.batch_size_iter = repeat(1000)
+
+    def count_new_items(self, data):
+        return len(data['items'])
+
+    def update(self, data):
+        self.result['count'] = data['count']
+        self.result['items'].extend(data['items'])
