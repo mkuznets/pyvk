@@ -1,12 +1,16 @@
-# -----------------------------------------------------------------------------
-# pyvk.helpers: __main__.py
-#
-# Implements helper to get `n' data items from API methods by a single function
-# call without messing with `count' and `offset' parameters.
-#
-# Copyright (c) 2013-2016, Max Kuznetsov
-# Licence: MIT
-# -----------------------------------------------------------------------------
+# -*- coding: utf-8 -*-
+"""
+    pyvk.helpers.reqn.reqn
+    ~~~~
+
+    Implements helper to get `n' data item
+    from API methods by a single function call
+    without messing with `count' and `offset' parameters.
+
+    :copyright: (c) 2013-2016 by Max Kuznetsov.
+    :license: MIT, see LICENSE for more details.
+"""
+
 
 
 from itertools import chain, takewhile, accumulate, tee
