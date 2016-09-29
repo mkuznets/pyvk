@@ -50,8 +50,11 @@ def reqn(partial_req, n=None, **api_method_args):
         #   (... (off_m, step_m))
         # and (off_m + step_m) > n, the sequence becomes
         #   (... (off_m, n - off_m))
-        schedule = ((off, size if (off+size) <= n else n - off)
-                    for off, size in schedule)
+        schedule = [(off, size if (off+size) <= n else n - off)
+                    for off, size in schedule]
+
+        # Sanity test for total number of items.
+        assert n == sum(s[1] for s in schedule)
 
     for offset, size in schedule:
         logger.debug("Requesting batch: %s for offset=%d, count=%d"
