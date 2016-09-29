@@ -12,7 +12,6 @@
 """
 
 
-
 from itertools import chain, takewhile, accumulate, tee
 import logging
 import inspect
