@@ -167,6 +167,38 @@ class ResultFriendsGetOnline(_Result):
             return len(data)
 
 
+class ResultFriendsGetMutual(_Result):
+    method_name = 'friends.getMutual'
+
+    def __init__(self, args):
+        self.multiple = bool(args.get('target_uids', False))
+
+        if self.multiple:
+            uids = filter(lambda x: x > 0, map(int, args['target_uids']))
+            self.result = [{'id': uid, 'common_friends': [], 'common_count': 0}
+                           for uid in uids]
+        else:
+            self.result = []
+
+        self.batch_size_iter = repeat(10)  # the size is not limited
+
+    def update(self, data):
+        if self.multiple:
+            for (old, new) in zip(self.result, data):
+                old['common_friends'].extend(new['common_friends'])
+                old['common_count'] = new['common_count']
+        else:
+            assert isinstance(data, list)
+            self.result.extend(data)
+
+    def count_new_items(self, data):
+        if self.multiple:
+            return max(len(u['common_friends']) for u in data)
+        else:
+            assert isinstance(data, list)
+            return len(data)
+
+
 
 # TODO
 
@@ -186,7 +218,7 @@ class ResultFriendsGetOnline(_Result):
 # + photos.getNewTags
 # + friends.get
 # + friends.getOnline
-# friends.getMutual
+# + friends.getMutual
 # friends.getRequests
 # friends.getSuggestions
 # friends.search
