@@ -12,7 +12,7 @@
 """
 
 
-from itertools import chain, takewhile, accumulate, tee
+from itertools import chain, takewhile, accumulate, tee, repeat
 import logging
 import inspect
 from . import results
@@ -27,14 +27,17 @@ result_classes = {v.method_name: v
 logger.debug('Supported methods: %s' % list(result_classes.keys()))
 
 
-def reqn(partial_req, n=None, **api_method_args):
+def reqn(partial_req, n=None, batch_size=None, **api_method_args):
 
     method_name = partial_req.method_name()
     result = result_classes[method_name](api_method_args)
 
     # Get two batch size iterators for offset calculation and for constructing
     # the (offset,size)-schedule.
-    sizes_offset, sizes_shedule = tee(result.batch_size_iter, 2)
+    sizes_offset, sizes_shedule = tee(
+        result.batch_size_iter if (batch_size is None) else repeat(batch_size),
+        2
+    )
 
     # Infinite generator of offsets:
     #   (0, steps_1, steps_1 + steps_2, ..., \sum{i=1}{m} steps_i)

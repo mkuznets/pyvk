@@ -199,6 +199,55 @@ class ResultFriendsGetMutual(_Result):
             return len(data)
 
 
+class ResultFriendsGetRequests(ResultItemList):
+    method_name = 'friends.getRequests'
+
+
+class ResultFriendsGetSuggestions(ResultItemList):
+    method_name = 'friends.getSuggestions'
+    _batch_size = 500
+
+
+class ResultFriendsSearch(ResultItemList):
+    method_name = 'friends.search'
+
+
+class ResultAudioGet(ResultItemList):
+    method_name = 'audio.get'
+    _batch_size = 5000
+
+
+class ResultAudioSearch(ResultItemList):
+    method_name = 'audio.search'
+    _batch_size = 300
+
+
+class ResultAudioGetAlbums(ResultItemList):
+    method_name = 'audio.getAlbums'
+    _batch_size = 100
+
+
+class ResultAudioGetRecommendations(ResultItemList):
+    method_name = 'audio.getRecommendations'
+
+
+class ResultAudioGetPopular(_Result):
+    method_name = 'audio.getPopular'
+
+    def __init__(self, args):
+        self.result = []
+        self.batch_size_iter = repeat(1000)
+
+    def update(self, data):
+        self.result.extend(data)
+
+    def count_new_items(self, data):
+        return len(data)
+
+
+class ResultNewsfeedGetMentions(ResultItemList):
+    method_name = 'newsfeed.getMentions'
+    _batch_size = 50
 
 # TODO
 
@@ -219,17 +268,17 @@ class ResultFriendsGetMutual(_Result):
 # + friends.get
 # + friends.getOnline
 # + friends.getMutual
-# friends.getRequests
-# friends.getSuggestions
-# friends.search
+# + friends.getRequests
+# + friends.getSuggestions
+# + friends.search
 # widgets.getComments
 # widgets.getPages
 # storage.getKeys
-# audio.get
-# audio.search
-# audio.getAlbums
-# audio.getRecommendations
-# audio.getPopular
+# + audio.get
+# + audio.search
+# + audio.getAlbums
+# + audio.getRecommendations
+# + audio.getPopular
 # + groups.get
 # + groups.getMembers
 # groups.search
@@ -253,9 +302,7 @@ class ResultFriendsGetMutual(_Result):
 # messages.search
 # messages.getHistory
 # messages.deleteDialog
-# newsfeed.get
-# newsfeed.getRecommended
-# newsfeed.getMentions
+# + newsfeed.getMentions
 # newsfeed.search
 # newsfeed.getSuggestedSources
 # likes.getList
@@ -294,3 +341,5 @@ class ResultFriendsGetMutual(_Result):
 # video.getComments
 # messages.getDialogs
 # messages.get
+# newsfeed.get
+# newsfeed.getRecommended
