@@ -140,6 +140,33 @@ class ResultPhotosGetNewTags(ResultItemList):
     _batch_size = 100
 
 
+class ResultFriendsGetOnline(_Result):
+    method_name = 'friends.getOnline'
+
+    def __init__(self, args):
+        self.online_mobile = bool(args.get('online_mobile', False))
+
+        self.result = {'online': [], 'online_mobile': []} \
+            if self.online_mobile else []
+
+        self.batch_size_iter = repeat(100000)  # the size is not limited
+
+    def update(self, data):
+        if self.online_mobile:
+            self.result['online'].extend(data['online'])
+            self.result['online_mobile'].extend(data['online_mobile'])
+        else:
+            assert isinstance(data, list)
+            self.result.extend(data)
+
+    def count_new_items(self, data):
+        if self.online_mobile:
+            return len(data['online']) + len(data['online_mobile'])
+        else:
+            assert isinstance(data, list)
+            return len(data)
+
+
 
 # TODO
 
@@ -158,7 +185,7 @@ class ResultPhotosGetNewTags(ResultItemList):
 # + photos.getAllComments
 # + photos.getNewTags
 # + friends.get
-# friends.getOnline
+# + friends.getOnline
 # friends.getMutual
 # friends.getRequests
 # friends.getSuggestions
