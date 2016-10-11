@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pyvk.request
     ~~~~~~~~~~~~
@@ -25,40 +26,38 @@ else:
     from urllib.parse import urlencode
 
 logger = logging.getLogger(__name__)
-logging.getLogger('requests').setLevel(logging.WARNING)
 
 
-class PartialRequest(object):
-    def __init__(self, prefix, aux):
+class RequestHandler(object):
+    def __init__(self, prefix, auth, config):
         self._prefix = prefix
-        self._aux = aux
+        self._auth = auth
+        self._config = config
+
+    @property
+    def method(self):
+        return '.'.join(self._prefix)
 
     def __getattr__(self, suffix):
-        return PartialRequest(self._prefix + [suffix], self._aux)
+        return RequestHandler(self._prefix + [suffix], self._auth, self._config)
 
     def __call__(self, **args):
-        return Request(self.method_name(), args, **self._aux).send()
+        return Request(self.method, args, self._auth, self._config).send()
 
     def __repr__(self):
-        return '<VK API PartialRequest | prefix=%s>' % repr(self.method_name())
-
-    def method_name(self):
-        return '.'.join(self._prefix)
+        return '<RequestHandler | prefix=%s>' % repr(self.method)
 
 
 class Request(object):
     def __init__(self, method, args, auth, config):
-        assert auth.token
-        self._auth = auth
-
         self._method = method
-
+        self._auth = auth
+        self._config = config
         # Transform lists into comma-separated strings
         self._args = {k: ','.join(str(i) for i in v) if type(v) is list else v
                       for k, v in args.items()}
-        self._config = config
 
-    def _fetch_response(self):
+    def _fetch(self):
 
         args = self._args.copy()
         args['access_token'] = self._auth.token
@@ -106,7 +105,7 @@ class Request(object):
 
         for attempt in range(self._config.max_attempts):
             try:
-                return self._fetch_response()
+                return self._fetch()
 
             except APIError as e:
                 # User authorisation failed, try to reauthorise.

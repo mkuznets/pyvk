@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pyvk.api
     ~~~~~~~~
@@ -13,36 +14,30 @@ from __future__ import generators, with_statement, print_function, \
 
 import logging
 
-from .config import RequestConfig
+from .config import GlobalConfig, AuthConfig, RequestConfig
 from .auth import Auth
-from .request import PartialRequest
+from .request import RequestHandler
 
 logger = logging.getLogger(__name__)
 
 
 class API(object):
     def __init__(self, api_id, **kwargs):
-        self.config = RequestConfig(**kwargs)
+        self.config = GlobalConfig(**kwargs)
 
         log_file = {'filename': self.config.log_file} \
             if self.config.log_file else {}
-
         logging.basicConfig(format=self.config.log_format,
                             level=self.config.log_level,
                             **log_file)
-
-        self.auth = Auth(api_id, **kwargs)
+        # Singleton
+        self.auth = Auth(api_id, AuthConfig(**kwargs))
 
         if not self.auth.token:
             self.auth.auth()
 
-    def __getattr__(self, api_method_prefix):
-        return PartialRequest([api_method_prefix],
-                              {'config': self.config, 'auth': self.auth})
-
-    def request(self, **kwargs):
-        return PartialRequest([], {'config': RequestConfig(**kwargs),
-                                   'auth': self.auth})
+    def get_handler(self, **kwargs):
+        return RequestHandler([], self.auth, RequestConfig(**kwargs))
 
     def __repr__(self):
         return '<VK API | id=%d>' % self.auth.api_id

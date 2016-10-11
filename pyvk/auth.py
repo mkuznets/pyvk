@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pyvk.auth
     ~~~~~~~~~
@@ -22,10 +23,7 @@ import binascii
 import logging
 from appdirs import AppDirs
 from requests.exceptions import RequestException
-
-from .config import AuthConfig
 from .exceptions import AuthError, PyVKError
-from .utils import Prompt
 
 
 if PY2:
@@ -36,47 +34,38 @@ else:
 
 
 logger = logging.getLogger(__name__)
-logging.getLogger('requests').setLevel(logging.WARNING)
 
 
 class Auth(object):
 
-    def __init__(self, api_id, **kwargs):
-        self.config = AuthConfig(**kwargs)
-
-        # ---------------------------------------------------------------------
+    def __init__(self, api_id, config):
+        self.config = config
+        self.api_id = api_id
 
         self.http = requests.Session()
-
-        self.api_id = api_id
-        self.username = None
         self.token = None
-        self.scope = self.config.scope
+        self.scope = None
+        self.username = self.config.username
+        self._state = None
 
         # ---------------------------------------------------------------------
 
-        if 'token' in kwargs:
+        if self.config.token:
             logger.debug('Testing the token provided...')
             try:
-                self.scope = self.test_token(kwargs['token'])
-
+                self.scope = self.test_token(self.config.token)
             except PyVKError as e:
                 raise AuthError('Invalid token', **e.attrs)
-
             else:
                 logger.debug('Token is valid.')
-                self.token = kwargs['token']
+                self.token = self.config.token
                 return
 
         # ---------------------------------------------------------------------
 
-        self.prompt = kwargs.get('prompt', Prompt)
-        self._state = None
-
-        self.username = kwargs.get('username', None)
-        if not self.username:
+        if not self.config.username:
             logger.debug('Username is not provided. Awaiting input...')
-            self.username = self.prompt.ask_username()
+            self.username = self.config.prompt.ask_username()
 
         if not self.config.disable_cache:
             logger.debug('Reading authorisation cache')
@@ -96,7 +85,7 @@ class Auth(object):
 
                 # For the cached token to be valid it has to have the same mask
                 # as requested and age less than expiration time.
-                if time_diff < 24 * 3600 and self.scope <= cached['scope']:
+                if time_diff < 24 * 3600 and self.config.scope <= cached['scope']:
                     logger.debug('Testing the cached token...')
                     try:
                         self.scope = self.test_token(cached['token'])
@@ -195,7 +184,7 @@ class Auth(object):
         # Collect post data from the form and fill user-defined fields
         post_data = fields
         post_data['email'] = self.username
-        post_data['pass'] = self.prompt.ask_password()
+        post_data['pass'] = self.config.prompt.ask_password()
 
         try:
             r = self.http.post(action_url, data=post_data,
@@ -244,7 +233,7 @@ class Auth(object):
                             **exc_data)
 
         fields['remember'] = 0
-        fields['code'] = self.prompt.ask_secret_code()
+        fields['code'] = self.config.prompt.ask_secret_code()
 
         try:
             r = self.http.post(action_url, data=fields,
