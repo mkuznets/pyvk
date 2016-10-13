@@ -14,7 +14,6 @@ from __future__ import generators, with_statement, print_function, \
 
 import requests
 import logging
-from requests.exceptions import RequestException
 from time import sleep
 
 from .utils import PY2
@@ -67,12 +66,8 @@ class Request(object):
               % (self._method, urlencode(args))
 
         # 1. Send HTTP request
-        try:
-            response = requests.get(url, timeout=self._config.timeout)
-            logger.debug('GET %s' % url)
-
-        except RequestException as e:
-            raise ReqError('Network error', exc=e)
+        response = requests.get(url, timeout=self._config.timeout)
+        logger.debug('GET %s' % url)
 
         # 2. Unpack it
         try:
@@ -85,11 +80,10 @@ class Request(object):
 
         # 3. Try to return the result
         try:
-            return data['response']
-
+            return data if self._config.raw_response else data['response']
         except KeyError:
-            if not self._config.error_handling:
-                return data
+            # 'response' does not exist
+            pass
 
         # 4. Handle possible API error response
         try:

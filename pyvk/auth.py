@@ -15,22 +15,26 @@ from __future__ import generators, with_statement, print_function, \
 from .utils import PY2
 
 import os
-import time
 import lxml.html
 import requests
-import pickle
-import binascii
+import hashlib
 import logging
+import shelve
+from collections import namedtuple
 from appdirs import AppDirs
 from requests.exceptions import RequestException
-from .exceptions import AuthError, PyVKError
+from .exceptions import AuthError, ReqError
+from .config import  RequestConfig
+from .request import Request
 
 
 if PY2:
     from urlparse import urlparse, ParseResult, parse_qs
     from urllib import urlencode
+    from anydbm import error as db_error
 else:
     from urllib.parse import urlparse, ParseResult, parse_qs, urlencode
+    from dbm import error as db_error
 
 
 logger = logging.getLogger(__name__)
@@ -48,68 +52,42 @@ class Auth(object):
         self.username = self.config.username
         self._state = None
 
-        # ---------------------------------------------------------------------
-
         if self.config.token:
             logger.debug('Testing the token provided...')
-            try:
-                self.scope = self.test_token(self.config.token)
-            except PyVKError as e:
-                raise AuthError('Invalid token', **e.attrs)
-            else:
-                logger.debug('Token is valid.')
-                self.token = self.config.token
-                return
-
-        # ---------------------------------------------------------------------
+            self.scope = self._get_token_scope(self.config.token)
+            self.token = self.config.token
+            logger.debug('Token is valid.')
+            return
 
         if not self.config.username:
             logger.debug('Username is not provided. Awaiting input...')
             self.username = self.config.prompt.ask_username()
 
         if not self.config.disable_cache:
-            logger.debug('Reading authorisation cache')
-
-            self.cache = Cache(self.username)
-            cached = self.cache.read()
-
-            if cached:
-                cookies = cached.get('cookies', {})
-                self.http.cookies.update(cookies)
-
-                # set() added for PY2 compatibility.
-                assert {'token_time', 'scope', 'token'} <= set(cached.keys())
-
-                # Age of the cached token
-                time_diff = int(time.time()) - cached['token_time']
-
-                # For the cached token to be valid it has to have the same mask
-                # as requested and age less than expiration time.
-                if time_diff < 24 * 3600 and self.config.scope <= cached['scope']:
-                    logger.debug('Testing the cached token...')
-                    try:
-                        self.scope = self.test_token(cached['token'])
-                    except PyVKError:
-                        pass
-                    else:
-                        logger.debug('Cached token is valid.')
-                        self.token = cached['token']
-                else:
-                    logger.debug('Cached token is expired or do not match '
-                                 'requested permissions.')
-            else:
-                logger.debug('Cache is empty.')
-        else:
-            logger.debug('Cache is disabled. Authorisation needed.')
+            try:
+                cache = shelve.open(self._cache_filename, flag='r', protocol=2)
+                self.http.cookies.update(cache.get('cookies', {}))
+                logger.debug('Cheking cached token...')
+                cached_scope = self._get_token_scope(cache['token'])
+                # Token has to have at least as many permissions as requested.
+                if self.config.scope <= cached_scope:
+                    self.scope = cached_scope
+                    self.token = cache['token']
+                    logger.debug('Token is valid.')
+                cache.close()
+            except (KeyError, *db_error):
+                logger.debug('Authorisation cache does not exist or is empty')
 
     @staticmethod
-    def test_token(token):
-        r = requests.get('https://api.vk.com/method/account.getAppPermissions'
-                         'access_token=%s' % token)
+    def _get_token_scope(token):
+        fake_auth = namedtuple('Auth', 'token')
+        req = Request('account.getAppPermissions', {}, fake_auth(token=token),
+                      RequestConfig(raw_response=True))
         try:
-            return r.json()['response']
-        except Exception:
-            return None
+            response = req.send()
+            return response['response']
+        except (KeyError, ReqError) as err:
+            raise AuthError('Invalid token') from err
 
     def auth(self):
 
@@ -130,13 +108,28 @@ class Auth(object):
             self._state = result[0]
             args = result[1:]
 
+    @property
+    def _cache_filename(self):
+        if self.api_id is None or self.username is None:
+            raise ValueError('API ID and username have to be set')
+
+        cache_dir = AppDirs('pyvk').user_cache_dir
+        if not os.path.exists(cache_dir):
+            # `exist_ok' is not used for compatibility.
+            os.makedirs(cache_dir)
+
+        h = hashlib.sha1()
+        h.update(str(self.api_id).encode())
+        h.update(self.username.encode())
+        return os.path.join(cache_dir, h.hexdigest())
+
     # --------------------------------------------------------------------------
 
     def _s_auth_page(self):
 
         exc_data = {'state': self._state}
 
-        q = {'client_id': self.api_id, 'scope': self.scope,
+        q = {'client_id': self.api_id, 'scope': self.config.scope,
              'redirect_uri': 'https://oauth.vk.com/blank.html',
              'display': 'mobile', 'v': self.config.version,
              'response_type': 'token'}
@@ -287,43 +280,17 @@ class Auth(object):
             raise AuthError('Token fetch URL is not found', url=url, **exc_data)
 
     def _s_get_token(self, url):
-
         assert isinstance(url, ParseResult)
-
-        # Final token
         self.token = parse_qs(url.fragment)['access_token'][0]
 
         if not self.config.disable_cache:
-            self.cache.write(token=self.token, scope=self.scope,
-                             token_time=int(time.time()),
-                             cookies=self.http.cookies.get_dict())
+            try:
+                cache = shelve.open(self._cache_filename, flag='n', protocol=2)
+                cache['token'] = self.token
+                cache['cookies'] = self.http.cookies.get_dict()
+                cache.close()
+            except db_error:
+                logger.debug('%s: Cannot open or create cache file.'
+                             % self._cache_filename)
+
         return ('exit', )
-
-    # --------------------------------------------------------------------------
-
-
-class Cache(object):
-
-    def __init__(self, username):
-
-        cache_dir = AppDirs('pyvk').user_cache_dir
-
-        if not os.path.exists(cache_dir):
-            # `exist_ok' is not used for compatibility.
-            os.makedirs(cache_dir)
-
-        cache_hash = binascii.crc32(username.encode('utf-8'))
-        self.file = os.path.join(cache_dir, str(cache_hash))
-
-    def read(self):
-        try:
-            with open(self.file, 'rb') as cf:
-                return pickle.load(cf)
-
-        except (OSError, IOError, EOFError, pickle.PickleError):
-            # Auth cache is corrupted or unreadable, start with an empty cache
-            return {}
-
-    def write(self, **data):
-        with open(self.file, 'wb') as cf:
-            pickle.dump(data, cf, protocol=2)

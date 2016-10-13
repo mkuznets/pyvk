@@ -89,6 +89,6 @@ class RequestConfig(GlobalConfig):
     auto_reauth = True  # type: bool
     slow_down = False   # type: bool
     max_attempts = 5    # type: int
-    error_handling = True,                          # type: bool
+    raw_response = False                            # type: bool
     user_agent = 'Mozilla/5.0(Windows NT 6.1; WOW64; rv:22.0)' \
                  'Gecko/20100101 Firefox/22.0'      # type: str
