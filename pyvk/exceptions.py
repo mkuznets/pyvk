@@ -32,6 +32,10 @@ class AuthError(PyVKError):
     pass
 
 
+class InvalidToken(PyVKError):
+    pass
+
+
 class ReAuthNeeded(PyVKError):
     pass
 

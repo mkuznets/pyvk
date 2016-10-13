@@ -67,7 +67,6 @@ class Request(object):
 
         # 1. Send HTTP request
         response = requests.get(url, timeout=self._config.timeout)
-        logger.debug('GET %s' % url)
 
         # 2. Unpack it
         try:
@@ -130,6 +129,7 @@ class Request(object):
 
                 # Captcha needed.
                 elif e.code == 14:
+                    logger.debug('Captcha needed')
                     try:
                         self._args['captcha_sid'] = e.error['captcha_sid']
                         img = e.error['captcha_img']
@@ -142,7 +142,15 @@ class Request(object):
                         key = self._config.prompt.ask_captcha(img)
                         self._args['captcha_key'] = key
 
-                # Don't handle error, raise it as is.
+                # Validation needed.
+                elif e.code == 17:
+                    logger.debug('Validation needed: %s' % url)
+                    url = e.error['redirect_uri']
+                    response = requests.get(url, timeout=self._config.timeout)
+                    self._auth.auth('router', response)
+                    logger.debug('Continue...')
+
+                # Cannot handle error, raise it as is.
                 else:
                     raise
 

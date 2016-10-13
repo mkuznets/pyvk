@@ -20,11 +20,12 @@ import requests
 import hashlib
 import logging
 import shelve
-from collections import namedtuple
+import textwrap
 from appdirs import AppDirs
-from .exceptions import AuthError, ReqError
-from .config import  RequestConfig
+from .exceptions import AuthError, ReqError, InvalidToken, APIError
+from .config import RequestConfig
 from .request import Request
+from requests.exceptions import RequestException
 
 
 if PY2:
@@ -53,53 +54,63 @@ class Auth(object):
 
         if self.config.token:
             logger.debug('Testing the token provided...')
-            self.scope = self._get_token_scope(self.config.token)
-            self.token = self.config.token
+            self._test_and_set_token(self.config.token)
             logger.debug('Token is valid.')
             return
 
         if not self.config.username:
-            logger.debug('Username is not provided. Awaiting input...')
+            logger.info('Username is not provided')
             self.username = self.config.prompt.ask_username()
 
         if not self.config.disable_cache:
             try:
                 cache = shelve.open(self._cache_filename, flag='r', protocol=2)
                 self.http.cookies.update(cache.get('cookies', {}))
+
                 logger.debug('Cheking cached token...')
-                cached_scope = self._get_token_scope(cache['token'])
+                self._test_and_set_token(cache['token'])
+
                 # Token has to have at least as many permissions as requested.
-                if self.config.scope <= cached_scope:
-                    self.scope = cached_scope
-                    self.token = cache['token']
+                if self.config.scope <= self.scope:
                     logger.debug('Token is valid.')
+                else:
+                    # TODO: Cached token does not have enough permission
+                    self.token = None
+                    self.scope = None
                 cache.close()
-            except (KeyError, *db_error):
+
+            except RequestException:
+                raise
+
+            except InvalidToken as err:
+                logger.debug('Cached token is invalid: %s' % err.args[0])
+
+            except (db_error, KeyError):
                 logger.debug('Authorisation cache does not exist or is empty')
 
-    @staticmethod
-    def _get_token_scope(token):
-        fake_auth = namedtuple('Auth', 'token')
-        req = Request('account.getAppPermissions', {}, fake_auth(token=token),
-                      RequestConfig(raw_response=True))
+    def _test_and_set_token(self, token):
+        self.token = token
+        req = Request('account.getAppPermissions', {}, self,
+                      RequestConfig(auto_reauth=False))
         try:
-            response = req.send()
-            return response['response']
-        except (KeyError, ReqError) as err:
-            raise AuthError('Invalid token') from err
+            self.scope = req.send()
 
-    def auth(self):
+        except APIError as err:
+            self.token = None
+            raise InvalidToken(err.msg, exc=err)
 
-        self._state = 'auth_page'
-        args = ()
+        except ReqError as err:
+            self.token = None
+            raise InvalidToken('Could not test the token', exc=err)
+
+    def auth(self, state=None, *args):
+        self._state = state or 'auth_page'
 
         while self._state != 'exit':
-
             logger.debug('Auth stage: %s' % self._state)
             fname = '_s_%s' % self._state
 
             assert hasattr(self, fname), 'State `%s\' not in DFA!' % self._state
-
             f = getattr(self, fname)
 
             # Cannot use pattern matching due to PY2 compatibility.
@@ -125,14 +136,13 @@ class Auth(object):
     # --------------------------------------------------------------------------
 
     def _s_router(self, response):
-
         # Chech for JSON response in case of errors
         try:
             data = response.json()
             if 'error' in data:
                 raise AuthError('Error occured', error=data)
         except ValueError:
-            # Not JSON, process response as HTML
+            # Not JSON, treat response as HTML
             pass
 
         urlp = urlparse(response.url)
@@ -141,12 +151,17 @@ class Auth(object):
         if urlp.fragment.startswith('access_token='):
             return ('get_token', urlp)
 
+        # Detect failed validation
+        elif 'fail=1' in urlp.fragment:
+            raise AuthError('Unsuccesful validation', response=response)
+
         # Detect error page, try to repeat with empty cookies
         elif 'err' in urlp.path:
             logger.debug('Error occured, trying to repeat...')
             self.http.cookies.clear()
             return ('auth_page', )
 
+        # Parse HTML
         else:
             try:
                 doc = lxml.html.fromstring(response.content)
@@ -171,6 +186,27 @@ class Auth(object):
                 elif act == 'authcheck_code':
                     fields = {k: form.fields[k] for k in ('remember', 'code')}
                     return (act, act_url, fields)
+
+                elif act == 'security_check':
+                    prefixes = doc.xpath("//span[@class='field_prefix']")
+                    if len(prefixes) != 2:
+                        raise ValueError('Unrecognised security page')
+
+                    # Phone number: construct from prefix and suffix
+                    prefixes_text = [p.text_content().strip() for p in prefixes]
+                    prefixes_text.insert(1, ' ... ')
+                    number = ''.join(prefixes_text)
+
+                    # Text message
+                    msgs = doc.xpath("//div[@class='fi_row']")[:2]
+                    msg = "\n".join([m.text_content() for m in msgs])
+                    # Wrap for width 70
+                    msg = "\n".join(textwrap.wrap(msg))
+                    msg += "\n%s: " % number
+
+                    fields = {k: form.fields[k] for k in ('code',)}
+
+                    return (act, act_url, msg, fields)
 
                 else:
                     raise ValueError('Unrecognised action')
@@ -201,6 +237,12 @@ class Auth(object):
     def _s_authcheck_code(self, action_url, fields):
         fields['remember'] = 0
         fields['code'] = self.config.prompt.ask_secret_code()
+
+        r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
+        return ('router', r)
+
+    def _s_security_check(self, action_url, msg, fields):
+        fields['code'] = self.config.prompt.ask_text(msg)
 
         r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
         return ('router', r)
