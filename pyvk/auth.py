@@ -125,13 +125,23 @@ class Auth(object):
     # --------------------------------------------------------------------------
 
     def _s_router(self, response):
+
+        # Chech for JSON response in case of errors
+        try:
+            data = response.json()
+            if 'error' in data:
+                raise AuthError('Error occured', error=data)
+        except ValueError:
+            # Not JSON, process response as HTML
+            pass
+
         urlp = urlparse(response.url)
 
-        # Token page
+        # Detect token page
         if urlp.fragment.startswith('access_token='):
             return ('get_token', urlp)
 
-        # Error page, try to repeat with empty cookies
+        # Detect error page, try to repeat with empty cookies
         elif 'err' in urlp.path:
             logger.debug('Error occured, trying to repeat...')
             self.http.cookies.clear()
@@ -167,7 +177,7 @@ class Auth(object):
 
             except (KeyError, ValueError) as err:
                 raise AuthError('Unrecognised auth page', response=response,
-                                exc=err) from err
+                                exc=err)
 
     def _s_auth_page(self):
         q = {'client_id': self.api_id, 'scope': self.config.scope,
