@@ -22,18 +22,17 @@ import logging
 import shelve
 from collections import namedtuple
 from appdirs import AppDirs
-from requests.exceptions import RequestException
 from .exceptions import AuthError, ReqError
 from .config import  RequestConfig
 from .request import Request
 
 
 if PY2:
-    from urlparse import urlparse, ParseResult, parse_qs
+    from urlparse import urlparse, parse_qs, urljoin
     from urllib import urlencode
     from anydbm import error as db_error
 else:
-    from urllib.parse import urlparse, ParseResult, parse_qs, urlencode
+    from urllib.parse import urlparse, parse_qs, urlencode, urljoin
     from dbm import error as db_error
 
 
@@ -125,163 +124,83 @@ class Auth(object):
 
     # --------------------------------------------------------------------------
 
+    def _s_router(self, response):
+        urlp = urlparse(response.url)
+
+        # Token page
+        if urlp.fragment.startswith('access_token='):
+            return ('get_token', urlp)
+
+        # Error page, try to repeat with empty cookies
+        elif 'err' in urlp.path:
+            logger.debug('Error occured, trying to repeat...')
+            self.http.cookies.clear()
+            return ('auth_page', )
+
+        else:
+            try:
+                doc = lxml.html.fromstring(response.content)
+
+                errors = doc.find_class('service_msg_warning')
+                if errors:
+                    raise AuthError('Incorrect information',
+                                    msg=errors[0].text, response=response)
+
+                form, = doc.forms
+                # Make sure action_url is full i.e. contains scheme and host
+                act_url = urljoin(response.url, form.action)
+                act, = parse_qs(urlparse(act_url).query)['act']
+
+                if act == 'login':
+                    fields = {k: form.fields[k] for k in ('email', 'pass')}
+                    return (act, act_url, dict(form.fields))
+
+                elif act == 'grant_access':
+                    return (act, act_url)
+
+                elif act == 'authcheck_code':
+                    fields = {k: form.fields[k] for k in ('remember', 'code')}
+                    return (act, act_url, fields)
+
+                else:
+                    raise ValueError('Unrecognised action')
+
+            except (KeyError, ValueError) as err:
+                raise AuthError('Unrecognised auth page', response=response,
+                                exc=err) from err
+
     def _s_auth_page(self):
-
-        exc_data = {'state': self._state}
-
         q = {'client_id': self.api_id, 'scope': self.config.scope,
              'redirect_uri': 'https://oauth.vk.com/blank.html',
              'display': 'mobile', 'v': self.config.version,
              'response_type': 'token'}
 
-        auth_url = 'https://oauth.vk.com/authorize?%s' % urlencode(q)
-
-        # Start auth URL
-        try:
-            r = self.http.get(auth_url, timeout=self.config.timeout)
-        except RequestException as e:
-            raise AuthError('Network error', exc=e, **exc_data)
-
-        url = urlparse(r.url)
-
-        # Token page
-        if url.fragment.startswith('access_token='):
-            return ('get_token', url)
-
-        # Error page, try to repeat with empty cookies
-        elif 'err' in url.path:
-            logger.info('Cookies corrupted, trying to repeat...')
-            self.http.cookies.clear()
-            return ('auth_page', )
-
-        else:
-            # TODO: fix the ugly parsing
-            doc = lxml.html.document_fromstring(r.text.encode('utf-8'))
-            form = doc.forms[0]
-            action_url = urlparse(form.action)
-            act = parse_qs(action_url.query)['act'][0]
-
-            if act == 'login':
-                return ('login', form.action, dict(form.fields))
-            elif act == 'grant_access':
-                return ('grant_access', form.action)
-            else:
-                raise AuthError('Unknown form action on auth page',
-                                response=r, **exc_data)
+        # Initiate authorisation.
+        r = self.http.get('https://oauth.vk.com/authorize?%s' % urlencode(q),
+                          timeout=self.config.timeout)
+        return ('router', r)
 
     def _s_login(self, action_url, fields):
+        # Collect post data from the form and fill user-defined fields.
+        fields['email'] = self.username
+        fields['pass'] = self.config.prompt.ask_password()
 
-        exc_data = {'state': self._state, 'action_url': action_url,
-                    'fields': fields}
+        r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
+        return ('router', r)
 
-        # Collect post data from the form and fill user-defined fields
-        post_data = fields
-        post_data['email'] = self.username
-        post_data['pass'] = self.config.prompt.ask_password()
-
-        try:
-            r = self.http.post(action_url, data=post_data,
-                               timeout=self.config.timeout)
-        except RequestException as e:
-            raise AuthError('Network error', exc=e, **exc_data)
-
-        doc = lxml.html.document_fromstring(r.text.encode('utf-8'))
-
-        # Check for wrong password
-        errors = doc.find_class('service_msg_warning')
-
-        if errors:
-            raise AuthError('Wrong email or password', msg=errors[0].text,
-                            response=r, **exc_data)
-
-        url = urlparse(r.url)
-
-        # Token page
-        if url.fragment.startswith('access_token='):
-            return ('get_token', url)
-
-        # Otherwise: check the need to confirm access
-        form = doc.forms[0]
-        action_url = urlparse(form.action)
-        act = parse_qs(action_url.query)['act'][0]
-
-        if act == 'grant_access':
-            return ('grant_access', form.action)
-
-        elif act == 'authcheck_code':
-            action_url = '%s://%s%s' % (url.scheme, url.netloc, form.action)
-            return ('authcheck', action_url, dict(form.fields))
-
-        else:
-            raise AuthError('Unknown form action on login page.',
-                            response=r, **exc_data)
-
-    def _s_authcheck(self, action_url, fields):
-
-        exc_data = {'state': self._state, 'action_url': action_url,
-                    'fields': fields}
-
-        if not all(k in fields for k in ('remember', 'code')):
-            raise AuthError('Authcheck page has unexpected formatting.',
-                            **exc_data)
-
+    def _s_authcheck_code(self, action_url, fields):
         fields['remember'] = 0
         fields['code'] = self.config.prompt.ask_secret_code()
 
-        try:
-            r = self.http.post(action_url, data=fields,
-                               timeout=self.config.timeout)
-        except RequestException as e:
-            raise AuthError('Network error', exc=e, **exc_data)
-
-        doc = lxml.html.document_fromstring(r.text.encode('utf-8'))
-
-        # Check for wrong password
-        errors = doc.find_class('service_msg_warning')
-
-        if errors:
-            raise AuthError('Wrong secret code',
-                            msg=errors[0].text, response=r, **exc_data)
-
-        url = urlparse(r.url)
-
-        # Token page
-        if url.fragment.startswith('access_token='):
-            return ('get_token', url)
-
-        # Otherwise: check the need to confirm access
-        form = doc.forms[0]
-        action_url = urlparse(form.action)
-        act = parse_qs(action_url.query)['act'][0]
-
-        if act == 'grant_access':
-            return ('grant_access', form.action)
-
-        else:
-            raise AuthError('Unknown form action on authcheck page.',
-                            response=r, **exc_data)
+        r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
+        return ('router', r)
 
     def _s_grant_access(self, action_url):
+        r = self.http.post(action_url, timeout=self.config.timeout)
+        return ('router', r)
 
-        exc_data = {'state': self._state, 'action_url': action_url}
-
-        try:
-            r = self.http.post(action_url, timeout=self.config.timeout)
-        except RequestException as e:
-            raise AuthError('Network error', exc=e, **exc_data)
-
-        url = urlparse(r.url)
-
-        # Token page
-        if url.fragment.startswith('access_token='):
-            return ('get_token', url)
-
-        else:
-            raise AuthError('Token fetch URL is not found', url=url, **exc_data)
-
-    def _s_get_token(self, url):
-        assert isinstance(url, ParseResult)
-        self.token = parse_qs(url.fragment)['access_token'][0]
+    def _s_get_token(self, urlp):
+        self.token, = parse_qs(urlp.fragment)['access_token']
 
         if not self.config.disable_cache:
             try:
@@ -292,5 +211,4 @@ class Auth(object):
             except db_error:
                 logger.debug('%s: Cannot open or create cache file.'
                              % self._cache_filename)
-
         return ('exit', )
