@@ -2,25 +2,13 @@
 VK API for Python
 -----------------
 
-PyVK implements a Python client for `VK`_ (major Russian social network.) It is
+`VK`_ is one of the major Russian-speaking social networks.
+**PyVK** is a no-nonsence boilerplate-free `VK API`_ library for Python.
+It can be used in server or client applications, scripts, or interactively for
+data retrieval and analysis, social media integration, automation, and fun.
 
 .. _VK: https://vk.com
-
-* **cross-platform:**
-  Supports both Python 2 and 3.
-* **user-friendly:**
-  Robust authorisation. Error handling.
-* **smart:**
-  Renews expired authorisation.
-  Repeats failed requests.
-  Delays too frequent requests.
-* **configurable:**
-  Exposes parameters of HTTP requests,
-  logging,
-  user input,
-  API version,
-  error handling,
-  and so on.
+.. _VK API: https://vk.com/dev/
 
 
 Usage
@@ -32,47 +20,139 @@ Authorisation
 .. code-block:: python
 
     >>> from pyvk import API
-    >>> vk = API(api_id=<...>, username=<...>)
+    >>> api = API(api_id=<...>, username=<...>)
     Password: <...>
 
-Password is requested only for the first time:
-PyVK stores `API token`_ on disk and renews it automatically.
+The password is requested only once:
+PyVK caches an `API token`_ and renews it automatically.
+This ensures that your password is not stored anywhere in plain-text.
 Secret code, mobile phone, and captcha
-may also be requested during the initial authorisation.
+may also be needed during authorisation depending on your profile settings.
 
-.. _API token: https://new.vk.com/dev/access_token
+.. _API token: https://vk.com/dev/access_token
 
-One can also directly specify an API token obtained elsewhere:
+By default PyVK reads the information from the standard input.
+You can also define custom credential providers if your application
+is not supposed to have an interactive shell session.
 
-.. code-block:: python
-
-    >>> vk = API(token=<...>)
-
-Method Calls
-============
+If you have obtained an API token elsewhere, you can use it directly.
+Note that in this case PyVK will not renew the token when it is expired.
 
 .. code-block:: python
 
-    >>> vk.users.get(user_ids=['haroldpain'], fields=['home_town'])
-    [{'last_name': 'Arató', 'home_town': 'Kőszeg', 'first_name': 'András', 'id': 329237321}]
+    >>> api = API(token=<...>)
 
-    >>> albums = vk.photos.getAlbums(owner_id=329237321)
-    >>> {a['title'] for a in albums['items']}
-    {'Zuglói képek', 'In the arboretum of the Horticulture University in Budapest'}
+Access rights are configured by passing a desired `access bitmask`_
+into a ``scope`` argument:
 
-See `list of methods`_ at VK developers section.
+.. _access bitmask: https://vk.com/dev/permissions
+
+.. code-block:: python
+
+    >>> from pyvk import p_audio, p_wall, p_messages
+    >>> api = API(api_id=<...>, username=<...>, scope=p_audio | p_wall | p_messages)
+
+By default ``p_basic`` is used, it ensures an access to
+friends, photos, audio/video, messages, wall, and groups.
+Use ``p_all`` if you like to live dangerously.
+
+
+Request Handler and Configuration
+=================================
+
+Once authorised, get a request handler. A default one is good enough:
+
+.. code-block:: python
+
+    >>> vk = api.get_handler()  # default handler
+
+Handlers can be customised with
+global API settings, request parameters, and error handling options:
+
+.. code-block:: python
+
+    >>> vk = api.get_handler(version='5.21', lang='en', max_attempts=10, timeout=30.)
+
+
+API Calls
+=========
+
+Lets call a couple of `VK API methods`_:
+
+.. _VK API methods: https://vk.com/dev/methods
+
+.. code-block:: python
+
+    >>> vk.users.get(user_ids=[210700286], fields=['bdate'])
+    [{'first_name': 'Lindsey', 'last_name': 'Stirling', 'id': 210700286, 'bdate': '21.9.1986'}]
+
+    >>> pprint(vk.audio.search(q='The Beatles - Let It Be', count=1))
+    {'count': 18006,
+     'items': [{'artist': 'The Beatles',
+                'date': 1308179559,
+                'duration': 243,
+                'genre_id': 1,
+                <...>
+                'title': 'Let It Be',
+                'url': 'https://cs9-15v4.vk.me/<...>'}]}
+
 Note that pythonic integers and lists can be used
 where the official API documentation specify
 numbers (including negative)
 and comma-separated lists.
 
-.. _list of methods: https://new.vk.com/dev/methods
+Error Handling
+==============
+
+VK API errors can be catched as exceptions:
+
+.. code-block:: python
+
+    >>> from pyvk.exceptions import APIError
+    >>> try:
+    ...     vk.docs.get()
+    ... except APIError as err:
+    ...     print('Error %d: %s' % (err.attrs['code'], err.attrs['msg']))
+
+    Error 15: Access denied: no access to call this method
+
+However, PyVK can handle some recoverable errors
+("too many requests per second", "captcha needed", and the like)
+by its own:
+
+.. code-block:: python
+
+    >>> for i in range(1, 100000):
+    ...     vk.users.get(user_ids=[i])
+    ...     print(i, end=' ')
+    ...     sys.stdout.flush()
+    1 2 3 4 5 6 7 8 9 10 11 12 13 14 <...> pyvk.request INFO: Too many requests per second. Wait 0.3 sec and retry.
+    <...> pyvk.request INFO: Too many requests per second. Wait 0.6 sec and retry.
+    <...> pyvk.request INFO: Too many requests per second. Wait 0.9 sec and retry.
+    15 16 17 18 19 20 <...>
+
+
+If that is not what you want, just make your request handler a bit dumber:
+
+.. code-block:: python
+
+    >>> vk = api.get_handler(auto_reauth=False, slow_down=False, validation=False)
+
+Or pass ``raw_response=True`` to work with JSON responses directly:
+
+.. code-block:: python
+
+    >>> vk = api.get_handler(raw_response=True)
+    >>> vk.docs.get()
+    {'error': {'error_code': 15, 'error_msg': 'Access denied: no access to call this method', <...>}}
+
+
 
 
 Credits
 -------
 
-Some ideas (such as first-class queryset-like methods)
-are inspired by `vk-requests`_.
+The idea of first-class queryset-like method calls
+is inspired by `vk-requests`_.
 
 .. _vk-requests: https://github.com/prawn-cake/vk-requests
