@@ -144,8 +144,8 @@ class Request(object):
 
                 # Validation needed.
                 elif e.code == 17 and self._config.validation:
-                    logger.debug('Validation needed: %s' % url)
                     url = e.error['redirect_uri']
+                    logger.debug('Validation needed: %s' % url)
                     response = requests.get(url, timeout=self._config.timeout)
                     self._auth.auth('router', response)
                     logger.debug('Continue...')
