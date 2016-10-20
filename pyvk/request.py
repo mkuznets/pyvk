@@ -61,6 +61,8 @@ class Request(object):
         args = self._args.copy()
         args['access_token'] = self._auth.token
         args['v'] = args.get('v', self._config.version)
+        if self._config.lang:
+            args['lang'] = self._config.lang
 
         url = 'https://api.vk.com/method/%s?%s' \
               % (self._method, urlencode(args))
