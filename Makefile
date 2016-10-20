@@ -4,7 +4,10 @@ PY2_DIR=.py2
 PY3_DIR=.py3
 REQUIREMENTS="requirements.txt"
 
-all: vclean vcreate vsetup
+all: test
+
+test:
+	py.test --cov-report term-missing --cov=pyvk
 
 vcreate:
 	virtualenv --always-copy $(PY2_DIR)
