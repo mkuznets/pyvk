@@ -16,11 +16,11 @@ else:
     from urllib.parse import urlparse, ParseResult, parse_qs, urlencode
 
 
-class Session:
+class Session(object):
     def __init__(self, handler):
         self.handler = handler
         self.cookies = {}
-        super().__init__()
+        super(Session, self).__init__()
 
     def get(self, url, *args, **kwargs):
         return self.handler('GET', url, *args, **kwargs)
@@ -35,7 +35,7 @@ def selector(session):
     return _callable
 
 
-class Response:
+class Response(object):
     def __init__(self, url, text):
         self.url = url
         self.text = text
@@ -55,7 +55,7 @@ def test_auth_app_invalid():
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
             with pytest.raises(pyvk.exceptions.AuthError):
-                pyvk.API(123, token='foo')
+                pyvk.API(api_id=123, token='foo')
 
 
 @pytest.mark.skip()
@@ -70,7 +70,7 @@ def test_auth_token_only_invalid():
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
             with pytest.raises(pyvk.exceptions.AuthError):
-                pyvk.API(123, token='foo')
+                pyvk.API(api_id=123, token='foo')
 
 
 def test_auth_token_only_valid():
@@ -86,5 +86,5 @@ def test_auth_token_only_valid():
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
             token = 'fuuuuuuu'
-            api = pyvk.API(123, token=token)
+            api = pyvk.API(api_id=123, token=token)
             assert api.auth.token == token
