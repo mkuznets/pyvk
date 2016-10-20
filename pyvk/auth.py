@@ -9,8 +9,7 @@
     :license: MIT, see LICENSE for more details.
 """
 
-from __future__ import generators, with_statement, print_function, \
-    unicode_literals, absolute_import
+from __future__ import generators, with_statement, print_function, absolute_import
 
 from .utils import PY2
 
@@ -85,7 +84,7 @@ class Auth(object):
             except InvalidToken as err:
                 logger.debug('Cached token is invalid: %s' % err.args[0])
 
-            except (db_error, KeyError):
+            except db_error + (KeyError, ):
                 logger.debug('Authorisation cache does not exist or is empty')
 
     def _test_and_set_token(self, token):
