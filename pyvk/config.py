@@ -78,6 +78,7 @@ class GlobalConfig(Config):
 
 
 class AuthConfig(GlobalConfig):
+    api_id = None           # type: int
     scope = p_basic         # type: int
     disable_cache = False   # type: bool
     token = None            # type: str
@@ -87,7 +88,8 @@ class AuthConfig(GlobalConfig):
 class RequestConfig(GlobalConfig):
     version = GlobalConfig.version                  # type: str
     auto_reauth = True  # type: bool
-    slow_down = False   # type: bool
+    validation = True   # type: bool
+    slow_down = True   # type: bool
     max_attempts = 5    # type: int
     raw_response = False                            # type: bool
     user_agent = 'Mozilla/5.0(Windows NT 6.1; WOW64; rv:22.0)' \

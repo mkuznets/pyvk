@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class API(object):
-    def __init__(self, api_id, **kwargs):
+    def __init__(self, **kwargs):
         self.config = GlobalConfig(**kwargs)
 
         log_file = {'filename': self.config.log_file} \
@@ -31,7 +31,7 @@ class API(object):
                             level=self.config.log_level,
                             **log_file)
         # Singleton
-        self.auth = Auth(api_id, AuthConfig(**kwargs))
+        self.auth = Auth(AuthConfig(**kwargs))
 
         if not self.auth.token:
             self.auth.auth()

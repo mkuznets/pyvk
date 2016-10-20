@@ -42,13 +42,13 @@ logger = logging.getLogger(__name__)
 
 class Auth(object):
 
-    def __init__(self, api_id, config):
+    def __init__(self, config):
         self.config = config
-        self.api_id = api_id
 
         self.http = requests.Session()
         self.token = None
         self.scope = None
+        self.api_id = self.config.api_id
         self.username = self.config.username
         self._state = None
 

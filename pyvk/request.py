@@ -121,14 +121,14 @@ class Request(object):
                                     'repeating the request...')
 
                 # Requests are too ofter.
-                elif e.code in (6, 9):
+                elif e.code in (6, 9) and self._config.slow_down:
                     t = 0.3 * (attempt + 1)
                     logger.info('Too many requests per second. '
                                 'Wait %.1f sec and retry.' % t)
                     sleep(t)
 
                 # Captcha needed.
-                elif e.code == 14:
+                elif e.code == 14 and self._config.validation:
                     logger.debug('Captcha needed')
                     try:
                         self._args['captcha_sid'] = e.error['captcha_sid']
@@ -143,7 +143,7 @@ class Request(object):
                         self._args['captcha_key'] = key
 
                 # Validation needed.
-                elif e.code == 17:
+                elif e.code == 17 and self._config.validation:
                     logger.debug('Validation needed: %s' % url)
                     url = e.error['redirect_uri']
                     response = requests.get(url, timeout=self._config.timeout)
