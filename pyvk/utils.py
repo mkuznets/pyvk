@@ -24,22 +24,33 @@ if PY2:
 class Prompt(object):
 
     @staticmethod
-    def ask_text(prompt):
+    def prompt(prompt):
         return input(prompt).strip()
 
     @staticmethod
-    def ask_username():
-        return Prompt.ask_text('Username (email of mobile number): ')
+    def ask(field, **kwargs):
 
-    @staticmethod
-    def ask_password():
-        return getpass.getpass('Password: ')
+        if field == 'username':
+            return Prompt.prompt('Username (email of mobile number): ')
 
-    @staticmethod
-    def ask_secret_code():
-        return Prompt.ask_text('Secret code: ')
+        elif field == 'api_id':
+            return Prompt.prompt('API ID: ')
 
-    @staticmethod
-    def ask_captcha(img):
-        text = "%s\nEnter text from the picture above" % img
-        return Prompt.ask_text(text)
+        elif field == 'password':
+            return getpass.getpass('Password: ')
+
+        elif field == 'secret_code':
+            return Prompt.prompt('Secret code: ')
+
+        elif field == 'phone':
+            try:
+                return Prompt.prompt('%s: ' % kwargs['msg'])
+            except KeyError:
+                raise ValueError('Message is not provided')
+
+        elif field == 'captcha':
+            try:
+                text = "%s\nEnter text from the picture above" % kwargs['img']
+                return Prompt.prompt('Secret code: ')
+            except KeyError:
+                raise ValueError('Image URL is not provided')

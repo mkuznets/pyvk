@@ -9,7 +9,8 @@
     :license: MIT, see LICENSE for more details.
 """
 
-from __future__ import generators, with_statement, print_function, absolute_import
+from __future__ import (generators, with_statement,
+                        print_function, absolute_import)
 
 from .utils import PY2
 
@@ -18,23 +19,22 @@ import lxml.html
 import requests
 import hashlib
 import logging
+import traceback
 import shelve
 import textwrap
 from appdirs import AppDirs
 from .exceptions import AuthError, ReqError, InvalidToken, APIError
 from .config import RequestConfig
 from .request import Request
-from requests.exceptions import RequestException
 
-
-if PY2:
+if PY2:  # pragma: no cover
     from urlparse import urlparse, parse_qs, urljoin
     from urllib import urlencode
     from anydbm import error as db_error
-else:
+
+else:  # pragma: no cover
     from urllib.parse import urlparse, parse_qs, urlencode, urljoin
     from dbm import error as db_error
-
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +47,8 @@ class Auth(object):
         self.http = requests.Session()
         self.token = None
         self.scope = None
-        self.api_id = self.config.api_id
-        self.username = self.config.username
+        self.api_id = None
+        self.username = None
         self._state = None
 
         if self.config.token:
@@ -57,35 +57,36 @@ class Auth(object):
             logger.debug('Token is valid.')
             return
 
-        if not self.config.username:
-            logger.info('Username is not provided')
-            self.username = self.config.prompt.ask_username()
+        self.api_id = (self.config.api_id
+                       or self.config.prompt.ask('api_id'))
+        self.username = (self.config.username
+                         or self.config.prompt.ask('username'))
 
-        if not self.config.disable_cache:
-            try:
-                cache = shelve.open(self._cache_filename, flag='r', protocol=2)
-                self.http.cookies.update(cache.get('cookies', {}))
+        if self.config.disable_cache:
+            return
 
-                logger.debug('Cheking cached token...')
-                self._test_and_set_token(cache['token'])
+        try:
+            cache = shelve.open(self._cache_path, flag='r', protocol=2)
+            self.http.cookies.update(cache.get('cookies', {}))
 
-                # Token has to have at least as many permissions as requested.
-                if self.config.scope <= self.scope:
-                    logger.debug('Token is valid.')
-                else:
-                    # TODO: Cached token does not have enough permission
-                    self.token = None
-                    self.scope = None
-                cache.close()
+            logger.debug('Testing cached token...')
+            self._test_and_set_token(cache['token'])
 
-            except RequestException:
-                raise
+            # Token has to have at least as many permissions as requested.
+            if self.config.scope <= self.scope:
+                logger.debug('Cached token is valid.')
+            else:
+                logger.debug('Token does not have requested access rights')
+                self.token = self.scope = None
 
-            except InvalidToken as err:
-                logger.debug('Cached token is invalid: %s' % err.args[0])
+            # NOTE: context manager is not used for Python 2 compatibility
+            cache.close()
 
-            except db_error + (KeyError, ):
-                logger.debug('Authorisation cache does not exist or is empty')
+        except InvalidToken as err:
+            logger.debug('Cached token is invalid: %s' % err.err_text)
+
+        except db_error + (KeyError,):
+            logger.debug('Authorisation cache does not exist or is empty')
 
     def _test_and_set_token(self, token):
         self.token = token
@@ -96,7 +97,7 @@ class Auth(object):
 
         except APIError as err:
             self.token = None
-            raise InvalidToken(err.msg, exc=err)
+            raise InvalidToken(err.attrs['msg'], exc=err)
 
         except ReqError as err:
             self.token = None
@@ -118,9 +119,10 @@ class Auth(object):
             args = result[1:]
 
     @property
-    def _cache_filename(self):
-        if self.api_id is None or self.username is None:
-            raise ValueError('API ID and username have to be set')
+    def _cache_path(self):
+        # Username and API ID are either passed as arguments or requested from
+        # user at the point where this method is used.
+        assert self.username is not None and self.api_id is not None
 
         cache_dir = AppDirs('pyvk').user_cache_dir
         if not os.path.exists(cache_dir):
@@ -140,6 +142,10 @@ class Auth(object):
             data = response.json()
             if 'error' in data:
                 raise AuthError('Error occured', error=data)
+
+            # No known cases of non-error JSON
+            raise AuthError('Unexpected JSON response', response=response)
+
         except ValueError:
             # Not JSON, treat response as HTML
             pass
@@ -158,7 +164,7 @@ class Auth(object):
         elif 'err' in urlp.path:
             logger.debug('Error occured, trying to repeat...')
             self.http.cookies.clear()
-            return ('auth_page', )
+            return ('auth_page',)
 
         # Parse HTML
         else:
@@ -176,15 +182,13 @@ class Auth(object):
                 act, = parse_qs(urlparse(act_url).query)['act']
 
                 if act == 'login':
-                    fields = {k: form.fields[k] for k in ('email', 'pass')}
                     return (act, act_url, dict(form.fields))
 
                 elif act == 'grant_access':
                     return (act, act_url)
 
                 elif act == 'authcheck_code':
-                    fields = {k: form.fields[k] for k in ('remember', 'code')}
-                    return (act, act_url, fields)
+                    return (act, act_url, dict(form.fields))
 
                 elif act == 'security_check':
                     prefixes = doc.xpath("//span[@class='field_prefix']")
@@ -212,7 +216,7 @@ class Auth(object):
 
             except (KeyError, ValueError) as err:
                 raise AuthError('Unrecognised auth page', response=response,
-                                exc=err)
+                                exc=err, traceback=traceback.format_exc())
 
     def _s_auth_page(self):
         q = {'client_id': self.api_id, 'scope': self.config.scope,
@@ -228,20 +232,20 @@ class Auth(object):
     def _s_login(self, action_url, fields):
         # Collect post data from the form and fill user-defined fields.
         fields['email'] = self.username
-        fields['pass'] = self.config.prompt.ask_password()
+        fields['pass'] = self.config.prompt.ask('password')
 
         r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
         return ('router', r)
 
     def _s_authcheck_code(self, action_url, fields):
         fields['remember'] = 0
-        fields['code'] = self.config.prompt.ask_secret_code()
+        fields['code'] = self.config.prompt.ask('secret_code')
 
         r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
         return ('router', r)
 
     def _s_security_check(self, action_url, msg, fields):
-        fields['code'] = self.config.prompt.ask_text(msg)
+        fields['code'] = self.config.prompt.ask('phone', msg=msg)
 
         r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
         return ('router', r)
@@ -255,11 +259,11 @@ class Auth(object):
 
         if not self.config.disable_cache:
             try:
-                cache = shelve.open(self._cache_filename, flag='n', protocol=2)
+                cache = shelve.open(self._cache_path, flag='n', protocol=2)
                 cache['token'] = self.token
                 cache['cookies'] = self.http.cookies.get_dict()
                 cache.close()
             except db_error:
                 logger.debug('%s: Cannot open or create cache file.'
-                             % self._cache_filename)
-        return ('exit', )
+                             % self._cache_path)
+        return ('exit',)
