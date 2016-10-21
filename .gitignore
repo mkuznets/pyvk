@@ -8,7 +8,6 @@ __pycache__
 *.swo
 *.out
 *.rt
-*.ini
 *.bak
 dist
 build
