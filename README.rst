@@ -2,6 +2,15 @@
 VK API for Python
 -----------------
 
+.. image:: https://travis-ci.org/mkuznets/pyvk.svg?branch=master
+    :target: https://travis-ci.org/mkuznets/pyvk
+
+.. image:: https://coveralls.io/repos/github/mkuznets/pyvk/badge.svg?branch=master
+    :target: https://coveralls.io/github/mkuznets/pyvk?branch=master
+
+.. image:: https://img.shields.io/pypi/v/pyvk.svg?style=flat
+    :target: https://pypi.python.org/pypi/pyvk
+
 `VK`_ is one of the major Russian-speaking social networks.
 **PyVK** is a no-nonsence boilerplate-free `VK API`_ library for Python.
 It can be used in server or client applications, scripts, or interactively for
