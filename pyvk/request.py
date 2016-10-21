@@ -141,7 +141,7 @@ class Request(object):
                                        'is malformed', exc=e)
 
                     else:
-                        key = self._config.prompt.ask_captcha(img)
+                        key = self._config.prompt.ask('captcha', img=img)
                         self._args['captcha_key'] = key
 
                 # Validation needed.
