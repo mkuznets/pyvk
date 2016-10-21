@@ -12,12 +12,6 @@ setup(
         'appdirs',
     ],
 
-    tests_require=[
-        'mock',
-        'pytest',
-        'pytest-cov',
-    ],
-
     author='Max Kuznetsov',
     author_email='maks.kuznetsov@gmail.com',
     description='VK API for Python',

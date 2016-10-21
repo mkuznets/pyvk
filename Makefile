@@ -7,7 +7,7 @@ REQUIREMENTS="requirements.txt"
 all: test
 
 test:
-	py.test --cov-report term-missing --cov=pyvk
+	coverage run --branch --source pyvk -m py.test
 
 vcreate:
 	virtualenv --always-copy $(PY2_DIR)
