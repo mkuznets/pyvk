@@ -43,7 +43,7 @@ p_all = p_notify | p_friends | p_photos | p_audio | p_video \
 
 
 p_basic = p_friends | p_photos | p_audio | p_video | p_status | p_messages \
-    | p_wall | p_groups
+    | p_wall | p_groups | p_offline
 
 
 class Config:
