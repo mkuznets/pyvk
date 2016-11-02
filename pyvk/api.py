@@ -26,17 +26,18 @@ if PY2:
 else:
     from urllib.parse import urlencode
 
+logging.getLogger('requests').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
 class API(object):
-    def __init__(self, token, **kwargs):
+    def __init__(self, token=None, **kwargs):
         self.config = conf = APIConfig(**kwargs)
         setup_logger(conf)
         self._token = token
 
         self._fixed_args = urlencode(
-            {'access_token': token,
+            {'access_token': token or '',
              'lang': conf.lang,
              'v': conf.version}
         )
