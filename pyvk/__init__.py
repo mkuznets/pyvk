@@ -11,8 +11,9 @@
 
 
 from .api import API
-from . import config
+from .auth import ClientAuth, ServerAuth
+from . import constants
 from . import exceptions
 
-globals().update({k: v for k, v in config.__dict__.items()
+globals().update({k: v for k, v in constants.__dict__.items()
                   if k.startswith('p_')})

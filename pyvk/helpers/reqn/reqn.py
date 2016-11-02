@@ -21,16 +21,16 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # Index result classes by API method names
-result_classes = {v.method_name: v
+result_classes = {v.method: v
                   for k, v in inspect.getmembers(results, inspect.isclass)
                   if k.startswith('Result')}
 logger.debug('Supported methods: %s' % list(result_classes.keys()))
 
 
-def reqn(partial_req, n=None, batch_size=None, **api_method_args):
+def reqn(partial_call, n=None, batch_size=None, **api_method_args):
 
-    method_name = partial_req.method_name()
-    result = result_classes[method_name](api_method_args)
+    method = partial_call.method
+    result = result_classes[method](api_method_args)
 
     # Get two batch size iterators for offset calculation and for constructing
     # the (offset,size)-schedule.
@@ -64,8 +64,8 @@ def reqn(partial_req, n=None, batch_size=None, **api_method_args):
 
     for offset, size in schedule:
         logger.debug("Requesting batch: %s for offset=%d, count=%d"
-                     % (method_name, offset, size))
-        data = partial_req(**dict(api_method_args, offset=offset, count=size))
+                     % (method, offset, size))
+        data = partial_call(**dict(api_method_args, offset=offset, count=size))
 
         n_items = result.count_new_items(data)
         logger.debug('Fetched %d new items' % n_items)

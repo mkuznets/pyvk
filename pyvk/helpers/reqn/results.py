@@ -15,7 +15,7 @@ from itertools import chain, repeat
 
 
 class _Result:
-    method_name = None
+    method = None
     result = None
     batch_size_iter = None
 
@@ -44,7 +44,7 @@ class ResultItemList(_Result):
 
 
 class ResultWallGet(_Result):
-    method_name = 'wall.get'
+    method = 'wall.get'
 
     def __init__(self, args):
         self.result = {'count': 0, 'items': []}
@@ -65,7 +65,7 @@ class ResultWallGet(_Result):
 
 
 class ResultWallGetReposts(_Result):
-    method_name = 'wall.getReposts'
+    method = 'wall.getReposts'
 
     def __init__(self, args):
         self.result = {'items': [], 'profiles': [], 'groups': []}
@@ -78,19 +78,19 @@ class ResultWallGetReposts(_Result):
 
 
 class ResultWallSearch(ResultWallGet):
-    method_name = 'wall.search'
+    method = 'wall.search'
 
 
 class ResultUsersSearch(ResultItemList):
-    method_name = 'users.search'
+    method = 'users.search'
 
 
 class ResultUsersGetFollowers(ResultItemList):
-    method_name = 'users.getFollowers'
+    method = 'users.getFollowers'
 
 
 class ResultUsersGetSubscriptions(ResultItemList):
-    method_name = 'users.getSubscriptions'
+    method = 'users.getSubscriptions'
     _batch_size = 200
 
     def __init__(self, args):
@@ -101,47 +101,47 @@ class ResultUsersGetSubscriptions(ResultItemList):
 
 
 class ResultFriendsGet(ResultItemList):
-    method_name = 'friends.get'
+    method = 'friends.get'
     _batch_size = 5000
 
 
 class ResultGroupsGet(ResultItemList):
-    method_name = 'groups.get'
+    method = 'groups.get'
 
 
 class ResultGroupsGetMembers(ResultItemList):
-    method_name = 'groups.getMembers'
+    method = 'groups.getMembers'
 
 
 class ResultPhotosGet(ResultItemList):
-    method_name = 'photos.get'
+    method = 'photos.get'
 
 
 class ResultPhotosSearch(ResultItemList):
-    method_name = 'photos.search'
+    method = 'photos.search'
 
 
 class ResultPhotosGetAlbums(ResultItemList):
-    method_name = 'photos.getAlbums'
+    method = 'photos.getAlbums'
     # NOTE: batch size is not mentioned in documentation, assume default
 
 
 class ResultPhotosGetUserPhotos(ResultItemList):
-    method_name = 'photos.getUserPhotos'
+    method = 'photos.getUserPhotos'
 
 
 class ResultPhotosGetAllComments(ResultItemList):
-    method_name = 'photos.getAllComments'
+    method = 'photos.getAllComments'
     _batch_size = 100
 
 
 class ResultPhotosGetNewTags(ResultItemList):
-    method_name = 'photos.getNewTags'
+    method = 'photos.getNewTags'
     _batch_size = 100
 
 
 class ResultFriendsGetOnline(_Result):
-    method_name = 'friends.getOnline'
+    method = 'friends.getOnline'
 
     def __init__(self, args):
         self.online_mobile = bool(args.get('online_mobile', False))
@@ -168,7 +168,7 @@ class ResultFriendsGetOnline(_Result):
 
 
 class ResultFriendsGetMutual(_Result):
-    method_name = 'friends.getMutual'
+    method = 'friends.getMutual'
 
     def __init__(self, args):
         self.multiple = bool(args.get('target_uids', False))
@@ -200,39 +200,39 @@ class ResultFriendsGetMutual(_Result):
 
 
 class ResultFriendsGetRequests(ResultItemList):
-    method_name = 'friends.getRequests'
+    method = 'friends.getRequests'
 
 
 class ResultFriendsGetSuggestions(ResultItemList):
-    method_name = 'friends.getSuggestions'
+    method = 'friends.getSuggestions'
     _batch_size = 500
 
 
 class ResultFriendsSearch(ResultItemList):
-    method_name = 'friends.search'
+    method = 'friends.search'
 
 
 class ResultAudioGet(ResultItemList):
-    method_name = 'audio.get'
+    method = 'audio.get'
     _batch_size = 5000
 
 
 class ResultAudioSearch(ResultItemList):
-    method_name = 'audio.search'
+    method = 'audio.search'
     _batch_size = 300
 
 
 class ResultAudioGetAlbums(ResultItemList):
-    method_name = 'audio.getAlbums'
+    method = 'audio.getAlbums'
     _batch_size = 100
 
 
 class ResultAudioGetRecommendations(ResultItemList):
-    method_name = 'audio.getRecommendations'
+    method = 'audio.getRecommendations'
 
 
 class ResultAudioGetPopular(_Result):
-    method_name = 'audio.getPopular'
+    method = 'audio.getPopular'
 
     def __init__(self, args):
         self.result = []
@@ -246,7 +246,7 @@ class ResultAudioGetPopular(_Result):
 
 
 class ResultNewsfeedGetMentions(ResultItemList):
-    method_name = 'newsfeed.getMentions'
+    method = 'newsfeed.getMentions'
     _batch_size = 50
 
 # TODO

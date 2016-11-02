@@ -16,16 +16,21 @@ from __future__ import generators, with_statement, print_function, \
 
 class PyVKError(Exception):
 
-    def __init__(self, err_text, **attrs):
-        self.err_text = err_text
-        self.attrs = attrs
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
 
-    def __str__(self):
-        args_text = "\n".join("  %s: %s" % (k, repr(v)) for k, v in self.attrs.items())
-        return "%s\nRelated attrs:\n%s" % (self.err_text, args_text)
+    def __repr__(self):
+        return "%s(%s, %s)" % (self.__class__.__name__,
+                               ', '.join(map(str, self.args)),
+                               ', '.join("%s=%s" % (k, repr(v)) for k,v in self.kwargs.items()))
+
+    __str__ = __repr__
 
     def __getattr__(self, name):
-        return self.attrs[name]
+        return self.kwargs[name]
+
+    __getitem__ = __getattr__
 
 
 class AuthError(PyVKError):

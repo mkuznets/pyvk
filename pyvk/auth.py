@@ -3,7 +3,7 @@
     pyvk.auth
     ~~~~~~~~~
 
-    Implements VK authentication and cookie storage.
+    Implements VK server- and client-side authorisation
 
     :copyright: (c) 2013-2016, Max Kuznetsov
     :license: MIT, see LICENSE for more details.
@@ -23,44 +23,110 @@ import traceback
 import shelve
 import textwrap
 from appdirs import AppDirs
+
+from .api import API
+from .utils import setup_logger
 from .exceptions import AuthError, ReqError, InvalidToken, APIError
-from .config import RequestConfig
-from .request import Request
+from .config import ServerAuthConfig, ClientAuthConfig, GlobalConfig
 
 if PY2:  # pragma: no cover
     from urlparse import urlparse, parse_qs, urljoin
-    from urllib import urlencode
     from anydbm import error as db_error
 
 else:  # pragma: no cover
-    from urllib.parse import urlparse, parse_qs, urlencode, urljoin
+    from urllib.parse import urlparse, parse_qs, urljoin
     from dbm import error as db_error
 
 logger = logging.getLogger(__name__)
 
 
 class Auth(object):
+    token = scope = api_id = config = None
 
-    def __init__(self, config):
-        self.config = config
+    def _test_and_set_token(self, token):
+        api = API(token=token)
+        try:
+            self.scope = api.call('account.getAppPermissions')
+            self.token = token
+
+        except APIError as exc:
+            raise InvalidToken(*exc.args, **exc.kwargs)
+
+        except ReqError as exc:
+            raise InvalidToken('Could not test the token', *exc.args,
+                               **exc.kwargs)
+
+    def get_api(self, **kwargs):
+        if self.token is None:
+            raise AuthError('Not authorised. '
+                            'Probably forgot to run .auth()?')
+
+        params = dict(GlobalConfig(**self.config))
+        params.update(kwargs)
+        return API(self.token, **params)
+
+
+class ServerAuth(Auth):
+
+    def __init__(self, api_id, redirect_uri,  **kwargs):
+        self.config = ServerAuthConfig(api_id=api_id, redirect_uri=redirect_uri,
+                                       **kwargs)
+        setup_logger(self.config)
+
+        self.api_id = self.config.api_id
+
+    @property
+    def auth_url(self):
+        url = 'https://oauth.vk.com/authorize' \
+              '?client_id={api_id}' \
+              '&display={display}' \
+              '&redirect_uri={redirect_uri}' \
+              '&scope={scope}' \
+              '&response_type=code' \
+              '&v={version}'.format(**self.config)
+        return url
+
+    def auth(self, code, client_secret):
+        url = 'https://oauth.vk.com/access_token' \
+              '?client_id={api_id}' \
+              '&client_secret={client_secret}' \
+              '&redirect_uri={redirect_uri}' \
+              '&code={code}'.format(code=code, client_secret=client_secret,
+                                    **self.config)
+
+        response = requests.get(url, timeout=self.config.timeout)
+
+        try:
+            data = response.json()
+            token = data['access_token']
+            self._test_and_set_token(token)
+
+        except ValueError:
+            raise AuthError('Unexpected response', response=response)
+
+        except KeyError:
+            data = response.json()
+            if 'error' in data:
+                raise AuthError('API Error', **data)
+            else:
+                raise AuthError('Unexpected JSON response', response=response)
+
+
+class ClientAuth(Auth):
+    username = _state = None
+
+    def __init__(self, **kwargs):
+        self.config = ClientAuthConfig(**kwargs)
+        setup_logger(self.config)
 
         self.http = requests.Session()
-        self.token = None
-        self.scope = None
-        self.api_id = None
-        self.username = None
-        self._state = None
-
-        if self.config.token:
-            logger.debug('Testing the token provided...')
-            self._test_and_set_token(self.config.token)
-            logger.debug('Token is valid.')
-            return
 
         self.api_id = (self.config.api_id
                        or self.config.prompt.ask('api_id'))
         self.username = (self.config.username
                          or self.config.prompt.ask('username'))
+
+    def _test_and_set_cached_token(self):
 
         if self.config.disable_cache:
             return
@@ -82,28 +148,18 @@ class Auth(object):
             # NOTE: context manager is not used for Python 2 compatibility
             cache.close()
 
-        except InvalidToken as err:
-            logger.debug('Cached token is invalid: %s' % err.err_text)
+        except InvalidToken as exc:
+            logger.debug('Cached token is invalid: %s' % exc.args[0])
 
         except db_error + (KeyError,):
             logger.debug('Authorisation cache does not exist or is empty')
 
-    def _test_and_set_token(self, token):
-        self.token = token
-        req = Request('account.getAppPermissions', {}, self,
-                      RequestConfig(auto_reauth=False))
-        try:
-            self.scope = req.send()
-
-        except APIError as err:
-            self.token = None
-            raise InvalidToken(err.attrs['msg'], exc=err)
-
-        except ReqError as err:
-            self.token = None
-            raise InvalidToken('Could not test the token', exc=err)
-
     def auth(self, state=None, *args):
+
+        self._test_and_set_cached_token()
+        if self.token:
+            return
+
         self._state = state or 'auth_page'
 
         while self._state != 'exit':
@@ -219,14 +275,16 @@ class Auth(object):
                                 exc=err, traceback=traceback.format_exc())
 
     def _s_auth_page(self):
-        q = {'client_id': self.api_id, 'scope': self.config.scope,
-             'redirect_uri': 'https://oauth.vk.com/blank.html',
-             'display': 'mobile', 'v': self.config.version,
-             'response_type': 'token'}
+        url = 'https://oauth.vk.com/authorize' \
+              '?client_id={api_id}' \
+              '&display=mobile' \
+              '&redirect_uri=https://oauth.vk.com/blank.html' \
+              '&scope={scope}' \
+              '&response_type=token' \
+              '&v={version}'.format(**self.config)
 
         # Initiate authorisation.
-        r = self.http.get('https://oauth.vk.com/authorize?%s' % urlencode(q),
-                          timeout=self.config.timeout)
+        r = self.http.get(url, timeout=self.config.timeout)
         return ('router', r)
 
     def _s_login(self, action_url, fields):
