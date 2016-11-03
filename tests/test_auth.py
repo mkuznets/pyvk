@@ -12,7 +12,7 @@ from pyvk import p_all, p_basic
 from pyvk.utils import PY2
 from pyvk import ClientAuth
 
-from .utils import *
+from tests.utils import *
 
 if PY2:
     from urlparse import urlparse, parse_qsl
