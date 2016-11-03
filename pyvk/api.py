@@ -81,14 +81,16 @@ class API(object):
 
     def call(self, method, **args):
         conf = self.config
-
-        url = 'https://api.vk.com/method/{method}?{fixed_args}&{args}'.format(
-            method=method,
-            fixed_args=self._fixed_args,
-            args=urlencode(process_args(args))
-        )
+        args = process_args(args)
 
         for attempt in range(conf.max_attempts):
+
+            url = 'https://api.vk.com/method/{method}?{fixed_args}&{args}'.format(
+                method=method,
+                fixed_args=self._fixed_args,
+                args=urlencode(args)
+            )
+
             try:
                 return self._make_request(url)
 
