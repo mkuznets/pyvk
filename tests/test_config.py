@@ -1,5 +1,5 @@
 import pytest
-from pyvk.config import Config
+from pyvk.utils import Config
 
 
 class Global(Config):
@@ -28,3 +28,13 @@ def test_change_protection():
     config = Local()
     with pytest.raises(AttributeError):
         config.bar = 100
+
+
+def test_len():
+    config = Local()
+    assert len(config) == 2
+
+
+def test_repr():
+    config = Local()
+    assert eval(repr(config)) == config
