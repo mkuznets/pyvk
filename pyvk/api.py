@@ -21,9 +21,9 @@ from .constants import E_CAPTCHA, E_TOO_MANY, E_FLOOD
 from .exceptions import ReqError, APIError
 from .utils import PY2, process_args, setup_logger
 
-if PY2:
+if PY2:  # pragma: no cover
     from urllib import urlencode
-else:
+else:    # pragma: no cover
     from urllib.parse import urlencode
 
 logging.getLogger('requests').setLevel(logging.WARNING)

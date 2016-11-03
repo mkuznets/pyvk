@@ -18,7 +18,7 @@ PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
 
-if PY2:
+if PY2:  # pragma: no cover
     input = raw_input
 
 
@@ -40,7 +40,7 @@ def process_args(args):
         else:
             return item
 
-    return filter_dict({k: convert(v) for k,v in args.items()})
+    return filter_dict(dict((k, convert(v)) for k,v in args.items()))
 
 
 def setup_logger(config):
@@ -58,7 +58,7 @@ class Config(Mapping):
     def __init__(self, **params):
         for attr, value in params.items():
             setattr(self, attr, value)
-        self._len = len(list(iter(self)))
+        self._len = len(list(self.__iter__()))
 
         # Make attributes read-only
         self._lock = True
@@ -72,7 +72,7 @@ class Config(Mapping):
     def __iter__(self):
         def is_param(attr):
             return not (attr.startswith('_') or callable(getattr(self, attr)))
-        return filter(is_param, dir(self))
+        return (attr for attr in dir(self) if is_param(attr))
 
     def __repr__(self):
         params = ', '.join('%s=%s' % (k,repr(v))for k,v in self.items())

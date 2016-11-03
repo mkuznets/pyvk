@@ -263,7 +263,7 @@ class ClientAuth(Auth):
                     msg = "\n".join(textwrap.wrap(msg))
                     msg += "\n%s: " % number
 
-                    fields = {k: form.fields[k] for k in ('code',)}
+                    fields = dict((k, form.fields[k]) for k in ('code',))
 
                     return (act, act_url, msg, fields)
 
