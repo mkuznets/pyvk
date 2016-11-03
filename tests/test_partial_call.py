@@ -8,7 +8,7 @@ def test_request_handler_init():
     assert '.'.join(prefix) == call_init.method
 
 
-def test_request_handler_append():
+def test_append():
     prefix = ['foo', 'bar']
     suffix1 = 'buz'
     suffix2 = 'bam'
@@ -22,15 +22,20 @@ def test_request_handler_append():
     assert '.'.join(prefix + [suffix1, suffix2]) == call_final.method
 
 
-def test_request_handler_call():
+def test_call():
 
     api = mock.Mock()
     args = {'c': 100, 'd': 1000}
 
-    req = PartialCall(['c0'], api)
-    req.c1.c2(**args)
+    call = PartialCall(['c0'], api)
+    call.c1.c2(**args)
 
     api_call = mock.call.call('c0.c1.c2', **args)
 
     assert len(api.mock_calls) == 1
     assert api.mock_calls[0] == api_call
+
+
+def test_repr():
+    call = PartialCall(['foo', 'bar'], None)
+    assert call.method in repr(call)

@@ -46,7 +46,7 @@ class Auth(object):
     def _test_and_set_token(self, token):
         api = API(token=token)
         try:
-            self.scope = api.call('account.getAppPermissions')
+            self.scope = api.account.getAppPermissions()
             self.token = token
 
         except APIError as exc:

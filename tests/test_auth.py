@@ -4,70 +4,21 @@ from __future__ import generators, with_statement, print_function, \
 
 import os
 import mock
-import json
 import pytest
 from collections import namedtuple
 
 import pyvk
 from pyvk import p_all, p_basic
-from pyvk.utils import PY2, Prompt
-from pyvk.auth import ClientAuth
+from pyvk.utils import PY2
+from pyvk import ClientAuth
+
+from .utils import *
 
 if PY2:
     from urlparse import urlparse, parse_qsl
     from exceptions import IOError
 else:
     from urllib.parse import urlparse, parse_qsl
-
-
-class Session(object):
-    def __init__(self, handler, **kwargs):
-        self.handler = handler
-        self.cookies = {}
-        self.kwargs = kwargs
-        super(Session, self).__init__()
-
-    def get(self, url, *args, **kwargs):
-        kwargs = dict(kwargs)
-        kwargs.update(self.kwargs)
-        return self.handler('GET', url, *args, **kwargs)
-
-    def post(self, url, *args, **kwargs):
-        kwargs = dict(kwargs)
-        kwargs.update(self.kwargs)
-        return self.handler('POST', url, *args, **kwargs)
-
-
-def selector(session):
-    def _callable(*args, **kwargs):
-        return session
-    return _callable
-
-
-class Response(object):
-    def __init__(self, url, content):
-        self.url = url
-        self.content = content
-
-    def json(self):
-        return json.loads(self.text)
-
-    @property
-    def text(self):
-        return self.content.decode()
-
-
-class Fake(Prompt):
-    @staticmethod
-    def ask(field, **kwargs):
-        if field == 'secret_code':
-            return 'fooooo'
-        elif field == 'phone':
-            return '2323442'
-        elif field == 'password':
-            return 'qwerty'
-
-#  -----------------------------------------------------------------------------
 
 
 def test_auth_app_invalid():
