@@ -20,73 +20,116 @@ data retrieval and analysis, social media integration, automation, and fun.
 .. _VK API: https://vk.com/dev/
 
 
-Usage
------
+Quickstart
+----------
 
 Authorisation
 =============
 
-.. code-block:: python
+PyVK supports two types of authorisation:
 
-    >>> from pyvk import API
-    >>> api = API(api_id=<...>, username=<...>)
+* **Client-Side** (\"`Implicit`_\") flow
+  is suitable for interactive sessions and applications with a user interface.
+  In this mode a user provides their login/password directly to PyVK:
+
+  .. _Implicit: https://vk.com/dev/implicit_flow_user
+
+  .. code-block:: python
+
+    >>> from pyvk import ClientAuth
+    >>> auth = ClientAuth(api_id=<...>, username=<...>)
+    >>> auth.auth()
     Password: <...>
 
-The password is requested only once:
-PyVK caches an `API token`_ and renews it automatically.
-This ensures that your password is not stored anywhere in plain-text.
-Secret code, mobile phone, and captcha
-may also be needed during authorisation depending on your profile settings.
+  The password is requested only once.
+  PyVK remembers the access token and session cookies so that
+  next time the authorisation will succeed immediately.
+  This ensures that your password is not stored anywhere in plain-text.
+  PyVK may also request 2FA code, mobile number, and/or captcha
+  depending on your profile settings.
 
-.. _API token: https://vk.com/dev/access_token
+  By default PyVK reads the information from the standard input.
+  You can also define custom credential providers if your application
+  is not supposed to have a shell session.
+* **Server-Side** (\"`Authorisation code`_\") flow
+  is intended for long-running server scripts, web-services,
+  and other applications where there is no or limited user interaction.
+  In this mode a user should be redirected to VK login page:
 
-By default PyVK reads the information from the standard input.
-You can also define custom credential providers if your application
-is not supposed to have an interactive shell session.
+  .. _Authorisation code: https://vk.com/dev/implicit_flow_user
 
-If you have obtained an API token elsewhere, you can use it directly.
-Note that in this case PyVK will not renew the token when it is expired.
+  .. code-block:: python
 
-.. code-block:: python
+    >>> # User Interface
+    >>> from pyvk import ServerAuth, p_photos, p_audio
+    >>> auth = ServerAuth(api_id=<...>, redirect_uri='https://<example-server>/vkauth')
+    >>> auth.auth_url
+    'https://oauth.vk.com/authorize?client_id=<...>&display=page[...]&response_type=code'
 
-    >>> api = API(token=<...>)
+  Once the user granted permissions to your application,
+  VK API sends a unique code to the callback URL to complete the authorisation:
 
-Access rights are configured by passing a desired `access bitmask`_
-into a ``scope`` argument:
+  .. code-block:: python
+
+    >>> # App Server
+    >>> # GET /vkauth?code=<...>
+    >>> auth = ServerAuth(<...>)  # (same as at the first step)
+    >>> auth.auth(
+    ...     code=<...>,           # `code' from the query string
+    ...     client_secret=<...>   # secret key from VK application settings
+    ... )
+
+Either way,
+the access rights are configured by passing a desired `access bitmask`_
+with a ``scope`` argument.
 
 .. _access bitmask: https://vk.com/dev/permissions
 
 .. code-block:: python
 
-    >>> from pyvk import p_audio, p_wall, p_messages
-    >>> api = API(api_id=<...>, username=<...>, scope=p_audio | p_wall | p_messages)
+    >>> from pyvk import p_audio, p_offline
+    >>> api = ClientAuth(api_id=<...>, username=<...>, scope=p_audio | p_offline)
 
-By default ``p_basic`` is used, it ensures an access to
-friends, photos, audio/video, messages, wall, and groups.
-Use ``p_all`` if you like to live dangerously.
+By default ``p_basic`` is used for ``ClientAuth``. It gives a
+non-expiring access to friends, photos, audio/video, messages, wall, and groups.
+``p_offline`` is a default for ``ServerAuth``.
 
 
-Request Handler and Configuration
-=================================
+``API`` Object
+==============
 
-Once authorised, get a request handler. A default one is good enough:
+Once authorised, get youself an ``API`` object.
+A default one may be good enough for you:
 
 .. code-block:: python
 
-    >>> vk = api.get_handler()  # default handler
+    >>> vk = auth.get_api()
 
-Handlers can be customised with
+Or you can customise it with
 global API settings, request parameters, and error handling options:
 
 .. code-block:: python
 
-    >>> vk = api.get_handler(version='5.21', lang='en', max_attempts=10, timeout=30.)
+    >>> vk = auth.get_api(version='5.21', lang='en', max_attempts=10, timeout=30.)
+
+If you have obtained an API token elsewhere, you can use it directly:
+
+.. code-block:: python
+
+    >>> from pyvk import API
+    >>> vk = API(token=<...>)
+
+Frankly, for some VK API methods you do not even need the token:
+
+.. code-block:: python
+
+    >>> vk = API()
 
 
 API Calls
 =========
 
-Lets call a couple of `VK API methods`_:
+Let's call a couple of `VK API methods`_:
 
 .. _VK API methods: https://vk.com/dev/methods
 
@@ -105,8 +148,15 @@ Lets call a couple of `VK API methods`_:
                 'title': 'Let It Be',
                 'url': 'https://cs9-15v4.vk.me/<...>'}]}
 
+Or, without fancy attribute-chaining:
+
+.. code-block:: python
+
+    >>> vk.call('account.getInfo')
+    {'own_posts_default': 0, 'country': 'GB', 'intro': 0, 'no_wall_replies': 0, 'https_required': 1, 'lang': 3}
+
 Note that pythonic integers and lists can be used
-where the official API documentation specify
+where the official API documentation specifies
 numbers (including negative)
 and comma-separated lists.
 
@@ -145,7 +195,7 @@ If that is not what you want, just make your request handler a bit dumber:
 
 .. code-block:: python
 
-    >>> vk = api.get_handler(auto_reauth=False, slow_down=False, validation=False)
+    >>> vk = api.get_handler(slow_down=False, validation=False)
 
 Or pass ``raw_response=True`` to work with JSON responses directly:
 
