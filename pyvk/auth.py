@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 class Auth(object):
-    token = scope = api_id = config = None
+    token = scope = app_id = config = None
 
     def _test_and_set_token(self, token):
         api = API(token=token)
@@ -68,17 +68,17 @@ class Auth(object):
 
 class ServerAuth(Auth):
 
-    def __init__(self, api_id, redirect_uri,  **kwargs):
-        self.config = ServerAuthConfig(api_id=api_id, redirect_uri=redirect_uri,
+    def __init__(self, app_id, redirect_uri,  **kwargs):
+        self.config = ServerAuthConfig(app_id=app_id, redirect_uri=redirect_uri,
                                        **kwargs)
         setup_logger(self.config)
 
-        self.api_id = self.config.api_id
+        self.app_id = self.config.app_id
 
     @property
     def auth_url(self):
         url = 'https://oauth.vk.com/authorize' \
-              '?client_id={api_id}' \
+              '?client_id={app_id}' \
               '&display={display}' \
               '&redirect_uri={redirect_uri}' \
               '&scope={scope}' \
@@ -88,7 +88,7 @@ class ServerAuth(Auth):
 
     def auth(self, code, client_secret):
         url = 'https://oauth.vk.com/access_token' \
-              '?client_id={api_id}' \
+              '?client_id={app_id}' \
               '&client_secret={client_secret}' \
               '&redirect_uri={redirect_uri}' \
               '&code={code}'.format(code=code, client_secret=client_secret,
@@ -121,8 +121,8 @@ class ClientAuth(Auth):
 
         self.http = requests.Session()
 
-        self.api_id = (self.config.api_id
-                       or self.config.prompt.ask('api_id'))
+        self.app_id = (self.config.app_id
+                       or self.config.prompt.ask('app_id'))
         self.username = (self.config.username
                          or self.config.prompt.ask('username'))
 
@@ -178,7 +178,7 @@ class ClientAuth(Auth):
     def _cache_path(self):
         # Username and API ID are either passed as arguments or requested from
         # user at the point where this method is used.
-        assert self.username is not None and self.api_id is not None
+        assert self.username is not None and self.app_id is not None
 
         cache_dir = AppDirs('pyvk').user_cache_dir
         if not os.path.exists(cache_dir):
@@ -186,7 +186,7 @@ class ClientAuth(Auth):
             os.makedirs(cache_dir)
 
         h = hashlib.sha1()
-        h.update(str(self.api_id).encode())
+        h.update(str(self.app_id).encode())
         h.update(self.username.encode())
         return os.path.join(cache_dir, h.hexdigest())
 
@@ -276,7 +276,7 @@ class ClientAuth(Auth):
 
     def _s_auth_page(self):
         url = 'https://oauth.vk.com/authorize' \
-              '?client_id={api_id}' \
+              '?client_id={app_id}' \
               '&display=mobile' \
               '&redirect_uri=https://oauth.vk.com/blank.html' \
               '&scope={scope}' \

@@ -26,7 +26,7 @@ class GlobalConfig(Config):
 
 
 class ServerAuthConfig(GlobalConfig):
-    api_id = None           # type: int
+    app_id = None           # type: int
     scope = p_offline       # type: int
     redirect_uri = None     # type: str
     display = 'page'        # type: str
@@ -34,7 +34,7 @@ class ServerAuthConfig(GlobalConfig):
 
 
 class ClientAuthConfig(GlobalConfig):
-    api_id = None           # type: int
+    app_id = None           # type: int
     scope = p_basic         # type: int
     username = None         # type: str
     disable_cache = False   # type: bool

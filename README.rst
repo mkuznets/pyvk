@@ -37,7 +37,7 @@ PyVK supports two types of authorisation:
   .. code-block:: python
 
     >>> from pyvk import ClientAuth
-    >>> auth = ClientAuth(api_id=<...>, username=<...>)
+    >>> auth = ClientAuth(app_id=<...>, username=<...>)
     >>> auth.auth()
     Password: <...>
 
@@ -62,7 +62,7 @@ PyVK supports two types of authorisation:
 
     >>> # User Interface
     >>> from pyvk import ServerAuth, p_photos, p_audio
-    >>> auth = ServerAuth(api_id=<...>, redirect_uri='https://<example-server>/vkauth')
+    >>> auth = ServerAuth(app_id=<...>, redirect_uri='https://<example-server>/vkauth')
     >>> auth.auth_url
     'https://oauth.vk.com/authorize?client_id=<...>&display=page[...]&response_type=code'
 
@@ -88,7 +88,7 @@ with a ``scope`` argument.
 .. code-block:: python
 
     >>> from pyvk import p_audio, p_offline
-    >>> api = ClientAuth(api_id=<...>, username=<...>, scope=p_audio | p_offline)
+    >>> api = ClientAuth(app_id=<...>, username=<...>, scope=p_audio | p_offline)
 
 By default ``p_basic`` is used for ``ClientAuth``. It gives a
 non-expiring access to friends, photos, audio/video, messages, wall, and groups.

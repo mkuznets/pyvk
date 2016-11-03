@@ -103,7 +103,7 @@ class Prompt(object):
         if field == 'username':
             return Prompt.prompt('Username (email of mobile number): ')
 
-        elif field == 'api_id':
+        elif field == 'app_id':
             return Prompt.prompt('API ID: ')
 
         elif field == 'password':
