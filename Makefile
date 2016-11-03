@@ -3,6 +3,7 @@ SHELL := /bin/bash
 PY2_DIR=.py2
 PY3_DIR=.py3
 REQUIREMENTS="requirements.txt"
+REQUIREMENTS_TEST="requirements-test.txt"
 
 all: test
 
@@ -17,10 +18,12 @@ vcreate:
 vsetup:
 	( \
 	  . $(PY2_DIR)/bin/activate ; \
-	  pip install --upgrade -r $(REQUIREMENTS) ; \
+	  pip install -U pip ; \
+	  pip install -U -r $(REQUIREMENTS) -r $(REQUIREMENTS_TEST) ; \
 	  deactivate ; \
 	  . $(PY3_DIR)/bin/activate ; \
-	  pip install --upgrade -r $(REQUIREMENTS) ; \
+	  pip install -U pip ; \
+	  pip install -U -r $(REQUIREMENTS) -r $(REQUIREMENTS_TEST) ; \
 	  deactivate ; \
 	)
 
