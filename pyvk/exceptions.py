@@ -22,7 +22,7 @@ class PyVKError(Exception):
 
     def __repr__(self):
         return "%s(%s, %s)" % (self.__class__.__name__,
-                               ', '.join(map(str, self.args)),
+                               ', '.join(map(repr, self.args)),
                                ', '.join("%s=%s" % (k, repr(v)) for k,v in self.kwargs.items()))
 
     __str__ = __repr__
@@ -38,10 +38,6 @@ class AuthError(PyVKError):
 
 
 class InvalidToken(PyVKError):
-    pass
-
-
-class ReAuthNeeded(PyVKError):
     pass
 
 
