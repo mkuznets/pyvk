@@ -8,6 +8,7 @@ all: test
 
 test:
 	coverage run --branch --source pyvk -m py.test
+	coverage report -m
 
 vcreate:
 	virtualenv --always-copy $(PY2_DIR)
