@@ -81,7 +81,7 @@ def test_captcha():
             with open('tests/static/api_captcha.json', 'rb') as f:
                 return Response(url, f.read())
 
-    class FakeCaptcha(Prompt):
+    class FakeCaptcha(Input):
         @staticmethod
         def ask(field, **kwargs):
             if field == 'captcha':
@@ -91,5 +91,5 @@ def test_captcha():
     session = Session(handler)
     with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-        api = API(max_attempts=2, prompt=FakeCaptcha)
+        api = API(max_attempts=2, input=FakeCaptcha)
         api.vk.test()

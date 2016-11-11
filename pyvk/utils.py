@@ -19,7 +19,25 @@ PY3 = sys.version_info[0] == 3
 
 
 if PY2:  # pragma: no cover
+    from itertools import izip
     input = raw_input
+    zip = izip
+else:  # pragma: no cover
+    zip = zip
+
+
+def accumulate(iterable):
+    it = iter(iterable)
+
+    try:
+        total = next(it)
+        yield total
+    except StopIteration:
+        return
+
+    for element in it:
+        total += element
+        yield total
 
 
 def filter_dict(d):
@@ -40,7 +58,7 @@ def process_args(args):
         else:
             return item
 
-    return filter_dict(dict((k, convert(v)) for k,v in args.items()))
+    return filter_dict(dict((k, convert(v)) for k, v in args.items()))
 
 
 def setup_logger(config):
@@ -75,7 +93,7 @@ class Config(Mapping):
         return (attr for attr in dir(self) if is_param(attr))
 
     def __repr__(self):
-        params = ', '.join('%s=%s' % (k,repr(v))for k,v in self.items())
+        params = ', '.join('%s=%s' % (k, repr(v)) for k, v in self.items())
         return '{name}({params})'.format(name=self.__class__.__name__,
                                          params=params)
 
@@ -91,7 +109,7 @@ class Config(Mapping):
             pass
 
 
-class Prompt(object):
+class Input(object):
 
     @staticmethod
     def prompt(prompt):
@@ -101,26 +119,29 @@ class Prompt(object):
     def ask(field, **kwargs):
 
         if field == 'username':
-            return Prompt.prompt('Username (email of mobile number): ')
+            return Input.prompt('Username (email of mobile number): ')
 
         elif field == 'app_id':
-            return Prompt.prompt('API ID: ')
+            return Input.prompt('API ID: ')
 
         elif field == 'password':
             return getpass.getpass('Password: ')
 
         elif field == 'secret_code':
-            return Prompt.prompt('Secret code: ')
+            return Input.prompt('Secret code: ')
 
         elif field == 'phone':
             try:
-                return Prompt.prompt('%s: ' % kwargs['msg'])
+                return Input.prompt('%s: ' % kwargs['msg'])
             except KeyError:
                 raise ValueError('Message is not provided')
 
         elif field == 'captcha':
             try:
                 text = "%s\nEnter text from the picture above: " % kwargs['img']
-                return Prompt.prompt(text)
+                return Input.prompt(text)
             except KeyError:
                 raise ValueError('Image URL is not provided')
+
+        else:
+            raise ValueError('Unknown field')

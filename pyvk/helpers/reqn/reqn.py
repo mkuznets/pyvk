@@ -12,10 +12,11 @@
 """
 
 
-from itertools import chain, takewhile, accumulate, tee, repeat
+from itertools import chain, takewhile, tee, repeat
 import logging
 import inspect
 from . import results
+from pyvk.utils import accumulate, zip
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)

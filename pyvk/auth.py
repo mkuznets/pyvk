@@ -59,7 +59,7 @@ class Auth(object):
     def get_api(self, **kwargs):
         if self.token is None:
             raise AuthError('Not authorised. '
-                            'Probably forgot to run .auth()?')
+                            'Forgot to run .auth()?')
 
         params = dict(GlobalConfig(**self.config))
         params.update(kwargs)
@@ -122,9 +122,9 @@ class ClientAuth(Auth):
         self.http = requests.Session()
 
         self.app_id = (self.config.app_id
-                       or self.config.prompt.ask('app_id'))
+                       or self.config.input.ask('app_id'))
         self.username = (self.config.username
-                         or self.config.prompt.ask('username'))
+                         or self.config.input.ask('username'))
 
     def _test_and_set_cached_token(self):
 
@@ -290,20 +290,20 @@ class ClientAuth(Auth):
     def _s_login(self, action_url, fields):
         # Collect post data from the form and fill user-defined fields.
         fields['email'] = self.username
-        fields['pass'] = self.config.prompt.ask('password')
+        fields['pass'] = self.config.input.ask('password')
 
         r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
         return ('router', r)
 
     def _s_authcheck_code(self, action_url, fields):
         fields['remember'] = 0
-        fields['code'] = self.config.prompt.ask('secret_code')
+        fields['code'] = self.config.input.ask('secret_code')
 
         r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
         return ('router', r)
 
     def _s_security_check(self, action_url, msg, fields):
-        fields['code'] = self.config.prompt.ask('phone', msg=msg)
+        fields['code'] = self.config.input.ask('phone', msg=msg)
 
         r = self.http.post(action_url, data=fields, timeout=self.config.timeout)
         return ('router', r)

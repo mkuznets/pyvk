@@ -11,16 +11,16 @@
 
 import logging
 from .constants import p_basic, p_offline
-from .utils import Prompt, Config
+from .utils import Input, Config
 
 
 class GlobalConfig(Config):
     log_format = '%(asctime)s %(name)s %(levelname)s: %(message)s'  # type: str
     log_level = logging.INFO    # type: int
     log_file = None             # type: str
-    prompt = Prompt             # type: Prompt
+    input = Input             # type: Input
     timeout = 6.05              # type: float
-    version = '5.59'            # type: str
+    version = '5.60'            # type: str
     user_agent = 'Mozilla/5.0(Windows NT 6.1; WOW64; rv:22.0) ' \
                  'Gecko/20100101 Firefox/22.0'  # type: str
 

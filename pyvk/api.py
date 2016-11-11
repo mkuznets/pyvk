@@ -105,7 +105,7 @@ class API(object):
                     logger.debug('Captcha needed')
                     args['captcha_sid'] = exc.captcha_sid
 
-                    key = conf.prompt.ask('captcha', img=exc.captcha_img)
+                    key = conf.input.ask('captcha', img=exc.captcha_img)
                     args['captcha_key'] = key
 
                 # Cannot handle error, raise it as is.

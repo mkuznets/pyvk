@@ -1,4 +1,4 @@
-from pyvk.utils import Prompt
+from pyvk.utils import Input
 import json
 
 
@@ -39,7 +39,7 @@ class Response(object):
         return self.content.decode()
 
 
-class Fake(Prompt):
+class Fake(Input):
     @staticmethod
     def ask(field, **kwargs):
         if field == 'secret_code':
