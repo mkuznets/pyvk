@@ -1,17 +1,18 @@
 language: python
 python:
-  - "2.6"
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.5"
+- '2.6'
+- '2.7'
+- '3.3'
+- '3.4'
+- '3.5'
 env:
-  - CFLAGS="-O0" PYTHONDONTWRITEBYTECODE=1
+  global:
+  - CFLAGS="-O0"
+  - PYTHONDONTWRITEBYTECODE=1
+  - secure: bMsrnNducj+3XhKBjsh8ClcwHDUMamKZrRWHKBsF+D2r3PXKgfaTIAAIJoI2hpVR6Qb43kpAicFq6qoxSSLnuuOi7VcTJIsbZdAP+QUQ+ZyQYd2TXErlcOiTHDBABjC9LOI1gvhF9He4WQw2BcmGEsFaN8Tx2vzmqIZ+75G6lwY8N2EwKpEubp3JsNakbMZPmP8wSiOoCkYtnXj8Lvslx2oIfOSzAfo/H6j00OFDGFDCTfHjZ7og8wvBRR3SQ6edUJNzeb+BOaMW/1dmyw9/BtZcS6TGwNONi70UJj4w/7Tzs7Hyoj2jhMrD+WPYdUdizQRdYALYYb2tdJ6KyVmXXiQLpt1Fh9V0PpgAr0Gs8/EV+US62RsHKvlqZQuW2OzBx3GmoMJ7Q47PLLStZ0SUpq6sGYRkWE+oLQVgT7lL3Py2QU6hwCZnqDfquAY2FUIrPmWpMFmvxyWDjVycFj9OKLacaUACFa1GIDkJ5YxENk1rHvg2JWO0Y5dJDdsyGICKqSCaj41+0hwUrvVRVh8a4iBConf9hVFqyliF9PO2KOBqN/Yl0/1tdmHNm/5JIXB5rM/su5LdXzb6B7AXo0PqaYDKYQr4uyyIkSCRH9nfJL6BkvcLx7AIofajseslXLyKC4wspmPmsK+KpmgtWIZzZDVC7/TDHjbyJ+qaIC4Z/qw=
 install:
-  - "pip install -r requirements.txt"
-  - "pip install -r requirements-test.txt"
-  - "pip install coveralls"
-script:
-  make test
-after_success:
-  coveralls
+- pip install -r requirements.txt
+- pip install -r requirements-test.txt
+- pip install coveralls
+script: make test
+after_success: coveralls

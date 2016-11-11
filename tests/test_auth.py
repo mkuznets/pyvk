@@ -10,7 +10,7 @@ from collections import namedtuple
 import pyvk
 from pyvk import p_all, p_basic
 from pyvk.utils import PY2
-from pyvk import ClientAuth
+from pyvk import ClientAuth, ServerAuth
 
 from tests.utils import *
 
@@ -58,7 +58,7 @@ def test_auth_user_app_id_input():
 
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
-            auth = ClientAuth(disable_cache=True, prompt=Fake)
+            auth = ClientAuth(disable_cache=True, input=Fake)
             assert auth.username == Fake.ask('username')
             assert auth.app_id == Fake.ask('app_id')
 
@@ -102,10 +102,19 @@ def test_all_stages():
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-            auth = ClientAuth(disable_cache=True, prompt=Fake,
-                              username='johndoe', app_id=1234)
+            version = '5.0'
+
+            auth = ClientAuth(disable_cache=True, input=Fake,
+                              username='johndoe', app_id=1234, version=version)
             auth.auth()
             assert auth.token == token
+
+            # Test .get_api()
+            api = auth.get_api(user_agent='fff')
+            # Config propagation
+            assert api.config.version == version
+            assert api.config.user_agent == 'fff'
+            assert api._token == token
 
 
 def test_incorrect_info():
@@ -131,7 +140,7 @@ def test_incorrect_info():
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-            auth = ClientAuth(disable_cache=True, prompt=Fake,
+            auth = ClientAuth(disable_cache=True, input=Fake,
                               username='johndoe', app_id=1234)
 
             with pytest.raises(pyvk.exceptions.AuthError):
@@ -157,7 +166,7 @@ def test_security_check_corrupted_page():
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-            auth = ClientAuth(disable_cache=True, prompt=Fake,
+            auth = ClientAuth(disable_cache=True, input=Fake,
                               username='johndoe', app_id=1234)
 
             with pytest.raises(pyvk.exceptions.AuthError):
@@ -183,7 +192,7 @@ def test_unrecognised_form_action():
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-            auth = ClientAuth(disable_cache=True, prompt=Fake,
+            auth = ClientAuth(disable_cache=True, input=Fake,
                               username='johndoe', app_id=1234)
 
             with pytest.raises(pyvk.exceptions.AuthError):
@@ -210,7 +219,7 @@ def test_validation_failed():
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-            auth = ClientAuth(disable_cache=True, prompt=Fake,
+            auth = ClientAuth(disable_cache=True, input=Fake,
                               username='johndoe', app_id=1234)
 
             with pytest.raises(pyvk.exceptions.AuthError):
@@ -246,7 +255,7 @@ def test_corrupted_cookies():
     @mock.patch('pyvk.auth.requests.Session', new=selector(session))
     @mock.patch('pyvk.auth.requests.get', new=session.get)
     def run():
-        auth = ClientAuth(disable_cache=True, prompt=Fake,
+        auth = ClientAuth(disable_cache=True, input=Fake,
                           username='johndoe', app_id=1234)
 
         auth.auth('grant_access', 'https://login.vk.com/?act=grant_access')
@@ -290,7 +299,7 @@ def test_cached_token_valid():
     @mock.patch('pyvk.auth.shelve', fshelve)
     @mock.patch('pyvk.auth.ClientAuth._cache_path', cache_path)
     def run():
-        auth = ClientAuth(prompt=Fake, username='johndoe',
+        auth = ClientAuth(input=Fake, username='johndoe',
                           app_id=1234, scope=p_basic)
         auth.auth()
         assert auth.token == token
@@ -342,7 +351,7 @@ def test_cached_token_invalid():
         @mock.patch('pyvk.auth.shelve', fshelve)
         @mock.patch('pyvk.auth.ClientAuth._cache_path', cache_path)
         def run():
-            auth = ClientAuth(prompt=Fake, username='johndoe',
+            auth = ClientAuth(input=Fake, username='johndoe',
                               app_id=1234, scope=p_all)
             auth.auth(state='exit')
             assert auth.token is None
@@ -382,7 +391,7 @@ def test_cached_filename_new_dir():
     @mock.patch('pyvk.auth.AppDirs', appdirs)
     @mock.patch('pyvk.auth.os.makedirs', mk)
     def run():
-        auth = ClientAuth(prompt=Fake, username='johndoe',
+        auth = ClientAuth(input=Fake, username='johndoe',
                           app_id=1234, scope=p_all)
         return (auth, auth._cache_path)
 
@@ -442,7 +451,7 @@ def test_store_token():
     @mock.patch('pyvk.auth.shelve', fshelve)
     @mock.patch('pyvk.auth.ClientAuth._cache_path', cache_path)
     def run():
-        auth = ClientAuth(prompt=Fake, username='johndoe',
+        auth = ClientAuth(input=Fake, username='johndoe',
                           app_id=1234, scope=p_basic)
         auth.auth()
 
@@ -460,3 +469,59 @@ def test_store_token():
 
     fcache.__setitem__ = error
     run()
+
+
+def test_server_auth():
+
+    def handler(method, url, *args, **kwargs):
+        urlp = urlparse(url)
+        query = dict(parse_qsl(urlp.query))
+
+        responses = {
+            'valid': 'tests/static/server_auth_token.json',
+            'non_json': 'tests/static/server_auth_non_json.html',
+            'error': 'tests/static/server_auth_error.json',
+            'unrecognised': 'tests/static/server_auth_unrecognised.json',
+        }
+
+        if urlp.path.startswith('/method'):
+            assert query['access_token'] == 'fooo'
+            with open('tests/static/token_valid.json', 'rb') as f:
+                return Response(url, f.read())
+
+        elif urlp.path.startswith('/access_token'):
+            with open(responses[query['code']], 'rb') as f:
+                return Response(url, f.read())
+
+        else:
+            pytest.fail('Request is either not recognised '
+                        'or not expected: %s' % url)
+
+    session = Session(handler)
+
+    @mock.patch('pyvk.auth.requests.Session', new=selector(session))
+    @mock.patch('pyvk.auth.requests.get', new=session.get)
+    def run():
+        url = 'appserver.com'
+        auth = ServerAuth(1234, url)
+        assert url in auth.auth_url
+
+        auth.auth('valid', '123')
+        assert auth.token == 'fooo'
+
+        with pytest.raises(pyvk.exceptions.AuthError):
+            auth.auth('error', '123')
+
+        with pytest.raises(pyvk.exceptions.AuthError):
+            auth.auth('non_json', '123')
+
+        with pytest.raises(pyvk.exceptions.AuthError):
+            auth.auth('unrecognised', '123')
+
+    run()
+
+
+def test_get_api():
+    auth = ServerAuth(1234, 'aaa')
+    with pytest.raises(pyvk.exceptions.AuthError):
+        auth.get_api()
