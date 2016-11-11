@@ -275,13 +275,16 @@ class ClientAuth(Auth):
                                 exc=err, traceback=traceback.format_exc())
 
     def _s_auth_page(self):
+        args = dict(self.config)
+        args['app_id'] = self.app_id
+
         url = 'https://oauth.vk.com/authorize' \
               '?client_id={app_id}' \
               '&display=mobile' \
               '&redirect_uri=https://oauth.vk.com/blank.html' \
               '&scope={scope}' \
               '&response_type=token' \
-              '&v={version}'.format(**self.config)
+              '&v={version}'.format(**args)
 
         # Initiate authorisation.
         r = self.http.get(url, timeout=self.config.timeout)
