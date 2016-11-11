@@ -24,6 +24,7 @@ if PY2:  # pragma: no cover
     zip = izip
 else:  # pragma: no cover
     zip = zip
+    input = input
 
 
 def accumulate(iterable):

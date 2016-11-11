@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # Index result classes by API method names
-result_classes = {v.method: v
-                  for k, v in inspect.getmembers(results, inspect.isclass)
-                  if k.startswith('Result')}
+classes = inspect.getmembers(results, inspect.isclass)
+result_classes = dict(((v.method, v) for (k, v) in classes
+                       if k.startswith('Result')))
 logger.debug('Supported methods: %s' % list(result_classes.keys()))
 
 
