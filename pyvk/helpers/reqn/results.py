@@ -23,10 +23,10 @@ class _Result(object):
     def _merge_indexed_objects(self, data, object_name, key='id'):
         objects = chain(self.result[object_name], data[object_name])
 
+        items = dict(((x[key], x) for x in objects))
+
         # Filter duplicates by given key
-        self.result[object_name] = list(
-            {x[key]: x for x in objects}.values()
-        )
+        self.result[object_name] = list(items.values())
 
     def count_new_items(self, data):
         return len(data['items'])
