@@ -11,10 +11,11 @@
 """
 
 
+from pyvk.utils import zip
 from itertools import chain, repeat
 
 
-class _Result:
+class _Result(object):
     method = None
     result = None
     batch_size_iter = None
@@ -31,7 +32,7 @@ class _Result:
         return len(data['items'])
 
 
-class ResultItemList(_Result):
+class ResultItems(_Result):
     _batch_size = 1000
 
     def __init__(self, args):
@@ -41,6 +42,20 @@ class ResultItemList(_Result):
     def update(self, data):
         self.result['count'] = data['count']
         self.result['items'].extend(data['items'])
+
+
+class ResultList(_Result):
+    _batch_size = None
+
+    def __init__(self, args):
+        self.result = []
+        self.batch_size_iter = repeat(self._batch_size)
+
+    def update(self, data):
+        self.result.extend(data)
+
+    def count_new_items(self, data):
+        return len(data)
 
 
 class ResultWallGet(_Result):
@@ -81,15 +96,15 @@ class ResultWallSearch(ResultWallGet):
     method = 'wall.search'
 
 
-class ResultUsersSearch(ResultItemList):
+class ResultUsersSearch(ResultItems):
     method = 'users.search'
 
 
-class ResultUsersGetFollowers(ResultItemList):
+class ResultUsersGetFollowers(ResultItems):
     method = 'users.getFollowers'
 
 
-class ResultUsersGetSubscriptions(ResultItemList):
+class ResultUsersGetSubscriptions(ResultItems):
     method = 'users.getSubscriptions'
     _batch_size = 200
 
@@ -97,45 +112,45 @@ class ResultUsersGetSubscriptions(ResultItemList):
         if 'extended' not in args:
             raise ValueError('users.getSubscriptions: '
                              'batch request requires extended=1')
-        super().__init__(args)
+        super(ResultUsersGetSubscriptions, self).__init__(args)
 
 
-class ResultFriendsGet(ResultItemList):
+class ResultFriendsGet(ResultItems):
     method = 'friends.get'
     _batch_size = 5000
 
 
-class ResultGroupsGet(ResultItemList):
+class ResultGroupsGet(ResultItems):
     method = 'groups.get'
 
 
-class ResultGroupsGetMembers(ResultItemList):
+class ResultGroupsGetMembers(ResultItems):
     method = 'groups.getMembers'
 
 
-class ResultPhotosGet(ResultItemList):
+class ResultPhotosGet(ResultItems):
     method = 'photos.get'
 
 
-class ResultPhotosSearch(ResultItemList):
+class ResultPhotosSearch(ResultItems):
     method = 'photos.search'
 
 
-class ResultPhotosGetAlbums(ResultItemList):
+class ResultPhotosGetAlbums(ResultItems):
     method = 'photos.getAlbums'
     # NOTE: batch size is not mentioned in documentation, assume default
 
 
-class ResultPhotosGetUserPhotos(ResultItemList):
+class ResultPhotosGetUserPhotos(ResultItems):
     method = 'photos.getUserPhotos'
 
 
-class ResultPhotosGetAllComments(ResultItemList):
+class ResultPhotosGetAllComments(ResultItems):
     method = 'photos.getAllComments'
     _batch_size = 100
 
 
-class ResultPhotosGetNewTags(ResultItemList):
+class ResultPhotosGetNewTags(ResultItems):
     method = 'photos.getNewTags'
     _batch_size = 100
 
@@ -199,55 +214,53 @@ class ResultFriendsGetMutual(_Result):
             return len(data)
 
 
-class ResultFriendsGetRequests(ResultItemList):
+class ResultFriendsGetRequests(ResultItems):
     method = 'friends.getRequests'
 
 
-class ResultFriendsGetSuggestions(ResultItemList):
+class ResultFriendsGetSuggestions(ResultItems):
     method = 'friends.getSuggestions'
     _batch_size = 500
 
 
-class ResultFriendsSearch(ResultItemList):
+class ResultFriendsSearch(ResultItems):
     method = 'friends.search'
 
 
-class ResultAudioGet(ResultItemList):
+class ResultAudioGet(ResultItems):
     method = 'audio.get'
     _batch_size = 5000
 
 
-class ResultAudioSearch(ResultItemList):
+class ResultAudioSearch(ResultItems):
     method = 'audio.search'
     _batch_size = 300
 
 
-class ResultAudioGetAlbums(ResultItemList):
+class ResultAudioGetAlbums(ResultItems):
     method = 'audio.getAlbums'
     _batch_size = 100
 
 
-class ResultAudioGetRecommendations(ResultItemList):
+class ResultAudioGetRecommendations(ResultItems):
     method = 'audio.getRecommendations'
 
 
-class ResultAudioGetPopular(_Result):
+class ResultAudioGetPopular(ResultList):
     method = 'audio.getPopular'
-
-    def __init__(self, args):
-        self.result = []
-        self.batch_size_iter = repeat(1000)
-
-    def update(self, data):
-        self.result.extend(data)
-
-    def count_new_items(self, data):
-        return len(data)
+    _batch_size = 1000
 
 
-class ResultNewsfeedGetMentions(ResultItemList):
+class ResultNewsfeedGetMentions(ResultItems):
     method = 'newsfeed.getMentions'
     _batch_size = 50
+
+
+class ResultStorageGetKeys(ResultList):
+    method = 'storage.getKeys'
+    _batch_size = 1000
+
+
 
 # TODO
 
@@ -273,7 +286,7 @@ class ResultNewsfeedGetMentions(ResultItemList):
 # + friends.search
 # widgets.getComments
 # widgets.getPages
-# storage.getKeys
+# + storage.getKeys
 # + audio.get
 # + audio.search
 # + audio.getAlbums
