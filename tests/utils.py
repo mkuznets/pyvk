@@ -1,5 +1,26 @@
 from pyvk.utils import Input
 import json
+import os
+
+
+class EnvInput(Input):
+    @staticmethod
+    def ask(field, **kwargs):
+
+        if field == 'username':
+            return os.environ['API_USER']
+
+        elif field == 'app_id':
+            return os.environ['API_ID']
+
+        elif field == 'password':
+            return os.environ['API_PASS']
+
+        elif field == 'phone':
+            return os.environ['API_USER'][2:-2]
+
+        else:
+            raise ValueError('Unknown field')
 
 
 class Session(object):

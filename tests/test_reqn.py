@@ -1,10 +1,13 @@
 import os
 import pytest
-from pyvk import API
+from pyvk import ClientAuth, p_wall, p_friends
 from pyvk.utils import zip
 from pyvk.helpers import reqn
+from tests.utils import EnvInput
 
-api = API(os.environ['API_TOKEN'])
+auth = ClientAuth(input=EnvInput, scope=p_wall|p_friends, disable_cache=True)
+auth.auth()
+api = auth.get_api()
 
 
 def fetch(method, args, n, batch_size):
@@ -75,11 +78,22 @@ def test_reqn_users_getsubscriptions():
 def test_reqn_friends_getonline():
     method = api.friends.getOnline
 
-    args = dict(user_id=11651602, online_mobile=1)
-    fetch_and_compare(method, args, n=50, batch_size=10)
+    n = 5
+    # Online users are rather volatile, try several times.
+    for attempt in range(n):
+        try:
+            args = dict(user_id=11651602, online_mobile=1)
+            fetch_and_compare(method, args, n=50, batch_size=10)
+            args = dict(user_id=11651602)
+            fetch_and_compare(method, args, n=50, batch_size=10)
 
-    args = dict(user_id=11651602)
-    fetch_and_compare(method, args, n=50, batch_size=10)
+        except AssertionError:
+            if attempt == n-1:
+                raise
+            else:
+                continue
+
+        break
 
 
 def test_reqn_friends_getmutual():
