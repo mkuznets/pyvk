@@ -29,6 +29,19 @@ def test_invalid_json():
             api.vk.test()
 
 
+def test_malformed_json():
+
+    def handler(method, url, *args, **kwargs):
+        with open('tests/static/api_malformed.json', 'rb') as f:
+            return Response(url, f.read())
+
+    session = Session(handler)
+    with mock.patch('pyvk.auth.requests.get', new=session.get):
+        api = API()
+        with pytest.raises(pyvk.exceptions.ReqError):
+            api.vk.test()
+
+
 def test_valid_json():
 
     def handler(method, url, *args, **kwargs):
@@ -40,6 +53,11 @@ def test_valid_json():
         api = API(raw=True)
         data = api.vk.test()
         assert 'response' in data
+
+
+def test_token():
+    api = API(token='foobar')
+    assert api.token == 'foobar'
 
 
 def test_too_many():
@@ -100,6 +118,18 @@ def test_captcha():
 
     session = Session(handler)
     with mock.patch('pyvk.auth.requests.get', new=session.get):
-
         api = API(max_attempts=2, input=FakeCaptcha)
         api.vk.test()
+
+
+def test_unrecoverable_error():
+
+    def handler(method, url, *args, **kwargs):
+        with open('tests/static/api_some_error.json', 'rb') as f:
+            return Response(url, f.read())
+
+    session = Session(handler)
+    with mock.patch('pyvk.auth.requests.get', new=session.get):
+        api = API(max_attempts=2)
+        with pytest.raises(pyvk.exceptions.APIError):
+            api.vk.test()

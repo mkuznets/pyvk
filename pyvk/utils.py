@@ -9,7 +9,8 @@
     :license: MIT, see LICENSE for more details.
 """
 
-from collections import Mapping
+from collections import Mapping, Sequence
+from itertools import takewhile
 import getpass
 import sys
 
@@ -70,44 +71,88 @@ def setup_logger(config):
                         level=config.log_level, **log_file)
 
 
-class Config(Mapping):
-    _lock = False
-    _len = None
+class DictNamedTuple(Mapping):
 
-    def __init__(self, **params):
-        for attr, value in params.items():
-            setattr(self, attr, value)
-        self._len = len(list(self.__iter__()))
+    def __init__(self, *args, **params):
+        keys = []
+        attrs = self.__dict__
 
-        # Make attributes read-only
-        self._lock = True
+        if args:
+            source, = args
+
+            if isinstance(source, Sequence):
+                attrs.update(dict(source))
+                keys.extend(k for k, v in source)
+
+            elif isinstance(source, Mapping):
+                attrs.update(source)
+                keys.extend(source)
+
+            else:
+                raise TypeError("'%s' object is not iterable"
+                                % type(source).__name__)
+
+        keys.extend(set(params) - set(keys))
+        attrs.update(params)
+
+        attrs['_keys'] = tuple(keys)
 
     def __getitem__(self, item):
-        return getattr(self, item)
+        return self.__dict__[item]
+
+    def __getattr__(self, item):
+        try:
+            return self.__dict__[item]
+        except KeyError:
+            raise AttributeError("object has no attribute '%s'" % item)
 
     def __len__(self):
-        return self._len
+        return len(self.__dict__['_keys'])
 
     def __iter__(self):
-        def is_param(attr):
-            return not (attr.startswith('_') or callable(getattr(self, attr)))
-        return (attr for attr in dir(self) if is_param(attr))
+        return (k for k in self.__dict__['_keys'])
 
     def __repr__(self):
-        params = ', '.join('%s=%s' % (k, repr(v)) for k, v in self.items())
-        return '{name}({params})'.format(name=self.__class__.__name__,
-                                         params=params)
+        params = ', '.join('%s: %s' % (repr(k), repr(self[k])) for k in self)
+        return '{{{params}}}'.format(params=params)
+
+    def __eq__(self, other):
+        if not isinstance(other, Mapping):
+            return NotImplemented
+        return dict(self) == dict(other)
+
+    # Remove non-underscored methods as (1) they are not essential for most of
+    # the desired dict-like behaviour (2) they may shadow user-defined keys.
+    # NOTE: I admit it is really an abuse of the Mapping ABC. However this is
+    # probably the easiest way to support things like (**container).
+    items = None
+    values = None
+    get = None
 
     def __setattr__(self, attr, value):
-        if self._lock:
-            raise AttributeError('Cannot assign attributes to this class')
+        raise AttributeError('Cannot assign attributes to this class')
 
-        if attr in dir(self):
-            self.__dict__[attr] = value
 
-        # Ignore undefined parameters
-        else:
-            pass
+class Config(DictNamedTuple):
+
+    def __init__(self, **params):
+
+        new_params = {}
+
+        classes = takewhile(lambda x: x is not DictNamedTuple,
+                            self.__class__.__mro__)
+
+        for cls in classes:
+            for key, value in cls.__dict__.items():
+                if not key.startswith('_'):
+                    new_params[key] = params.get(key, value)
+
+        super(Config, self).__init__(**new_params)
+
+    def __repr__(self):
+        params = ', '.join('%s=%s' % (k, repr(self[k])) for k in self)
+        return '{name}({params})'.format(name=self.__class__.__name__,
+                                         params=params)
 
 
 class Input(object):

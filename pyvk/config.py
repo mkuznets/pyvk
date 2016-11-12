@@ -11,7 +11,7 @@
 
 import logging
 from .constants import p_basic, p_offline
-from .utils import Input, Config
+from .utils import Input, Config, DictNamedTuple
 
 
 class GlobalConfig(Config):
@@ -86,22 +86,27 @@ class ClientAuthConfig(GlobalConfig):
 class APIConfig(GlobalConfig):
     # :param lang: language of VK API responses
     # :type lang: str or None
-    lang = None           # type: str
+    lang = None
 
     # :param bool validation: if set, captcha requests will be handled via an
     #                         interactive session.
-    validation = True     # type: bool
+    validation = True
 
     # :param bool auto_delay: when encounter a request frequency limit, add
     #                         delays of increasing lenghts and repeat the
     #                         request `max_attempts` times.
-    auto_delay = True     # type: bool
+    auto_delay = True
 
     # :param int max_attempts: how many times to repeat a failed request if the
     #                          failure is configured to be handled
-    max_attempts = 5      # type: int
+    max_attempts = 5
 
     # :param bool raw: return raw response objects (converted from JSON) instead
     #                  of unpacking and error handling. If set, `validation` and
     #                  `auto_delay` will be ignored
-    raw = False           # type: bool
+    raw = False
+
+    # :param Mapping response_type: an object used for JSON decoding. It defines
+    #                               the type of map-like objects returned by
+    #                               API calls.
+    response_type = DictNamedTuple

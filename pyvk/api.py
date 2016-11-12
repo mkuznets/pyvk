@@ -15,11 +15,12 @@ from __future__ import generators, with_statement, print_function, \
 import logging
 import requests
 import time
+import json
 
 from .config import APIConfig
 from .constants import E_CAPTCHA, E_TOO_MANY, E_FLOOD
 from .exceptions import ReqError, APIError
-from .utils import PY2, process_args, setup_logger
+from .utils import PY2, process_args, setup_logger, DictNamedTuple
 
 if PY2:  # pragma: no cover
     from urllib import urlencode
@@ -36,11 +37,11 @@ class API(object):
         setup_logger(conf)
         self._token = token
 
-        self._fixed_args = urlencode(
-            {'access_token': token or '',
+        self._fixed_args = urlencode(process_args(
+            {'access_token': token or None,
              'lang': conf.lang,
              'v': conf.version}
-        )
+        ))
 
     @property
     def token(self):
@@ -56,8 +57,8 @@ class API(object):
 
         try:
             # 2. Unpack it
-            data = response.json()
-            assert isinstance(data, dict)
+            data = json.loads(response.text,
+                              object_hook=self.config.response_type)
 
         except ValueError as exc:
             raise ReqError('Response is not a valid JSON',
