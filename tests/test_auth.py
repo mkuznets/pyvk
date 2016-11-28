@@ -2,7 +2,6 @@ from __future__ import generators, with_statement, print_function, \
     unicode_literals, absolute_import
 
 
-import os
 import mock
 import pytest
 from collections import namedtuple
@@ -110,11 +109,11 @@ def test_all_stages():
             assert auth.token == token
 
             # Test .get_api()
-            api = auth.get_api(user_agent='fff')
+            api = auth.get_api(lang='ru')
             # Config propagation
             assert api.config.version == version
-            assert api.config.user_agent == 'fff'
-            assert api._token == token
+            assert api.config.lang == 'ru'
+            assert api.token == token
 
 
 def test_incorrect_info():

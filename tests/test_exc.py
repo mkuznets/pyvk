@@ -1,4 +1,3 @@
-import pytest
 from pyvk.exceptions import PyVKError
 
 

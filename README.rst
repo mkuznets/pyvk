@@ -170,8 +170,8 @@ VK API errors can be catched as exceptions:
     >>> from pyvk.exceptions import APIError
     >>> try:
     ...     vk.docs.get()
-    ... except APIError as err:
-    ...     print('Error %d: %s' % (err.attrs['code'], err.attrs['msg']))
+    ... except APIError as exc:
+    ...     print('Error %d: %s' % (exc.error_code, exc.error_msg))
 
     Error 15: Access denied: no access to call this method
 
@@ -187,7 +187,7 @@ by its own:
     ...     sys.stdout.flush()
     1 2 3 4 5 6 7 8 9 10 11 12 13 14 <...> pyvk.request INFO: Too many requests per second. Wait 0.3 sec and retry.
     <...> pyvk.request INFO: Too many requests per second. Wait 0.6 sec and retry.
-    <...> pyvk.request INFO: Too many requests per second. Wait 0.9 sec and retry.
+    <...> pyvk.request INFO: Too many requests per second. Wait 1.2 sec and retry.
     15 16 17 18 19 20 <...>
 
 
@@ -195,13 +195,13 @@ If that is not what you want, just make your request handler a bit dumber:
 
 .. code-block:: python
 
-    >>> vk = api.get_handler(slow_down=False, validation=False)
+    >>> vk = api.get_handler(auto_delay=False, validation=False)
 
-Or pass ``raw_response=True`` to work with JSON responses directly:
+Or pass ``raw=True`` to work with JSON responses directly:
 
 .. code-block:: python
 
-    >>> vk = api.get_handler(raw_response=True)
+    >>> vk = api.get_handler(raw=True)
     >>> vk.docs.get()
     {'error': {'error_code': 15, 'error_msg': 'Access denied: no access to call this method', <...>}}
 

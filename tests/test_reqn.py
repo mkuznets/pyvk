@@ -1,4 +1,3 @@
-import os
 import pytest
 from pyvk import ClientAuth, p_wall, p_friends
 from pyvk.utils import zip

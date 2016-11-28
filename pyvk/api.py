@@ -42,6 +42,10 @@ class API(object):
              'v': conf.version}
         )
 
+    @property
+    def token(self):
+        return self._token
+
     def __getattr__(self, prefix):
         return PartialCall([prefix], self)
 
@@ -61,7 +65,7 @@ class API(object):
 
         try:
             # 3. Return the result
-            if self.config.raw_response:
+            if self.config.raw:
                 return data
             else:
                 return data['response']
@@ -82,6 +86,7 @@ class API(object):
     def call(self, method, **args):
         conf = self.config
         args = process_args(args)
+        last_exc = None
 
         for attempt in range(conf.max_attempts):
 
@@ -95,7 +100,7 @@ class API(object):
                 return self._make_request(url)
 
             except APIError as exc:
-                if exc.error_code in (E_TOO_MANY, E_FLOOD) and conf.slow_down:
+                if exc.error_code in (E_TOO_MANY, E_FLOOD) and conf.auto_delay:
                     t = 0.3 * (2**attempt)
                     logger.info('Too many requests per second. '
                                 'Wait %.1f sec and retry.' % t)
@@ -112,7 +117,10 @@ class API(object):
                 else:
                     raise
 
-        raise ReqError('Request failed after all attempts.')
+            except requests.exceptions.RequestException as exc:
+                last_exc = exc
+
+        raise ReqError('Request failed after all attempts.', exc=last_exc)
 
 
 class PartialCall(object):

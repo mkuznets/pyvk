@@ -2,17 +2,13 @@ from __future__ import generators, with_statement, print_function, \
     unicode_literals, absolute_import
 
 
-import os
 import mock
 import pytest
-from collections import namedtuple
-
 import pyvk
-from pyvk import p_all, p_basic
 from pyvk.utils import PY2
 from pyvk import API
-
 from tests.utils import *
+from requests.exceptions import HTTPError
 
 if PY2:
     from urlparse import urlparse, parse_qsl
@@ -41,7 +37,7 @@ def test_valid_json():
 
     session = Session(handler)
     with mock.patch('pyvk.auth.requests.get', new=session.get):
-        api = API(raw_response=True)
+        api = API(raw=True)
         data = api.vk.test()
         assert 'response' in data
 
@@ -64,6 +60,20 @@ def test_too_many():
                 api.vk.test()
 
     sleep.assert_called()
+
+
+def test_network_failure():
+
+    def handler(method, url, *args, **kwargs):
+        raise HTTPError('Bam!')
+
+    session = Session(handler)
+    with mock.patch('pyvk.auth.requests.get', new=session.get):
+
+        api = API(max_attempts=1)
+
+        with pytest.raises(pyvk.exceptions.ReqError):
+            api.vk.test()
 
 
 def test_captcha():

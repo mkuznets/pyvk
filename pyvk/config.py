@@ -15,34 +15,93 @@ from .utils import Input, Config
 
 
 class GlobalConfig(Config):
-    log_format = '%(asctime)s %(name)s %(levelname)s: %(message)s'  # type: str
-    log_level = logging.INFO    # type: int
-    log_file = None             # type: str
-    input = Input             # type: Input
-    timeout = 6.05              # type: float
-    version = '5.60'            # type: str
-    user_agent = 'Mozilla/5.0(Windows NT 6.1; WOW64; rv:22.0) ' \
-                 'Gecko/20100101 Firefox/22.0'  # type: str
+    # :param str log_format: the log messages format compatible with standard
+    #                        `logging` module
+    log_format = '%(asctime)s %(name)s %(levelname)s: %(message)s'
+
+    # :param int log_level: the log messages level compatible with standard
+    #                       `logging` module
+    log_level = logging.INFO
+
+    # :param log_file: optional log file. If not set, standard output is used
+    # :type log_file: str or None
+    log_file = None
+
+    # :param input: static class for requesting user information during an
+    #               interactive client session. `pyvk.Input` or its subclassed
+    #               are expected.
+    # type input: Input
+    input = Input
+
+    # :param float timeout: time for waiting for a network response
+    timeout = 6.05
+
+    # :param str version: VK API version. See official documentation for
+    #                     version history and changelog
+    version = '5.60'
 
 
 class ServerAuthConfig(GlobalConfig):
-    app_id = None           # type: int
-    scope = p_offline       # type: int
-    redirect_uri = None     # type: str
-    display = 'page'        # type: str
-    state = None            # type: str
+    # :param app_id: VK application identifier
+    # :type app_id: int or None
+    app_id = None
+
+    # :param int scope: bitmaks for access rights requested from VK API
+    scope = p_offline
+
+    # :param str redirect_uri: callback URL that is requested by VK API to send
+    #                          a secret code which is then used by the sever to
+    #                          request an access token
+    redirect_uri = None
+
+    # :param str display: a setting for the authorisation page appearance
+    display = 'page'
+
+    # :param state:	an arbitrary string that will be returned together with
+    #               the authorisation result
+    # :type state: str or None
+    state = None
 
 
 class ClientAuthConfig(GlobalConfig):
-    app_id = None           # type: int
-    scope = p_basic         # type: int
-    username = None         # type: str
-    disable_cache = False   # type: bool
+    # :param str app_id: VK application identifier. Will be requested via
+    #                    an interactive session if not specified.
+    # :type app_id: int or None
+    app_id = None
+
+    # :param int scope: bitmaks for access rights requested from VK API
+    scope = p_basic
+
+    # :param username: VK login (email, username, or mobile phone). Will be
+    #                  requested via an interactive session if not specified
+    # :type username: int or None
+    username = None
+
+    # :param bool disable_cache: controls authorisation cache. Is set, login
+    #                            and password will be requested every time the
+    #                            ClientAuth is called
+    disable_cache = False
 
 
 class APIConfig(GlobalConfig):
+    # :param lang: language of VK API responses
+    # :type lang: str or None
     lang = None           # type: str
+
+    # :param bool validation: if set, captcha requests will be handled via an
+    #                         interactive session.
     validation = True     # type: bool
-    slow_down = True      # type: bool
+
+    # :param bool auto_delay: when encounter a request frequency limit, add
+    #                         delays of increasing lenghts and repeat the
+    #                         request `max_attempts` times.
+    auto_delay = True     # type: bool
+
+    # :param int max_attempts: how many times to repeat a failed request if the
+    #                          failure is configured to be handled
     max_attempts = 5      # type: int
-    raw_response = False  # type: bool
+
+    # :param bool raw: return raw response objects (converted from JSON) instead
+    #                  of unpacking and error handling. If set, `validation` and
+    #                  `auto_delay` will be ignored
+    raw = False           # type: bool

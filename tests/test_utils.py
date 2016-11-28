@@ -1,4 +1,3 @@
-import os
 import pytest
 import mock
 from pyvk import utils
