@@ -103,14 +103,14 @@ A default one may be good enough for you:
 
 .. code-block:: python
 
-    >>> vk = auth.get_api()
+    >>> vk = auth.api()
 
 Or you can customise it with
 global API settings, request parameters, and error handling options:
 
 .. code-block:: python
 
-    >>> vk = auth.get_api(version='5.21', lang='en', max_attempts=10, timeout=30.)
+    >>> vk = auth.api(version='5.21', lang='en', max_attempts=10, timeout=30.)
 
 If you have obtained an API token elsewhere, you can use it directly:
 

@@ -56,7 +56,7 @@ class Auth(object):
             raise InvalidToken('Could not test the token', *exc.args,
                                **exc.kwargs)
 
-    def get_api(self, **kwargs):
+    def api(self, **kwargs):
         if self.token is None:
             raise AuthError('Not authorised. '
                             'Forgot to run .auth()?')

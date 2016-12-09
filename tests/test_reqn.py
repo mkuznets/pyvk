@@ -6,7 +6,7 @@ from tests.utils import EnvInput
 
 auth = ClientAuth(input=EnvInput, scope=p_wall|p_friends, disable_cache=True)
 auth.auth()
-api = auth.get_api()
+api = auth.api()
 
 
 def fetch(method, args, n, batch_size):

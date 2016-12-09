@@ -8,7 +8,7 @@ import requests
 auth = ClientAuth(input=EnvInput, scope=p_basic|p_market|p_docs,
                   disable_cache=True)
 auth.auth()
-api = auth.get_api()
+api = auth.api()
 
 
 def get_random_photo():

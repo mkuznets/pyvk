@@ -109,7 +109,7 @@ def test_all_stages():
             assert auth.token == token
 
             # Test .get_api()
-            api = auth.get_api(lang='ru')
+            api = auth.api(lang='ru')
             # Config propagation
             assert api.config.version == version
             assert api.config.lang == 'ru'
@@ -523,4 +523,4 @@ def test_server_auth():
 def test_get_api():
     auth = ServerAuth(1234, 'aaa')
     with pytest.raises(pyvk.exceptions.AuthError):
-        auth.get_api()
+        auth.api()
