@@ -19,199 +19,74 @@ data retrieval and analysis, social media integration, automation, and fun.
 .. _VK: https://vk.com
 .. _VK API: https://vk.com/dev/
 
+Features
+--------
 
-Quickstart
-----------
+* **Authorisation:** PyVK assists both client- and server-side authorisation.
+  It ensures that your password is not stored anywhere in plain-text.
+  It also supports 2FA and captcha/mobile phone login confirmation.
+* **Error handling:** PyVK wraps API errors into exceptions and can recover
+  from certain kinds of those, such as expired autorisation, temporal ban,
+  or captcha request.
+* **Pagination:** PyVK can join paginated API responses into a single result.
+* **Media uploading:** PyVK wraps it into a single method call
+  and makes it to use those files as attachments to posts and messages.
+* **Python 2 and 3 :** PyVK is tested for CPython 2.6-3.5
 
-Authorisation
-=============
+Examples
+--------
 
-PyVK supports two types of authorisation:
+.. code-block:: python
 
-* **Client-Side** (\"`Implicit`_\") flow
-  is suitable for interactive sessions and applications with a user interface.
-  In this mode a user provides their login/password directly to PyVK:
+    >>> from pyvk import ClientAuth, p_docs, p_offline
 
-  .. _Implicit: https://vk.com/dev/implicit_flow_user
-
-  .. code-block:: python
-
-    >>> from pyvk import ClientAuth
-    >>> auth = ClientAuth(app_id=<...>, username=<...>)
+    >>> # Authorisation without tokens and stored passwords
+    >>> auth = ClientAuth(app_id=<...>, username=<...>,
+                          scope=p_docs | p_offline)
     >>> auth.auth()
     Password: <...>
 
-  The password is requested only once.
-  PyVK remembers the access token and session cookies so that
-  next time the authorisation will succeed immediately.
-  This ensures that your password is not stored anywhere in plain-text.
-  PyVK may also request 2FA code, mobile number, and/or captcha
-  depending on your profile settings.
+    >>> api = auth.api(version='5.21', lang='en')
 
-  By default PyVK reads the information from the standard input.
-  You can also define custom credential providers if your application
-  is not supposed to have a shell session.
-* **Server-Side** (\"`Authorisation code`_\") flow
-  is intended for long-running server scripts, web-services,
-  and other applications where there is no or limited user interaction.
-  In this mode a user should be redirected to VK login page:
+    >>> # Call API methods as if they were pythonic
+    >>> api.users.get(user_ids=[210700286], fields=['bdate'])
+    [{'bdate': '21.9.1986',
+      'first_name': 'Lindsey',
+      'id': 210700286,
+      'last_name': 'Stirling'}]
 
-  .. _Authorisation code: https://vk.com/dev/implicit_flow_user
+    >>> # Fetch all items from paginated API responses with a single call
+    >>> from pyvk.helpers import reqn
+    >>> reqn(api.users.getFollowers, n=1000, user_id=53083705)
+    {'count': 2255643,
+     'items': [404278316,
+               372620717,
+               405001689,
+               ...]}
 
-  .. code-block:: python
-
-    >>> # User Interface
-    >>> from pyvk import ServerAuth, p_photos, p_audio
-    >>> auth = ServerAuth(app_id=<...>, redirect_uri='https://<example-server>/vkauth')
-    >>> auth.auth_url
-    'https://oauth.vk.com/authorize?client_id=<...>&display=page[...]&response_type=code'
-
-  Once the user granted permissions to your application,
-  VK API sends a unique code to the callback URL to complete the authorisation:
-
-  .. code-block:: python
-
-    >>> # App Server
-    >>> # GET /vkauth?code=<...>
-    >>> auth = ServerAuth(<...>)  # (same as at the first step)
-    >>> auth.auth(
-    ...     code=<...>,           # `code' from the query string
-    ...     client_secret=<...>   # secret key from VK application settings
-    ... )
-
-Either way,
-the access rights are configured by passing a desired `access bitmask`_
-with a ``scope`` argument.
-
-.. _access bitmask: https://vk.com/dev/permissions
-
-.. code-block:: python
-
-    >>> from pyvk import p_audio, p_offline
-    >>> api = ClientAuth(app_id=<...>, username=<...>, scope=p_audio | p_offline)
-
-By default ``p_basic`` is used for ``ClientAuth``. It gives a
-non-expiring access to friends, photos, audio/video, messages, wall, and groups.
-``p_offline`` is a default for ``ServerAuth``.
+    >>> # Easy file uploading
+    >>> from pyvk.helpers.uploaders import WallPhotoUploader
+    >>> up = WallPhotoUploader(api)
+    >>> with open('cat.jpg', 'rb') as f:
+    >>>    attach = up.upload(f, attach=True)
+    >>>    api.wall.post(attachments=attach)
 
 
-``API`` Object
-==============
+Installation
+------------
 
-Once authorised, get youself an ``API`` object.
-A default one may be good enough for you:
+Stable versions can be installed using
+`easy_install <http://peak.telecommunity.com/DevCenter/EasyInstall>`__
+or `pip <https://pypi.python.org/pypi/pip>`__:
 
-.. code-block:: python
+.. code-block::
 
-    >>> vk = auth.api()
+    easy_install pyvk
+    pip install pyvk
 
-Or you can customise it with
-global API settings, request parameters, and error handling options:
+For development version:
 
-.. code-block:: python
+.. code-block::
 
-    >>> vk = auth.api(version='5.21', lang='en', max_attempts=10, timeout=30.)
+    pip install git+https://github.com/mkuznets/pyvk.git@master
 
-If you have obtained an API token elsewhere, you can use it directly:
-
-.. code-block:: python
-
-    >>> from pyvk import API
-    >>> vk = API(token=<...>)
-
-Frankly, for some VK API methods you do not even need the token:
-
-.. code-block:: python
-
-    >>> vk = API()
-
-
-API Calls
-=========
-
-Let's call a couple of `VK API methods`_:
-
-.. _VK API methods: https://vk.com/dev/methods
-
-.. code-block:: python
-
-    >>> vk.users.get(user_ids=[210700286], fields=['bdate'])
-    [{'first_name': 'Lindsey', 'last_name': 'Stirling', 'id': 210700286, 'bdate': '21.9.1986'}]
-
-    >>> pprint(vk.audio.search(q='The Beatles - Let It Be', count=1))
-    {'count': 18006,
-     'items': [{'artist': 'The Beatles',
-                'date': 1308179559,
-                'duration': 243,
-                'genre_id': 1,
-                <...>
-                'title': 'Let It Be',
-                'url': 'https://cs9-15v4.vk.me/<...>'}]}
-
-Or, without fancy attribute-chaining:
-
-.. code-block:: python
-
-    >>> vk.call('account.getInfo')
-    {'own_posts_default': 0, 'country': 'GB', 'intro': 0, 'no_wall_replies': 0, 'https_required': 1, 'lang': 3}
-
-Note that pythonic integers and lists can be used
-where the official API documentation specifies
-numbers (including negative)
-and comma-separated lists.
-
-Error Handling
-==============
-
-VK API errors can be catched as exceptions:
-
-.. code-block:: python
-
-    >>> from pyvk.exceptions import APIError
-    >>> try:
-    ...     vk.docs.get()
-    ... except APIError as exc:
-    ...     print('Error %d: %s' % (exc.error_code, exc.error_msg))
-
-    Error 15: Access denied: no access to call this method
-
-However, PyVK can handle some recoverable errors
-("too many requests per second", "captcha needed", and the like)
-by its own:
-
-.. code-block:: python
-
-    >>> for i in range(1, 100000):
-    ...     vk.users.get(user_ids=[i])
-    ...     print(i, end=' ')
-    ...     sys.stdout.flush()
-    1 2 3 4 5 6 7 8 9 10 11 12 13 14 <...> pyvk.request INFO: Too many requests per second. Wait 0.3 sec and retry.
-    <...> pyvk.request INFO: Too many requests per second. Wait 0.6 sec and retry.
-    <...> pyvk.request INFO: Too many requests per second. Wait 1.2 sec and retry.
-    15 16 17 18 19 20 <...>
-
-
-If that is not what you want, just make your request handler a bit dumber:
-
-.. code-block:: python
-
-    >>> vk = api.get_handler(auto_delay=False, validation=False)
-
-Or pass ``raw=True`` to work with JSON responses directly:
-
-.. code-block:: python
-
-    >>> vk = api.get_handler(raw=True)
-    >>> vk.docs.get()
-    {'error': {'error_code': 15, 'error_msg': 'Access denied: no access to call this method', <...>}}
-
-
-
-
-Credits
--------
-
-The idea of first-class queryset-like method calls
-is inspired by `vk-requests`_.
-
-.. _vk-requests: https://github.com/prawn-cake/vk-requests
