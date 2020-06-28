@@ -2,8 +2,8 @@
 VK API for Python
 -----------------
 
-.. image:: https://travis-ci.org/mkuznets/pyvk.svg?branch=master
-    :target: https://travis-ci.org/mkuznets/pyvk
+.. image:: https://github.com/mkuznets/pyvk/workflows/Tests/badge.svg?branch=master
+    :target: https://github.com/mkuznets/pyvk/actions?query=workflow%3ATests
 
 .. image:: https://coveralls.io/repos/github/mkuznets/pyvk/badge.svg?branch=master
     :target: https://coveralls.io/github/mkuznets/pyvk?branch=master
