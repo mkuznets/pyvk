@@ -48,6 +48,7 @@ def test_reqn_exhaustive():
     fetch_and_compare(method, args, None, batch_size=100)
 
 
+@pytest.mark.skip()
 def test_reqn_wall_get():
     method = api.wall.get
     args = dict(owner_id=-29534144, filter='owner', extended=1)

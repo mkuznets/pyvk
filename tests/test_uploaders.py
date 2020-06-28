@@ -4,6 +4,8 @@ from pyvk.helpers.uploaders import *
 from tests.utils import EnvInput
 import requests
 
+import pytest
+
 
 auth = ClientAuth(input=EnvInput, scope=p_basic|p_market|p_docs,
                   disable_cache=True)
@@ -49,6 +51,7 @@ def test_profile_photo():
     assert 'photo_src' in result
 
 
+@pytest.mark.skip()
 def test_chat_photo():
     photo = get_random_photo()
 
@@ -57,6 +60,7 @@ def test_chat_photo():
     assert 'message_id' in result
 
 
+@pytest.mark.skip()
 def test_message_photo():
     photo = get_random_photo()
     up = MessagePhotoUploader(api)
@@ -87,6 +91,7 @@ def test_doc():
     assert 'id' in result[0]
 
 
+@pytest.mark.skip()
 def test_product_photo():
     item, = api.market.getById(item_ids=['-131241381_360858'],
                                extended=True)['items']
