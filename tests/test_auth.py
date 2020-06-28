@@ -1,5 +1,4 @@
-from __future__ import generators, with_statement, print_function, \
-    unicode_literals, absolute_import
+from __future__ import generators, with_statement, print_function, unicode_literals, absolute_import
 
 
 import mock
@@ -21,7 +20,6 @@ else:
 
 
 def test_auth_app_invalid():
-
     def handler(method, url, *args, **kwargs):
         with open('tests/static/app_invalid.json', 'rb') as f:
             return Response(url, f.read())
@@ -35,7 +33,6 @@ def test_auth_app_invalid():
 
 
 def test_auth_unexpected_json():
-
     def handler(method, url, *args, **kwargs):
         with open('tests/static/token_valid_all.json', 'rb') as f:
             return Response(url, f.read())
@@ -49,7 +46,6 @@ def test_auth_unexpected_json():
 
 
 def test_auth_user_app_id_input():
-
     def handler(method, url, *args, **kwargs):
         pytest.fail('No requests expected here')
 
@@ -88,13 +84,14 @@ def test_all_stages():
 
         elif query.get('act', None) == 'grant_access':
             with open('tests/static/grant_access.html', 'rb') as f:
-                rurl = 'https://oauth.vk.com/blank.html#access_token=%s' \
-                       '&expires_in=86400&user_id=101010' % token
+                rurl = (
+                    'https://oauth.vk.com/blank.html#access_token=%s'
+                    '&expires_in=86400&user_id=101010' % token
+                )
                 return Response(rurl, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
 
@@ -103,8 +100,9 @@ def test_all_stages():
 
             version = '5.0'
 
-            auth = ClientAuth(disable_cache=True, input=Fake,
-                              username='johndoe', app_id=1234, version=version)
+            auth = ClientAuth(
+                disable_cache=True, input=Fake, username='johndoe', app_id=1234, version=version
+            )
             auth.auth()
             assert auth.token == token
 
@@ -117,7 +115,6 @@ def test_all_stages():
 
 
 def test_incorrect_info():
-
     def handler(method, url, *args, **kwargs):
         urlp = urlparse(url)
         query = dict(parse_qsl(urlp.query))
@@ -131,23 +128,20 @@ def test_incorrect_info():
                 return Response(url, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
 
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-            auth = ClientAuth(disable_cache=True, input=Fake,
-                              username='johndoe', app_id=1234)
+            auth = ClientAuth(disable_cache=True, input=Fake, username='johndoe', app_id=1234)
 
             with pytest.raises(pyvk.exceptions.AuthError):
                 auth.auth()
 
 
 def test_security_check_corrupted_page():
-
     def handler(method, url, *args, **kwargs):
         urlp = urlparse(url)
         query = dict(parse_qsl(urlp.query))
@@ -157,23 +151,20 @@ def test_security_check_corrupted_page():
                 return Response(url, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
 
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-            auth = ClientAuth(disable_cache=True, input=Fake,
-                              username='johndoe', app_id=1234)
+            auth = ClientAuth(disable_cache=True, input=Fake, username='johndoe', app_id=1234)
 
             with pytest.raises(pyvk.exceptions.AuthError):
                 auth.auth()
 
 
 def test_unrecognised_form_action():
-
     def handler(method, url, *args, **kwargs):
         urlp = urlparse(url)
         query = dict(parse_qsl(urlp.query))
@@ -183,23 +174,20 @@ def test_unrecognised_form_action():
                 return Response(url, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
 
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-            auth = ClientAuth(disable_cache=True, input=Fake,
-                              username='johndoe', app_id=1234)
+            auth = ClientAuth(disable_cache=True, input=Fake, username='johndoe', app_id=1234)
 
             with pytest.raises(pyvk.exceptions.AuthError):
                 auth.auth()
 
 
 def test_validation_failed():
-
     def handler(method, url, *args, **kwargs):
         urlp = urlparse(url)
         query = dict(parse_qsl(urlp.query))
@@ -210,16 +198,14 @@ def test_validation_failed():
                 return Response(rurl, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
 
     with mock.patch('pyvk.auth.requests.Session', new=selector(session)):
         with mock.patch('pyvk.auth.requests.get', new=session.get):
 
-            auth = ClientAuth(disable_cache=True, input=Fake,
-                              username='johndoe', app_id=1234)
+            auth = ClientAuth(disable_cache=True, input=Fake, username='johndoe', app_id=1234)
 
             with pytest.raises(pyvk.exceptions.AuthError):
                 auth.auth()
@@ -235,8 +221,10 @@ def test_corrupted_cookies():
 
         if urlp.path.startswith('/authorize'):
             with open('tests/static/final.html', 'rb') as f:
-                rurl = 'https://oauth.vk.com/blank.html#access_token=%s' \
-                       '&expires_in=86400&user_id=101010' % token
+                rurl = (
+                    'https://oauth.vk.com/blank.html#access_token=%s'
+                    '&expires_in=86400&user_id=101010' % token
+                )
                 return Response(rurl, f.read())
 
         elif query.get('act', None) == 'grant_access':
@@ -245,8 +233,7 @@ def test_corrupted_cookies():
                 return Response(rurl, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
     session.cookies['random'] = 42
@@ -254,8 +241,7 @@ def test_corrupted_cookies():
     @mock.patch('pyvk.auth.requests.Session', new=selector(session))
     @mock.patch('pyvk.auth.requests.get', new=session.get)
     def run():
-        auth = ClientAuth(disable_cache=True, input=Fake,
-                          username='johndoe', app_id=1234)
+        auth = ClientAuth(disable_cache=True, input=Fake, username='johndoe', app_id=1234)
 
         auth.auth('grant_access', 'https://login.vk.com/?act=grant_access')
         assert auth.token == token
@@ -280,8 +266,7 @@ def test_cached_token_valid():
                 return Response(url, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
 
@@ -298,8 +283,7 @@ def test_cached_token_valid():
     @mock.patch('pyvk.auth.shelve', fshelve)
     @mock.patch('pyvk.auth.ClientAuth._cache_path', cache_path)
     def run():
-        auth = ClientAuth(input=Fake, username='johndoe',
-                          app_id=1234, scope=p_basic)
+        auth = ClientAuth(input=Fake, username='johndoe', app_id=1234, scope=p_basic)
         auth.auth()
         assert auth.token == token
         assert auth.scope == p_all
@@ -325,8 +309,7 @@ def test_cached_token_invalid():
                 return Response(url, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     files = [
         'tests/static/token_valid_basic.json',
@@ -350,8 +333,7 @@ def test_cached_token_invalid():
         @mock.patch('pyvk.auth.shelve', fshelve)
         @mock.patch('pyvk.auth.ClientAuth._cache_path', cache_path)
         def run():
-            auth = ClientAuth(input=Fake, username='johndoe',
-                              app_id=1234, scope=p_all)
+            auth = ClientAuth(input=Fake, username='johndoe', app_id=1234, scope=p_all)
             auth.auth(state='exit')
             assert auth.token is None
             assert fshelve.open.call_args[0][0] == cache_path
@@ -366,8 +348,7 @@ def test_cached_filename_new_dir():
     directory = 'dfdsgdsagasg'
 
     def handler(method, url, *args, **kwargs):
-        pytest.fail('Request is either not recognised '
-                    'or not expected: %s' % url)
+        pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
 
@@ -377,10 +358,7 @@ def test_cached_filename_new_dir():
     fshelve = mock.MagicMock()
     fshelve.open.return_value = fcache
 
-    appdirs = mock.Mock(
-        return_value=namedtuple('Dir',
-                                'user_cache_dir')(user_cache_dir=directory)
-    )
+    appdirs = mock.Mock(return_value=namedtuple('Dir', 'user_cache_dir')(user_cache_dir=directory))
 
     mk = mock.MagicMock()
 
@@ -390,8 +368,7 @@ def test_cached_filename_new_dir():
     @mock.patch('pyvk.auth.AppDirs', appdirs)
     @mock.patch('pyvk.auth.os.makedirs', mk)
     def run():
-        auth = ClientAuth(input=Fake, username='johndoe',
-                          app_id=1234, scope=p_all)
+        auth = ClientAuth(input=Fake, username='johndoe', app_id=1234, scope=p_all)
         return (auth, auth._cache_path)
 
     # Directory exists
@@ -420,13 +397,14 @@ def test_store_token():
 
         if urlp.path.startswith('/authorize'):
             with open('tests/static/final.html', 'rb') as f:
-                rurl = 'https://oauth.vk.com/blank.html#access_token=%s' \
-                       '&expires_in=86400&user_id=101010' % token
+                rurl = (
+                    'https://oauth.vk.com/blank.html#access_token=%s'
+                    '&expires_in=86400&user_id=101010' % token
+                )
                 return Response(rurl, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
 
@@ -450,8 +428,7 @@ def test_store_token():
     @mock.patch('pyvk.auth.shelve', fshelve)
     @mock.patch('pyvk.auth.ClientAuth._cache_path', cache_path)
     def run():
-        auth = ClientAuth(input=Fake, username='johndoe',
-                          app_id=1234, scope=p_basic)
+        auth = ClientAuth(input=Fake, username='johndoe', app_id=1234, scope=p_basic)
         auth.auth()
 
     # Successful store
@@ -471,7 +448,6 @@ def test_store_token():
 
 
 def test_server_auth():
-
     def handler(method, url, *args, **kwargs):
         urlp = urlparse(url)
         query = dict(parse_qsl(urlp.query))
@@ -493,8 +469,7 @@ def test_server_auth():
                 return Response(url, f.read())
 
         else:
-            pytest.fail('Request is either not recognised '
-                        'or not expected: %s' % url)
+            pytest.fail('Request is either not recognised ' 'or not expected: %s' % url)
 
     session = Session(handler)
 

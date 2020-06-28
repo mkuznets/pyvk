@@ -7,21 +7,19 @@ import requests
 import pytest
 
 
-auth = ClientAuth(input=EnvInput, scope=p_basic|p_market|p_docs,
-                  disable_cache=True)
+auth = ClientAuth(input=EnvInput, scope=p_basic | p_market | p_docs, disable_cache=True)
 auth.auth()
 api = auth.api()
 
 
 def get_random_photo():
-    photo_obj, = api.photos.get(album_id=237720036, count=1, rev=True)['items']
+    (photo_obj,) = api.photos.get(album_id=237720036, count=1, rev=True)['items']
     photo_url = photo_obj['photo_604']
     return requests.get(photo_url).content
 
 
 def test_video():
-    up = VideoUploader(api, link='https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                       wallpost=True)
+    up = VideoUploader(api, link='https://www.youtube.com/watch?v=dQw4w9WgXcQ', wallpost=True)
     result = up.upload()
     assert 'response' in result
 
@@ -42,7 +40,7 @@ def test_wall_photo():
 
 
 def test_profile_photo():
-    user, = api.users.get(fields=['photo_max'])
+    (user,) = api.users.get(fields=['photo_max'])
     photo_url = user['photo_max']
     photo = requests.get(photo_url).content
 
@@ -70,7 +68,7 @@ def test_message_photo():
 
 
 def test_audio():
-    item, = api.audio.get(count=1)['items']
+    (item,) = api.audio.get(count=1)['items']
     audio_url = item['url']
     audio = requests.get(audio_url).content
 
@@ -80,7 +78,7 @@ def test_audio():
 
 
 def test_doc():
-    item, = api.docs.get(count=1)['items']
+    (item,) = api.docs.get(count=1)['items']
     doc_url, doc_name = item['url'], item['title']
     doc = requests.get(doc_url).content
 
@@ -93,9 +91,8 @@ def test_doc():
 
 @pytest.mark.skip()
 def test_product_photo():
-    item, = api.market.getById(item_ids=['-131241381_360858'],
-                               extended=True)['items']
-    photo_obj, = item['photos']
+    (item,) = api.market.getById(item_ids=['-131241381_360858'], extended=True)['items']
+    (photo_obj,) = item['photos']
     photo_url = photo_obj['photo_2560']
     photo = requests.get(photo_url).content
 
@@ -107,9 +104,8 @@ def test_product_photo():
 
 
 def test_product_collection_photo():
-    item, = api.market.getById(item_ids=['-131241381_360858'],
-                               extended=True)['items']
-    photo_obj, = item['photos']
+    (item,) = api.market.getById(item_ids=['-131241381_360858'], extended=True)['items']
+    (photo_obj,) = item['photos']
     photo_url = photo_obj['photo_2560']
     photo = requests.get(photo_url).content
 

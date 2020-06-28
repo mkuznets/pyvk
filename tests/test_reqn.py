@@ -4,7 +4,7 @@ from pyvk.utils import zip
 from pyvk.helpers import reqn
 from tests.utils import EnvInput
 
-auth = ClientAuth(input=EnvInput, scope=p_wall|p_friends, disable_cache=True)
+auth = ClientAuth(input=EnvInput, scope=p_wall | p_friends, disable_cache=True)
 auth.auth()
 api = auth.api()
 
@@ -17,7 +17,7 @@ def fetch(method, args, n, batch_size):
 
 def fetch_and_compare(method, args, n, batch_size):
 
-    rb, rn  = fetch(method, args, n, batch_size)
+    rb, rn = fetch(method, args, n, batch_size)
 
     if type(rb) is dict:
         assert set(rb.keys()) == set(rn.keys())
@@ -88,7 +88,7 @@ def test_reqn_friends_getonline():
             fetch_and_compare(method, args, n=50, batch_size=10)
 
         except AssertionError:
-            if attempt == n-1:
+            if attempt == n - 1:
                 raise
             else:
                 continue
@@ -102,7 +102,7 @@ def test_reqn_friends_getmutual():
     args = dict(source_uid=1, target_uid=21)
     fetch_and_compare(method, args, n=35, batch_size=10)
 
-    args = dict(source_uid=1, target_uids=[6,21])
+    args = dict(source_uid=1, target_uids=[6, 21])
     rb, rn = fetch(method, args, n=35, batch_size=10)
 
     for eb, en in zip(rb, rn):

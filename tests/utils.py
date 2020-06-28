@@ -44,6 +44,7 @@ class Session(object):
 def selector(session):
     def _callable(*args, **kwargs):
         return session
+
     return _callable
 
 

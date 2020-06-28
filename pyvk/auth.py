@@ -9,8 +9,7 @@
     :license: MIT, see LICENSE for more details.
 """
 
-from __future__ import (generators, with_statement,
-                        print_function, absolute_import)
+from __future__ import generators, with_statement, print_function, absolute_import
 
 from .utils import PY2
 
@@ -64,8 +63,7 @@ class _Auth(object):
             raise InvalidToken(*exc.args, **exc.kwargs)
 
         except ReqError as exc:
-            raise InvalidToken('Could not test the token', *exc.args,
-                               **exc.kwargs)
+            raise InvalidToken('Could not test the token', *exc.args, **exc.kwargs)
 
     def api(self, **kwargs):
         """
@@ -91,11 +89,9 @@ class _Auth(object):
 
 
 class ServerAuth(_Auth):
-
     def __init__(self, app_id, redirect_uri, **kwargs):
 
-        self.config = ServerAuthConfig(app_id=app_id, redirect_uri=redirect_uri,
-                                       **kwargs)
+        self.config = ServerAuthConfig(app_id=app_id, redirect_uri=redirect_uri, **kwargs)
         setup_logger(self.config)
 
         self.app_id = self.config.app_id
@@ -108,13 +104,15 @@ class ServerAuth(_Auth):
         :return: VK login page URL
         :rtype: str
         """
-        url = 'https://oauth.vk.com/authorize' \
-              '?client_id={app_id}' \
-              '&display={display}' \
-              '&redirect_uri={redirect_uri}' \
-              '&scope={scope}' \
-              '&response_type=code' \
-              '&v={version}'.format(**self.config)
+        url = (
+            'https://oauth.vk.com/authorize'
+            '?client_id={app_id}'
+            '&display={display}'
+            '&redirect_uri={redirect_uri}'
+            '&scope={scope}'
+            '&response_type=code'
+            '&v={version}'.format(**self.config)
+        )
         return url
 
     def auth(self, code, client_secret):
@@ -128,12 +126,13 @@ class ServerAuth(_Auth):
         :param client_secret: secret key from VK application settings
         :raises AuthError: if authorisation is unsuccessful.
         """
-        url = 'https://oauth.vk.com/access_token' \
-              '?client_id={app_id}' \
-              '&client_secret={client_secret}' \
-              '&redirect_uri={redirect_uri}' \
-              '&code={code}'.format(code=code, client_secret=client_secret,
-                                    **self.config)
+        url = (
+            'https://oauth.vk.com/access_token'
+            '?client_id={app_id}'
+            '&client_secret={client_secret}'
+            '&redirect_uri={redirect_uri}'
+            '&code={code}'.format(code=code, client_secret=client_secret, **self.config)
+        )
 
         response = requests.get(url, timeout=self.config.timeout)
 
@@ -162,10 +161,8 @@ class ClientAuth(_Auth):
 
         self.http = requests.Session()
 
-        self.app_id = (self.config.app_id
-                       or self.config.input.ask('app_id'))
-        self.username = (self.config.username
-                         or self.config.input.ask('username'))
+        self.app_id = self.config.app_id or self.config.input.ask('app_id')
+        self.username = self.config.username or self.config.input.ask('username')
 
     def _test_and_set_cached_token(self):
 
@@ -279,13 +276,12 @@ class ClientAuth(_Auth):
 
                 errors = doc.find_class('service_msg_warning')
                 if errors:
-                    raise AuthError('Incorrect information',
-                                    msg=errors[0].text, response=response)
+                    raise AuthError('Incorrect information', msg=errors[0].text, response=response)
 
-                form, = doc.forms
+                (form,) = doc.forms
                 # Make sure action_url is full i.e. contains scheme and host
                 act_url = urljoin(response.url, form.action)
-                act, = parse_qs(urlparse(act_url).query)['act']
+                (act,) = parse_qs(urlparse(act_url).query)['act']
 
                 if act == 'login':
                     return (act, act_url, dict(form.fields))
@@ -321,20 +317,26 @@ class ClientAuth(_Auth):
                     raise ValueError('Unrecognised action')
 
             except (KeyError, ValueError) as err:
-                raise AuthError('Unrecognised auth page', response=response,
-                                exc=err, traceback=traceback.format_exc())
+                raise AuthError(
+                    'Unrecognised auth page',
+                    response=response,
+                    exc=err,
+                    traceback=traceback.format_exc(),
+                )
 
     def _s_auth_page(self):
         args = dict(self.config)
         args['app_id'] = self.app_id
 
-        url = 'https://oauth.vk.com/authorize' \
-              '?client_id={app_id}' \
-              '&display=mobile' \
-              '&redirect_uri=https://oauth.vk.com/blank.html' \
-              '&scope={scope}' \
-              '&response_type=token' \
-              '&v={version}'.format(**args)
+        url = (
+            'https://oauth.vk.com/authorize'
+            '?client_id={app_id}'
+            '&display=mobile'
+            '&redirect_uri=https://oauth.vk.com/blank.html'
+            '&scope={scope}'
+            '&response_type=token'
+            '&v={version}'.format(**args)
+        )
 
         # Initiate authorisation.
         r = self.http.get(url, timeout=self.config.timeout)
@@ -366,7 +368,7 @@ class ClientAuth(_Auth):
         return ('router', r)
 
     def _s_get_token(self, urlp):
-        self.token, = parse_qs(urlp.fragment)['access_token']
+        (self.token,) = parse_qs(urlp.fragment)['access_token']
 
         if not self.config.disable_cache:
             try:
@@ -375,6 +377,5 @@ class ClientAuth(_Auth):
                 cache['cookies'] = self.http.cookies.get_dict()
                 cache.close()
             except db_error:
-                logger.debug('%s: Cannot open or create cache file.'
-                             % self._cache_path)
+                logger.debug('%s: Cannot open or create cache file.' % self._cache_path)
         return ('exit',)

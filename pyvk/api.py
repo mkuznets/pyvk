@@ -9,8 +9,7 @@
     :license: MIT, see LICENSE for more details.
 """
 
-from __future__ import generators, with_statement, print_function, \
-    unicode_literals, absolute_import
+from __future__ import generators, with_statement, print_function, unicode_literals, absolute_import
 
 import logging
 import requests
@@ -24,7 +23,7 @@ from .utils import PY2, process_args, setup_logger
 
 if PY2:  # pragma: no cover
     from urllib import urlencode
-else:    # pragma: no cover
+else:  # pragma: no cover
     from urllib.parse import urlencode
 
 logging.getLogger('requests').setLevel(logging.WARNING)
@@ -37,11 +36,9 @@ class API(object):
         setup_logger(conf)
         self._token = token
 
-        self._fixed_args = urlencode(process_args(
-            {'access_token': token or None,
-             'lang': conf.lang,
-             'v': conf.version}
-        ))
+        self._fixed_args = urlencode(
+            process_args({'access_token': token or None, 'lang': conf.lang, 'v': conf.version})
+        )
 
     @property
     def token(self):
@@ -57,12 +54,10 @@ class API(object):
 
         try:
             # 2. Unpack it
-            data = json.loads(response.text,
-                              object_hook=self.config.response_type)
+            data = json.loads(response.text, object_hook=self.config.response_type)
 
         except ValueError as exc:
-            raise ReqError('Response is not a valid JSON',
-                           response=response, exc=exc)
+            raise ReqError('Response is not a valid JSON', response=response, exc=exc)
 
         try:
             # 3. Return the result
@@ -77,12 +72,10 @@ class API(object):
         # 4. Handle possible API error response
         try:
             err = data['error']
-            raise APIError('%s' % err['error_msg'],
-                           response=response, **err)
+            raise APIError('%s' % err['error_msg'], response=response, **err)
 
         except KeyError as exc:
-            raise ReqError('Malformed response from API',
-                           response=response, data=data, exc=exc)
+            raise ReqError('Malformed response from API', response=response, data=data, exc=exc)
 
     def call(self, method, **args):
         conf = self.config
@@ -92,9 +85,7 @@ class API(object):
         for attempt in range(conf.max_attempts):
 
             url = 'https://api.vk.com/method/{method}?{fixed_args}&{args}'.format(
-                method=method,
-                fixed_args=self._fixed_args,
-                args=urlencode(args)
+                method=method, fixed_args=self._fixed_args, args=urlencode(args)
             )
 
             try:
@@ -102,9 +93,8 @@ class API(object):
 
             except APIError as exc:
                 if exc.error_code in (E_TOO_MANY, E_FLOOD) and conf.auto_delay:
-                    t = 0.3 * (2**attempt)
-                    logger.info('Too many requests per second. '
-                                'Wait %.1f sec and retry.' % t)
+                    t = 0.3 * (2 ** attempt)
+                    logger.info('Too many requests per second. ' 'Wait %.1f sec and retry.' % t)
                     time.sleep(t)
 
                 elif exc.error_code == E_CAPTCHA and conf.validation:

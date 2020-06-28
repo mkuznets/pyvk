@@ -27,6 +27,7 @@ PY3 = sys.version_info[0] == 3
 
 if PY2:  # pragma: no cover
     from itertools import izip
+
     input = raw_input
     zip = izip
 else:  # pragma: no cover
@@ -50,12 +51,10 @@ def accumulate(iterable):
 
 def filter_dict(d):
     # Remove None values
-    return dict(filter(lambda x: x[1] is not None,
-                       d.items()))
+    return dict(filter(lambda x: x[1] is not None, d.items()))
 
 
 def process_args(args):
-
     def convert(item):
         if type(item) is list:
             # Transform lists into comma-separated strings
@@ -71,20 +70,18 @@ def process_args(args):
 
 def setup_logger(config):
     import logging
-    log_file = {'filename': config.log_file} \
-        if config.log_file else {}
-    logging.basicConfig(format=config.log_format,
-                        level=config.log_level, **log_file)
+
+    log_file = {'filename': config.log_file} if config.log_file else {}
+    logging.basicConfig(format=config.log_format, level=config.log_level, **log_file)
 
 
 class DictNamedTuple(Mapping):
-
     def __init__(self, *args, **params):
         keys = []
         attrs = self.__dict__
 
         if args:
-            source, = args
+            (source,) = args
 
             if isinstance(source, Sequence):
                 attrs.update(dict(source))
@@ -95,8 +92,7 @@ class DictNamedTuple(Mapping):
                 keys.extend(source)
 
             else:
-                raise TypeError("'%s' object is not iterable"
-                                % type(source).__name__)
+                raise TypeError("'%s' object is not iterable" % type(source).__name__)
 
         keys.extend(set(params) - set(keys))
         attrs.update(params)
@@ -140,13 +136,11 @@ class DictNamedTuple(Mapping):
 
 
 class Config(DictNamedTuple):
-
     def __init__(self, **params):
 
         new_params = {}
 
-        classes = takewhile(lambda x: x is not DictNamedTuple,
-                            self.__class__.__mro__)
+        classes = takewhile(lambda x: x is not DictNamedTuple, self.__class__.__mro__)
 
         for cls in classes:
             for key, value in cls.__dict__.items():
@@ -157,8 +151,7 @@ class Config(DictNamedTuple):
 
     def __repr__(self):
         params = ', '.join('%s=%s' % (k, repr(self[k])) for k in self)
-        return '{name}({params})'.format(name=self.__class__.__name__,
-                                         params=params)
+        return '{name}({params})'.format(name=self.__class__.__name__, params=params)
 
 
 class Input(object):

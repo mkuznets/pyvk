@@ -57,4 +57,4 @@ def test_source_sequence():
 def test_source_error():
 
     with pytest.raises(TypeError):
-       DictNamedTuple(100, a=43, b=45)
+        DictNamedTuple(100, a=43, b=45)

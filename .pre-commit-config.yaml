@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        language: system
+        entry: black -S --target-version=py27 --line-length=100
+        require_serial: true
+        types: [python]

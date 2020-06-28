@@ -1,5 +1,4 @@
-from __future__ import generators, with_statement, print_function, \
-    unicode_literals, absolute_import
+from __future__ import generators, with_statement, print_function, unicode_literals, absolute_import
 
 
 import mock
@@ -17,7 +16,6 @@ else:
 
 
 def test_invalid_json():
-
     def handler(method, url, *args, **kwargs):
         with open('tests/static/api_corrupt.json', 'rb') as f:
             return Response(url, f.read())
@@ -30,7 +28,6 @@ def test_invalid_json():
 
 
 def test_malformed_json():
-
     def handler(method, url, *args, **kwargs):
         with open('tests/static/api_malformed.json', 'rb') as f:
             return Response(url, f.read())
@@ -43,7 +40,6 @@ def test_malformed_json():
 
 
 def test_valid_json():
-
     def handler(method, url, *args, **kwargs):
         with open('tests/static/api_valid.json', 'rb') as f:
             return Response(url, f.read())
@@ -61,7 +57,6 @@ def test_token():
 
 
 def test_too_many():
-
     def handler(method, url, *args, **kwargs):
         with open('tests/static/api_too_many.json', 'rb') as f:
             return Response(url, f.read())
@@ -81,7 +76,6 @@ def test_too_many():
 
 
 def test_network_failure():
-
     def handler(method, url, *args, **kwargs):
         raise HTTPError('Bam!')
 
@@ -95,7 +89,6 @@ def test_network_failure():
 
 
 def test_captcha():
-
     def handler(method, url, *args, **kwargs):
         urlp = urlparse(url)
         query = dict(parse_qsl(urlp.query))
@@ -123,7 +116,6 @@ def test_captcha():
 
 
 def test_unrecoverable_error():
-
     def handler(method, url, *args, **kwargs):
         with open('tests/static/api_some_error.json', 'rb') as f:
             return Response(url, f.read())

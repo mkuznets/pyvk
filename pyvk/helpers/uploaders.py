@@ -12,8 +12,7 @@ class _Uploader(object):
         self._server = self._api.call(self._get_server, **self._args)
 
     def attachments(self, files):
-        return ['{_type}{owner_id}_{id}'.format(_type=self._type, **p)
-                for p in files]
+        return ['{_type}{owner_id}_{id}'.format(_type=self._type, **p) for p in files]
 
     def _upload_common(self, data, **kwargs):
 
@@ -26,8 +25,7 @@ class _Uploader(object):
             except TypeError:
                 field = self._field
 
-            uploaded = requests.post(self._server['upload_url'],
-                                     files={field: data})
+            uploaded = requests.post(self._server['upload_url'], files={field: data})
             print(uploaded.json())
 
         if self._save:
@@ -51,17 +49,18 @@ class AlbumPhotoUploader(_Uploader):
     _type = 'photo'
 
     def __init__(self, api, album_id, group_id=None):
-        super(AlbumPhotoUploader, self).__init__(
-            api, album_id=album_id, group_id=group_id
-        )
+        super(AlbumPhotoUploader, self).__init__(api, album_id=album_id, group_id=group_id)
 
     def upload(self, content, latitude=None, longitude=None, caption=None):
-        args = {'latitude': latitude, 'longitude': longitude,
-                'caption': caption, 'album_id': self._args['album_id'],
-                'group_id': self._args['group_id']}
+        args = {
+            'latitude': latitude,
+            'longitude': longitude,
+            'caption': caption,
+            'album_id': self._args['album_id'],
+            'group_id': self._args['group_id'],
+        }
 
-        return self._upload_common(('file.jpg', content),
-                                   **filter_dict(args))
+        return self._upload_common(('file.jpg', content), **filter_dict(args))
 
 
 class WallPhotoUploader(_Uploader):
@@ -71,14 +70,12 @@ class WallPhotoUploader(_Uploader):
     _type = 'photo'
 
     def __init__(self, api, group_id=None):
-        super(WallPhotoUploader, self).__init__(
-            api, group_id=group_id
-        )
+        super(WallPhotoUploader, self).__init__(api, group_id=group_id)
 
     def upload(self, content, user_id=None, attach=False):
-        photos= self._upload_common(('file.jpg', content),
-                                    user_id=user_id,
-                                    group_id=self._args['group_id'])
+        photos = self._upload_common(
+            ('file.jpg', content), user_id=user_id, group_id=self._args['group_id']
+        )
         return self.attachments(photos) if attach else photos
 
 
@@ -89,13 +86,10 @@ class ProfilePhotoUploader(_Uploader):
     _type = 'photo'
 
     def __init__(self, api, owner_id=None):
-        super(ProfilePhotoUploader, self).__init__(
-            api, owner_id=owner_id
-        )
+        super(ProfilePhotoUploader, self).__init__(api, owner_id=owner_id)
 
     def upload(self, content):
-        return self._upload_common(('file.jpg', content),
-                                   owner_id=self._args['owner_id'])
+        return self._upload_common(('file.jpg', content), owner_id=self._args['owner_id'])
 
 
 class MessagePhotoUploader(_Uploader):
@@ -120,12 +114,10 @@ class ChatPhotoUploader(_Uploader):
     _type = 'photo'
     _argsmap = {'file': 'response'}
 
-    def __init__(self, api, chat_id,
-                 crop_x=None, crop_y=None, crop_width=None):
+    def __init__(self, api, chat_id, crop_x=None, crop_y=None, crop_width=None):
 
         super(ChatPhotoUploader, self).__init__(
-            api, chat_id=chat_id, crop_x=crop_x, crop_y=crop_y,
-            crop_width=crop_width
+            api, chat_id=chat_id, crop_x=crop_x, crop_y=crop_y, crop_width=crop_width
         )
 
     def upload(self, content):
@@ -138,17 +130,19 @@ class MarketPhotoUploader(_Uploader):
     _field = 'file'
     _type = 'photo'
 
-    def __init__(self, api, group_id, main_photo=None,
-                 crop_x=None, crop_y=None, crop_width=None):
+    def __init__(self, api, group_id, main_photo=None, crop_x=None, crop_y=None, crop_width=None):
 
         super(MarketPhotoUploader, self).__init__(
-            api, group_id=group_id, main_photo=main_photo,
-            crop_x=crop_x, crop_y=crop_y, crop_width=crop_width
+            api,
+            group_id=group_id,
+            main_photo=main_photo,
+            crop_x=crop_x,
+            crop_y=crop_y,
+            crop_width=crop_width,
         )
 
     def upload(self, content):
-        return self._upload_common(('file.jpg', content),
-                                   group_id=self._args['group_id'])
+        return self._upload_common(('file.jpg', content), group_id=self._args['group_id'])
 
 
 class MarketAlbumPhotoUploader(_Uploader):
@@ -158,13 +152,10 @@ class MarketAlbumPhotoUploader(_Uploader):
     _type = 'photo'
 
     def __init__(self, api, group_id):
-        super(MarketAlbumPhotoUploader, self).__init__(
-            api, group_id=group_id
-        )
+        super(MarketAlbumPhotoUploader, self).__init__(api, group_id=group_id)
 
     def upload(self, content):
-        return self._upload_common(('file.jpg', content),
-                                   group_id=self._args['group_id'])
+        return self._upload_common(('file.jpg', content), group_id=self._args['group_id'])
 
 
 class AudioUploader(_Uploader):
@@ -179,8 +170,7 @@ class AudioUploader(_Uploader):
     def upload(self, content, artist=None, title=None):
         name = list('abcdefghijklmnopqr')
         random.shuffle(name)
-        return self._upload_common((''.join(name) + '.mp3', content),
-                                   artist=artist, title=title)
+        return self._upload_common((''.join(name) + '.mp3', content), artist=artist, title=title)
 
 
 class VideoUploader(_Uploader):
@@ -205,8 +195,7 @@ class DocUploader(_Uploader):
         super(DocUploader, self).__init__(api, group_id=group_id)
 
     def upload(self, filename, content, title=None, tags=None, attach=False):
-        files = self._upload_common((filename, content),
-                                    title=title, tags=tags)
+        files = self._upload_common((filename, content), title=title, tags=tags)
         return self.attachments(files) if attach else files
 
 

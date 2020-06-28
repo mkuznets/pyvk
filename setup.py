@@ -10,19 +10,12 @@ setup(
     version=version,
     platforms='any',
     packages=['pyvk'],
-
-    install_requires=[
-        'requests',
-        'lxml',
-        'appdirs',
-    ],
-
+    install_requires=['requests', 'lxml', 'appdirs',],
     author='Max Kuznetsov',
     author_email='maks.kuznetsov@gmail.com',
     description='VK API for Python',
     license='MIT',
     url='https://github.com/mkuznets/pyvk',
-
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',

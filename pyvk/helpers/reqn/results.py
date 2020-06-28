@@ -115,8 +115,7 @@ class ResultUsersGetSubscriptions(ResultItems):
 
     def __init__(self, args):
         if 'extended' not in args:
-            raise ValueError('users.getSubscriptions: '
-                             'batch request requires extended=1')
+            raise ValueError('users.getSubscriptions: ' 'batch request requires extended=1')
         super(ResultUsersGetSubscriptions, self).__init__(args)
 
 
@@ -166,8 +165,7 @@ class ResultFriendsGetOnline(_Result):
     def __init__(self, args):
         self.online_mobile = bool(args.get('online_mobile', False))
 
-        self.result = {'online': [], 'online_mobile': []} \
-            if self.online_mobile else []
+        self.result = {'online': [], 'online_mobile': []} if self.online_mobile else []
 
         self.batch_size_iter = repeat(100000)  # the size is not limited
 
@@ -195,8 +193,7 @@ class ResultFriendsGetMutual(_Result):
 
         if self.multiple:
             uids = filter(lambda x: x > 0, map(int, args['target_uids']))
-            self.result = [{'id': uid, 'common_friends': [], 'common_count': 0}
-                           for uid in uids]
+            self.result = [{'id': uid, 'common_friends': [], 'common_count': 0} for uid in uids]
         else:
             self.result = []
 
@@ -264,7 +261,6 @@ class ResultNewsfeedGetMentions(ResultItems):
 class ResultStorageGetKeys(ResultList):
     method = 'storage.getKeys'
     _batch_size = 1000
-
 
 
 # TODO
