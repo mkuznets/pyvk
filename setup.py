@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pyvk',
-    version='0.1.0',
+    version='0.1.1',
     platforms='any',
     packages=['pyvk'],
 
