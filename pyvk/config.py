@@ -11,102 +11,84 @@
 
 import logging
 from .constants import p_basic, p_offline
-from .utils import Input, Config, DictNamedTuple
+from .utils import Input, Config
 
 
 class GlobalConfig(Config):
-    # :param str log_format: the log messages format compatible with standard
-    #                        `logging` module
+    #: log messages format compatible with :py:mod:`logging` module
     log_format = '%(asctime)s %(name)s %(levelname)s: %(message)s'
 
-    # :param int log_level: the log messages level compatible with standard
-    #                       `logging` module
+    #: log messages level compatible with :py:mod:`logging` module
     log_level = logging.INFO
 
-    # :param log_file: optional log file. If not set, standard output is used
-    # :type log_file: str or None
+    #: optional log file. If not set, standard output is used
     log_file = None
 
-    # :param input: static class for requesting user information during an
-    #               interactive client session. `pyvk.Input` or its subclassed
-    #               are expected.
-    # type input: Input
+    #: static class for requesting user information during an
+    #: interactive client session. :py:class:`.Input` or its subclassed
+    #: are expected.
     input = Input
 
-    # :param float timeout: time for waiting for a network response
+    #: time for waiting for a network response
     timeout = 6.05
 
-    # :param str version: VK API version. See official documentation for
-    #                     version history and changelog
+    #: VK API version.
+    #: See `version history <https://vk.com/dev/versions>`__
+    #: for more information.
     version = '5.60'
 
 
 class ServerAuthConfig(GlobalConfig):
-    # :param app_id: VK application identifier
-    # :type app_id: int or None
     app_id = None
-
-    # :param int scope: bitmaks for access rights requested from VK API
-    scope = p_offline
-
-    # :param str redirect_uri: callback URL that is requested by VK API to send
-    #                          a secret code which is then used by the sever to
-    #                          request an access token
     redirect_uri = None
 
-    # :param str display: a setting for the authorisation page appearance
+    #: bitmaks for access rights requested from VK API
+    scope = p_offline
+
+    #: sets authorisation page appearance.
+    #: See `VK documentation <https://vk.com/dev/authcode_flow_user>`__
+    #: for more details
     display = 'page'
 
-    # :param state:	an arbitrary string that will be returned together with
-    #               the authorisation result
-    # :type state: str or None
+    #: an arbitrary string that will be returned
+    #: together with the authorisation result
     state = None
 
 
 class ClientAuthConfig(GlobalConfig):
-    # :param str app_id: VK application identifier. Will be requested via
-    #                    an interactive session if not specified.
-    # :type app_id: int or None
     app_id = None
-
-    # :param int scope: bitmaks for access rights requested from VK API
-    scope = p_basic
-
-    # :param username: VK login (email, username, or mobile phone). Will be
-    #                  requested via an interactive session if not specified
-    # :type username: int or None
     username = None
 
-    # :param bool disable_cache: controls authorisation cache. Is set, login
-    #                            and password will be requested every time the
-    #                            ClientAuth is called
+    #: bitmask for access rights requested from VK API
+    scope = p_basic
+
+    #: controls authorisation cache.
+    #: If set, login and password will be requested
+    #: every time ClientAuth is called
     disable_cache = False
 
 
 class APIConfig(GlobalConfig):
-    # :param lang: language of VK API responses
-    # :type lang: str or None
-    lang = None
+    #: language of VK API responses
+    lang = 'en'
 
-    # :param bool validation: if set, captcha requests will be handled via an
-    #                         interactive session.
+    #: if set, captcha requests will be handled via an interactive session.
     validation = True
 
-    # :param bool auto_delay: when encounter a request frequency limit, add
-    #                         delays of increasing lenghts and repeat the
-    #                         request `max_attempts` times.
+    #: when encounter a request frequency limit
+    #: add delays of increasing lenghts and repeat the
+    #: request `max_attempts` times.
     auto_delay = True
 
-    # :param int max_attempts: how many times to repeat a failed request if the
-    #                          failure is configured to be handled
+    #: how many times to repeat a failed request if the
+    #: failure is configured to be handled
     max_attempts = 5
 
-    # :param bool raw: return raw response objects (converted from JSON) instead
-    #                  of unpacking and error handling. If set, `validation` and
-    #                  `auto_delay` will be ignored
+    #: return raw response objects (converted from JSON) instead
+    #: of unpacking and error handling. If set, `validation` and
+    #: `auto_delay` will be ignored
     raw = False
 
-    # :param Mapping response_type: an object used for JSON decoding. It defines
-    #                               the type of map-like objects returned by
-    #                               API calls.
-    response_type = DictNamedTuple
+    #: an object used for JSON decoding. It defines
+    #: the type of map-like objects returned by API calls.
+    response_type = dict

@@ -3,9 +3,8 @@
     pyvk.helpers.reqn.reqn
     ~~~~
 
-    Implements helper to get `n' data item
-    from API methods by a single function call
-    without messing with `count' and `offset' parameters.
+    Implements helper to get `n' data items
+    from paginated API methods by a single function call.
 
     :copyright: (c) 2013-2016 by Max Kuznetsov.
     :license: MIT, see LICENSE for more details.

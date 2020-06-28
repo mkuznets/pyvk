@@ -40,13 +40,24 @@ else:  # pragma: no cover
 logger = logging.getLogger(__name__)
 
 
-class Auth(object):
+class _Auth(object):
+    """
+    Base class for auth helper objects. Not supposed to be used directly.
+    """
+
     token = scope = app_id = config = None
 
     def _test_and_set_token(self, token):
+        """
+        Test VK API token and store it if valid.
+
+        :param str token: VK API token
+        :raises InvalidToken: if the token proved invalid or could not be tested
+        """
+
         api = API(token=token)
         try:
-            self.scope = api.account.getAppPermissions()
+            self.scope = api.call('account.getAppPermissions')
             self.token = token
 
         except APIError as exc:
@@ -57,18 +68,32 @@ class Auth(object):
                                **exc.kwargs)
 
     def api(self, **kwargs):
-        if self.token is None:
-            raise AuthError('Not authorised. '
-                            'Forgot to run .auth()?')
+        """
+        If authorised, returns an :py:class:`~pyvk.API` object.
 
+        One can also pass keyword parameters to customise default configuration
+        defined in :py:class:`~.config.GlobalConfig`
+        and :py:class:`~.config.APIConfig`. The formers ones will be inherited
+        if customised by the auth helper.
+
+        :raises AuthError: if not authorised
+        :returns: :py:class:`~pyvk.API` object
+        """
+        if self.token is None:
+            raise AuthError('Not authorised. Forgot to run .auth()?')
+
+        # Get only global parameters from the auth helper configuration...
         params = dict(GlobalConfig(**self.config))
+        # ...and update them with given parameters.
         params.update(kwargs)
+
         return API(self.token, **params)
 
 
-class ServerAuth(Auth):
+class ServerAuth(_Auth):
 
-    def __init__(self, app_id, redirect_uri,  **kwargs):
+    def __init__(self, app_id, redirect_uri, **kwargs):
+
         self.config = ServerAuthConfig(app_id=app_id, redirect_uri=redirect_uri,
                                        **kwargs)
         setup_logger(self.config)
@@ -77,6 +102,12 @@ class ServerAuth(Auth):
 
     @property
     def auth_url(self):
+        """
+        Returns URL for the first step of authorisation
+
+        :return: VK login page URL
+        :rtype: str
+        """
         url = 'https://oauth.vk.com/authorize' \
               '?client_id={app_id}' \
               '&display={display}' \
@@ -87,6 +118,16 @@ class ServerAuth(Auth):
         return url
 
     def auth(self, code, client_secret):
+        """
+        Completes authorisation with `code` and `client_secret` provided by VK
+        via GET request to `redirect_uri`.
+        Initialises :py:attr:`~.ServerAuth.token`
+        and :py:attr:`~.ServerAuth.scope` attributes if successful.
+
+        :param code: parameter from GET request sent to `redirect_uri`
+        :param client_secret: secret key from VK application settings
+        :raises AuthError: if authorisation is unsuccessful.
+        """
         url = 'https://oauth.vk.com/access_token' \
               '?client_id={app_id}' \
               '&client_secret={client_secret}' \
@@ -112,7 +153,7 @@ class ServerAuth(Auth):
                 raise AuthError('Unexpected JSON response', response=response)
 
 
-class ClientAuth(Auth):
+class ClientAuth(_Auth):
     username = _state = None
 
     def __init__(self, **kwargs):
@@ -155,6 +196,15 @@ class ClientAuth(Auth):
             logger.debug('Authorisation cache does not exist or is empty')
 
     def auth(self, state=None, *args):
+        """
+        Starts authorisation.
+        Initialises :py:attr:`~.ClientAuth.token`
+        and :py:attr:`~.ClientAuth.scope` attributes if successful.
+
+        :param str state: initial stage for authorisation procedure. Used for
+                          testing purposes only.
+        :raises AuthError: if authorisation is unsuccessful.
+        """
 
         self._test_and_set_cached_token()
         if self.token:
@@ -169,7 +219,7 @@ class ClientAuth(Auth):
             assert hasattr(self, fname), 'State `%s\' not in DFA!' % self._state
             f = getattr(self, fname)
 
-            # Cannot use pattern matching due to PY2 compatibility.
+            # Note: cannot use pattern matching due to Python 2 compatibility.
             result = f(*args)
             self._state = result[0]
             args = result[1:]

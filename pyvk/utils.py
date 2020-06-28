@@ -10,9 +10,11 @@
 """
 
 from collections import Mapping, Sequence
+from inspect import getsourcelines
 from itertools import takewhile
 import getpass
 import sys
+import re
 
 
 PY2 = sys.version_info[0] == 2
@@ -156,36 +158,59 @@ class Config(DictNamedTuple):
 
 
 class Input(object):
+    """
+    Interface for requesting input from user via stdin.
+    One can subclass and override :py:meth:`~Input.ask` in order to
+    implement other ways of providing the input.
+    """
 
     @staticmethod
-    def prompt(prompt):
+    def _prompt(prompt):
         return input(prompt).strip()
 
     @staticmethod
     def ask(field, **kwargs):
+        """
+        Read certain type of input from stdin with a relevant prompt.
+
+        :param str field: type of input
+        :return: input string
+        :raises: ValueError if incorrect arguments are passed
+
+        Additional keyword arguments are needed in some cases.
+
+        Possible inputs:
+
+        * ``ask('app_id')``
+        * ``ask('username')``
+        * ``ask('password')``
+        * ``ask('secret_code')``
+        * ``ask('phone', msg='...')``
+        * ``ask('captcha', img='<image URL>')``
+        """
 
         if field == 'username':
-            return Input.prompt('Username (email of mobile number): ')
+            return Input._prompt('Username (email of mobile number): ')
 
         elif field == 'app_id':
-            return Input.prompt('API ID: ')
+            return Input._prompt('API ID: ')
 
         elif field == 'password':
             return getpass.getpass('Password: ')
 
         elif field == 'secret_code':
-            return Input.prompt('Secret code: ')
+            return Input._prompt('Secret code: ')
 
         elif field == 'phone':
             try:
-                return Input.prompt('%s: ' % kwargs['msg'])
+                return Input._prompt('%s: ' % kwargs['msg'])
             except KeyError:
                 raise ValueError('Message is not provided')
 
         elif field == 'captcha':
             try:
                 text = "%s\nEnter text from the picture above: " % kwargs['img']
-                return Input.prompt(text)
+                return Input._prompt(text)
             except KeyError:
                 raise ValueError('Image URL is not provided')
 
