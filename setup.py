@@ -1,8 +1,13 @@
+import re
+
 from setuptools import setup
+
+with open("pyvk/__init__.py", encoding="utf8") as f:
+    version = re.search(r'__version__ = "(.*?)"', f.read()).group(1)
 
 setup(
     name='pyvk',
-    version='0.1.1',
+    version=version,
     platforms='any',
     packages=['pyvk'],
 
