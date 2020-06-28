@@ -2,7 +2,7 @@ import re
 
 from setuptools import setup
 
-with open("pyvk/__init__.py", encoding="utf8") as f:
+with open("pyvk/__init__.py") as f:
     version = re.search(r'__version__ = "(.*?)"', f.read()).group(1)
 
 setup(
@@ -10,7 +10,15 @@ setup(
     version=version,
     platforms='any',
     packages=['pyvk'],
-    install_requires=['requests', 'lxml', 'appdirs',],
+    install_requires=['requests', 'lxml', 'appdirs', ],
+    extras_require={
+        "tests": [
+            "mock",
+            "pytest",
+            "coverage",
+            "coveralls",
+        ]
+    },
     author='Max Kuznetsov',
     author_email='maks.kuznetsov@gmail.com',
     description='VK API for Python',

@@ -6,7 +6,7 @@ from tests.utils import EnvInput
 
 auth = ClientAuth(input=EnvInput, scope=p_wall | p_friends, disable_cache=True)
 auth.auth()
-api = auth.api()
+api = auth.api(max_attempts=100)
 
 
 def fetch(method, args, n, batch_size):
@@ -75,6 +75,7 @@ def test_reqn_users_getsubscriptions():
     fetch_and_compare(method, args, n=40, batch_size=10)
 
 
+@pytest.mark.skip(reason="flaky")
 def test_reqn_friends_getonline():
     method = api.friends.getOnline
 

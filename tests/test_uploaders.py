@@ -9,7 +9,7 @@ import pytest
 
 auth = ClientAuth(input=EnvInput, scope=p_basic | p_market | p_docs, disable_cache=True)
 auth.auth()
-api = auth.api()
+api = auth.api(max_attempts=100)
 
 
 def get_random_photo():
