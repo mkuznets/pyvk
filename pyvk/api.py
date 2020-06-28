@@ -20,7 +20,7 @@ import json
 from .config import APIConfig
 from .constants import E_CAPTCHA, E_TOO_MANY, E_FLOOD
 from .exceptions import ReqError, APIError
-from .utils import PY2, process_args, setup_logger, DictNamedTuple
+from .utils import PY2, process_args, setup_logger
 
 if PY2:  # pragma: no cover
     from urllib import urlencode
