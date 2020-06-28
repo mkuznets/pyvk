@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pyvk',
-    version='0.0.1',
+    version='0.1.0',
     platforms='any',
     packages=['pyvk'],
 
@@ -16,7 +16,7 @@ setup(
     author_email='maks.kuznetsov@gmail.com',
     description='VK API for Python',
     license='MIT',
-    url='https://github.com/mkuznets/PyVK',
+    url='https://github.com/mkuznets/pyvk',
 
     classifiers=[
         'Development Status :: 4 - Beta',
