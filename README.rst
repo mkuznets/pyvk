@@ -41,8 +41,7 @@ Examples
     >>> from pyvk import ClientAuth, p_docs, p_offline
 
     >>> # Authorisation without tokens and stored passwords
-    >>> auth = ClientAuth(app_id=<...>, username=<...>,
-                          scope=p_docs | p_offline)
+    >>> auth = ClientAuth(app_id=<...>, username=<...>, scope=p_docs | p_offline)
     >>> auth.auth()
     Password: <...>
 
@@ -50,10 +49,10 @@ Examples
 
     >>> # Call API methods as if they were pythonic
     >>> api.users.get(user_ids=[210700286], fields=['bdate'])
-    [{'bdate': '21.9.1986',
+    [{'id': 210700286,
       'first_name': 'Lindsey',
-      'id': 210700286,
-      'last_name': 'Stirling'}]
+      'last_name': 'Stirling',
+      'bdate': '21.9.1986'}]
 
     >>> # Fetch all items from paginated API responses with a single call
     >>> from pyvk.helpers import reqn
@@ -71,17 +70,13 @@ Examples
     >>>    attach = up.upload(f, attach=True)
     >>>    api.wall.post(attachments=attach)
 
-
 Installation
 ------------
 
-Stable versions can be installed using
-`easy_install <http://peak.telecommunity.com/DevCenter/EasyInstall>`__
-or `pip <https://pypi.python.org/pypi/pip>`__:
+Stable versions can be installed using `pip <https://pypi.python.org/pypi/pip>`__:
 
 .. code-block::
 
-    easy_install pyvk
     pip install pyvk
 
 For development version:
@@ -89,4 +84,3 @@ For development version:
 .. code-block::
 
     pip install git+https://github.com/mkuznets/pyvk.git@master
-
