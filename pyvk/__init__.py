@@ -12,5 +12,6 @@
 
 from .api import API
 from .auth import ClientAuth, ServerAuth
+from .utils import Input
 from .constants import *
 from . import exceptions
