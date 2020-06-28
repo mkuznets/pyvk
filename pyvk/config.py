@@ -5,7 +5,7 @@
 
     Defines constants, parameters, and their default values.
 
-    :copyright: (c) 2013-2016 by Max Kuznetsov.
+    :copyright: (c) 2013-2020 by Max Kuznetsov.
     :license: MIT, see LICENSE for more details.
 """
 

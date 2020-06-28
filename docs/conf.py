@@ -61,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'PyVK'
-copyright = ' 2015-2017, Max Kuznetsov'
+copyright = ' 2013-2020, Max Kuznetsov'
 author = 'Max Kuznetsov'
 
 # The version info for the project you're documenting, acts as replacement for

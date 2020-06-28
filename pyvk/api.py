@@ -5,7 +5,7 @@
 
     Defines classes for calling VK API methods
 
-    :copyright: (c) 2013-2016, Max Kuznetsov
+    :copyright: (c) 2013-2020, Max Kuznetsov
     :license: MIT, see LICENSE for more details.
 """
 

@@ -6,7 +6,7 @@
     Defines classes for results of particular VK API methods calls.
     They mainly implement merging multiple results into a single one.
 
-    :copyright: (c) 2013-2016 by Max Kuznetsov.
+    :copyright: (c) 2013-2020 by Max Kuznetsov.
     :license: MIT, see LICENSE for more details.
 """
 

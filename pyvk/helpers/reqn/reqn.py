@@ -6,7 +6,7 @@
     Implements helper to get `n' data items
     from paginated API methods by a single function call.
 
-    :copyright: (c) 2013-2016 by Max Kuznetsov.
+    :copyright: (c) 2013-2020 by Max Kuznetsov.
     :license: MIT, see LICENSE for more details.
 """
 
