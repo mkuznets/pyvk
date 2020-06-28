@@ -16,8 +16,8 @@ p_friends         = 2
 p_photos          = 4
 p_audio           = 8
 p_video           = 16
-p_offers          = 32
 p_questions       = 64
+p_stories         = 64
 p_pages           = 128
 p_leftmenu        = 256
 p_status          = 1024
@@ -34,14 +34,14 @@ p_email           = 4194304
 p_market          = 134217728
 
 
-p_all = p_notify | p_friends | p_photos | p_audio | p_video \
-    | p_offers | p_questions | p_pages | p_leftmenu | p_status \
-    | p_notes | p_messages | p_wall | p_ads | p_offline | p_docs \
-    | p_groups | p_notifications | p_stats | p_email | p_market
+p_all = (p_notify | p_friends | p_photos | p_audio | p_video | p_stories | p_pages
+         | p_leftmenu | p_status | p_notes | p_messages | p_wall | p_ads
+         | p_offline | p_docs | p_groups | p_notifications | p_stats | p_email
+         | p_market)
 
 
-p_basic = p_friends | p_photos | p_audio | p_video | p_status | p_messages \
-    | p_wall | p_groups | p_offline
+p_basic = (p_friends | p_photos | p_audio | p_video | p_status | p_messages
+           | p_wall | p_groups | p_offline)
 
 
 # Error Codes
