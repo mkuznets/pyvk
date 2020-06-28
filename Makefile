@@ -1,7 +1,7 @@
 SHELL := /usr/bin/env bash
 
 test:
-	coverage run --branch --source pyvk -m pytest
+	pytest --cov-branch --cov=pyvk ./tests
 	coverage report -m
 
 .PHONY: test

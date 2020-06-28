@@ -1,37 +1,33 @@
 from io import BytesIO
-from pyvk import ClientAuth, p_basic, p_market, p_docs
-from pyvk.helpers.uploaders import *
-from tests.utils import EnvInput
-import requests
 
 import pytest
 
-
-auth = ClientAuth(input=EnvInput, scope=p_basic | p_market | p_docs, disable_cache=True)
-auth.auth()
-api = auth.api(max_attempts=100)
+from pyvk.helpers.uploaders import *
 
 
-def get_random_photo():
+def get_random_photo(api):
     (photo_obj,) = api.photos.get(album_id=237720036, count=1, rev=True)['items']
     photo_url = photo_obj['photo_604']
     return requests.get(photo_url).content
 
 
-def test_video():
+@pytest.mark.network
+def test_video(api):
     up = VideoUploader(api, link='https://www.youtube.com/watch?v=dQw4w9WgXcQ', wallpost=True)
     result = up.upload()
     assert 'response' in result
 
 
-def test_album_photo():
+@pytest.mark.network
+def test_album_photo(api):
     photo = get_random_photo()
     up = AlbumPhotoUploader(api, album_id=237720036)
     result = up.upload(BytesIO(photo), caption='shakal')
     assert 'jpg' in result[0]['photo_604']
 
 
-def test_wall_photo():
+@pytest.mark.network
+def test_wall_photo(api):
     photo = get_random_photo()
     up = WallPhotoUploader(api)
     attach = up.upload(BytesIO(photo), attach=True)
@@ -39,7 +35,8 @@ def test_wall_photo():
     assert post['post_id']
 
 
-def test_profile_photo():
+@pytest.mark.network
+def test_profile_photo(api):
     (user,) = api.users.get(fields=['photo_max'])
     photo_url = user['photo_max']
     photo = requests.get(photo_url).content
@@ -49,8 +46,9 @@ def test_profile_photo():
     assert 'photo_src' in result
 
 
+@pytest.mark.network
 @pytest.mark.skip()
-def test_chat_photo():
+def test_chat_photo(api):
     photo = get_random_photo()
 
     up = ChatPhotoUploader(api, chat_id=1)
@@ -58,8 +56,9 @@ def test_chat_photo():
     assert 'message_id' in result
 
 
+@pytest.mark.network
 @pytest.mark.skip()
-def test_message_photo():
+def test_message_photo(api):
     photo = get_random_photo()
     up = MessagePhotoUploader(api)
     attach = up.upload(BytesIO(photo), attach=True)
@@ -67,7 +66,8 @@ def test_message_photo():
     assert type(msg_id) is int
 
 
-def test_audio():
+@pytest.mark.network
+def test_audio(api):
     (item,) = api.audio.get(count=1)['items']
     audio_url = item['url']
     audio = requests.get(audio_url).content
@@ -77,7 +77,8 @@ def test_audio():
     assert 'id' in result
 
 
-def test_doc():
+@pytest.mark.network
+def test_doc(api):
     (item,) = api.docs.get(count=1)['items']
     doc_url, doc_name = item['url'], item['title']
     doc = requests.get(doc_url).content
@@ -89,8 +90,9 @@ def test_doc():
     assert 'id' in result[0]
 
 
+@pytest.mark.network
 @pytest.mark.skip()
-def test_product_photo():
+def test_product_photo(api):
     (item,) = api.market.getById(item_ids=['-131241381_360858'], extended=True)['items']
     (photo_obj,) = item['photos']
     photo_url = photo_obj['photo_2560']
@@ -103,7 +105,8 @@ def test_product_photo():
     assert 'id' in result[0]
 
 
-def test_product_collection_photo():
+@pytest.mark.network
+def test_product_collection_photo(api):
     (item,) = api.market.getById(item_ids=['-131241381_360858'], extended=True)['items']
     (photo_obj,) = item['photos']
     photo_url = photo_obj['photo_2560']

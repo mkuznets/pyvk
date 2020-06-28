@@ -4,10 +4,6 @@ from pyvk.utils import zip
 from pyvk.helpers import reqn
 from tests.utils import EnvInput
 
-auth = ClientAuth(input=EnvInput, scope=p_wall | p_friends, disable_cache=True)
-auth.auth()
-api = auth.api(max_attempts=100)
-
 
 def fetch(method, args, n, batch_size):
     rb = reqn(method, n=n, batch_size=batch_size, **args)
@@ -42,14 +38,16 @@ def fetch_and_compare(method, args, n, batch_size):
         assert rb == rn
 
 
-def test_reqn_exhaustive():
+@pytest.mark.network
+def test_reqn_exhaustive(api):
     method = api.friends.get
     args = dict(user_id=1)
     fetch_and_compare(method, args, None, batch_size=100)
 
 
 @pytest.mark.skip()
-def test_reqn_wall_get():
+@pytest.mark.network
+def test_reqn_wall_get(api):
     method = api.wall.get
     args = dict(owner_id=-29534144, filter='owner', extended=1)
     fetch_and_compare(method, args, n=100, batch_size=10)
@@ -58,13 +56,15 @@ def test_reqn_wall_get():
     fetch_and_compare(method, args, n=100, batch_size=10)
 
 
-def test_reqn_wall_getreposts():
+@pytest.mark.network
+def test_reqn_wall_getreposts(api):
     method = api.wall.getReposts
     args = dict(owner_id=-29534144, post_id=1347049)
     fetch_and_compare(method, args, n=40, batch_size=10)
 
 
-def test_reqn_users_getsubscriptions():
+@pytest.mark.network
+def test_reqn_users_getsubscriptions(api):
     method = api.users.getSubscriptions
 
     with pytest.raises(ValueError):
@@ -75,8 +75,9 @@ def test_reqn_users_getsubscriptions():
     fetch_and_compare(method, args, n=40, batch_size=10)
 
 
+@pytest.mark.network
 @pytest.mark.skip(reason="flaky")
-def test_reqn_friends_getonline():
+def test_reqn_friends_getonline(api):
     method = api.friends.getOnline
 
     n = 5
@@ -97,7 +98,8 @@ def test_reqn_friends_getonline():
         break
 
 
-def test_reqn_friends_getmutual():
+@pytest.mark.network
+def test_reqn_friends_getmutual(api):
     method = api.friends.getMutual
 
     args = dict(source_uid=1, target_uid=21)
@@ -110,7 +112,8 @@ def test_reqn_friends_getmutual():
         assert eb['common_friends'] == en['common_friends']
 
 
-def test_reqn_storage_getkeys():
+@pytest.mark.network
+def test_reqn_storage_getkeys(api):
     method = api.storage.getKeys
 
     args = {'global': 1}

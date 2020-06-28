@@ -10,15 +10,8 @@ setup(
     version=version,
     platforms='any',
     packages=['pyvk'],
-    install_requires=['requests', 'lxml', 'appdirs', ],
-    extras_require={
-        "tests": [
-            "mock",
-            "pytest",
-            "coverage",
-            "coveralls",
-        ]
-    },
+    install_requires=['requests', 'lxml', 'appdirs',],
+    extras_require={"tests": ["mock", "pytest", "pytest-cov", "coverage", "coveralls",]},
     author='Max Kuznetsov',
     author_email='maks.kuznetsov@gmail.com',
     description='VK API for Python',
