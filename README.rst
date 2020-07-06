@@ -31,7 +31,7 @@ Features
 * **Pagination:** PyVK can join paginated API responses into a single result.
 * **Media uploading:** PyVK wraps it into a single method call
   and makes it to use those files as attachments to posts and messages.
-* **Python 2 and 3 :** PyVK is tested for CPython 2.6-3.5
+* **Python 2 and 3 :** PyVK is tested for CPython 2.7 and 3.5-3.8
 
 Examples
 --------
