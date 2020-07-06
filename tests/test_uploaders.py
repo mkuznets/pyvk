@@ -47,26 +47,6 @@ def test_profile_photo(api):
 
 
 @pytest.mark.network
-@pytest.mark.skip()
-def test_chat_photo(api):
-    photo = get_random_photo(api)
-
-    up = ChatPhotoUploader(api, chat_id=1)
-    result = up.upload(BytesIO(photo))
-    assert 'message_id' in result
-
-
-@pytest.mark.network
-@pytest.mark.skip()
-def test_message_photo(api):
-    photo = get_random_photo(api)
-    up = MessagePhotoUploader(api)
-    attach = up.upload(BytesIO(photo), attach=True)
-    msg_id = api.messages.send(chat_id=1, attachment=attach)
-    assert type(msg_id) is int
-
-
-@pytest.mark.network
 def test_audio(api):
     (item,) = api.audio.get(count=1)['items']
     audio_url = item['url']
