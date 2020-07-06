@@ -20,7 +20,7 @@ def test_video(api):
 
 @pytest.mark.network
 def test_album_photo(api):
-    photo = get_random_photo()
+    photo = get_random_photo(api)
     up = AlbumPhotoUploader(api, album_id=237720036)
     result = up.upload(BytesIO(photo), caption='shakal')
     assert 'jpg' in result[0]['photo_604']
@@ -28,7 +28,7 @@ def test_album_photo(api):
 
 @pytest.mark.network
 def test_wall_photo(api):
-    photo = get_random_photo()
+    photo = get_random_photo(api)
     up = WallPhotoUploader(api)
     attach = up.upload(BytesIO(photo), attach=True)
     post = api.wall.post(attachments=attach)
@@ -49,7 +49,7 @@ def test_profile_photo(api):
 @pytest.mark.network
 @pytest.mark.skip()
 def test_chat_photo(api):
-    photo = get_random_photo()
+    photo = get_random_photo(api)
 
     up = ChatPhotoUploader(api, chat_id=1)
     result = up.upload(BytesIO(photo))
@@ -59,7 +59,7 @@ def test_chat_photo(api):
 @pytest.mark.network
 @pytest.mark.skip()
 def test_message_photo(api):
-    photo = get_random_photo()
+    photo = get_random_photo(api)
     up = MessagePhotoUploader(api)
     attach = up.upload(BytesIO(photo), attach=True)
     msg_id = api.messages.send(chat_id=1, attachment=attach)
