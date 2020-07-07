@@ -71,11 +71,10 @@ def test_doc(api):
 
 
 @pytest.mark.network
-@pytest.mark.skip()
 def test_product_photo(api):
     (item,) = api.market.getById(item_ids=['-131241381_360858'], extended=True)['items']
     (photo_obj,) = item['photos']
-    photo_url = photo_obj['photo_2560']
+    photo_url = photo_obj['photo_604']
     photo = requests.get(photo_url).content
 
     up = MarketPhotoUploader(api, group_id=131241381, main_photo=True)
