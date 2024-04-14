@@ -1,3 +1,5 @@
+:tocdepth: 4
+
 PyVK
 ====
 
@@ -62,6 +64,7 @@ Client-Side
 +++++++++++
 
 .. py:class:: pyvk.ClientAuth(app_id=None, username=None, [**options])
+    :no-index:
 
     Client-side auth object. In this mode a user provides their login/password directly to PyVK.
 
@@ -96,16 +99,19 @@ Client-Side
                       to API objects spawned by :py:meth:`~.ClientAuth.api`.
 
     .. py:attribute:: token
+        :no-index:
 
         VK API token.
         Initialised only if authorisation is complete.
 
     .. py:attribute:: scope
+        :no-index:
 
         Bitmask of access rights.
         Initialised only if authorisation is complete.
 
     .. py:method:: auth()
+        :no-index:
 
         Starts authorisation.
         Initialises :py:attr:`~.ClientAuth.token`
@@ -114,6 +120,7 @@ Client-Side
         :raises AuthError: if authorisation is unsuccessful.
 
     .. py:method:: api([**options])
+        :no-index:
 
         Returns an :py:class:`~pyvk.API` object if authorised.
 
@@ -153,6 +160,7 @@ VK API sends a unique code to the callback URL to complete the authorisation:
 
 
 .. py:class:: pyvk.ServerAuth(app_id, redirect_uri, [**options])
+    :no-index:
 
     Server-side auth helper. It is intended for long-running server scripts,
     web-services, and other applications where there is no or limited
@@ -184,19 +192,23 @@ VK API sends a unique code to the callback URL to complete the authorisation:
 
 
     .. py:attribute:: token
+        :no-index:
 
         VK API token.
         Initialised only if authorisation is complete.
 
     .. py:attribute:: scope
+        :no-index:
 
         Bitmask of access rights. Ditto.
 
     .. py:attribute:: auth_url
+        :no-index:
 
         URL for the first step of authorisation
 
     .. py:method:: auth(code, client_secret)
+        :no-index:
 
         Completes authorisation with `code` and `client_secret` provided by VK
         via GET request to `redirect_uri`.
@@ -208,6 +220,7 @@ VK API sends a unique code to the callback URL to complete the authorisation:
         :raises AuthError: if authorisation is unsuccessful.
 
     .. py:method:: api([**options])
+        :no-index:
 
         Returns an :py:class:`~pyvk.API` object if authorised.
 
@@ -266,6 +279,7 @@ There are three ways to get one:
 
 
 .. py:class:: pyvk.API([token], [**parameters])
+    :no-index:
 
     :param str token: authorisation token. If `None`, only a small part of
                       VK API methods is available.)
@@ -383,6 +397,7 @@ access rights commonly used used in scripts and interactive sessions.
 :py:class:`.ServerAuth` defaults to :py:data:`~pyvk.p_offline`.
 
 .. py:data:: pyvk.p_basic
+    :no-index:
 
     Combines :py:data:`~pyvk.p_friends`,
     :py:data:`~pyvk.p_photos`, :py:data:`~pyvk.p_audio`,
@@ -391,85 +406,105 @@ access rights commonly used used in scripts and interactive sessions.
     :py:data:`~pyvk.p_groups`, :py:data:`~pyvk.p_offline`.
 
 .. py:data:: pyvk.p_all
+    :no-index:
 
     Combines all the access rights.
 
 .. py:data:: pyvk.p_notify
+    :no-index:
 
     User allowed to send notifications to they (for Flash/iFrame apps)
 
 .. py:data:: pyvk.p_friends
+    :no-index:
 
     Access to friends.
 
 .. py:data:: pyvk.p_photos
+    :no-index:
 
     Access to photos.
 
 .. py:data:: pyvk.p_audio
+    :no-index:
 
     Access to audio.
 
 .. py:data:: pyvk.p_video
+    :no-index:
 
     Access to video.
 
 .. py:data:: pyvk.p_pages
+    :no-index:
 
     Access to wiki pages.
 
 .. py:data:: pyvk.p_leftmenu
+    :no-index:
 
     Addition of link to the application in the left menu.
 
 .. py:data:: pyvk.p_status
+    :no-index:
 
     Access to user status.
 
 .. py:data:: pyvk.p_notes
+    :no-index:
 
     Access to notes.
 
 .. py:data:: pyvk.p_messages
+    :no-index:
 
     Access to advanced methods for messaging.
     Unavailable for server-side authorisation.
 
 .. py:data:: pyvk.p_wall
+    :no-index:
 
     Access to standard and advanced methods for the wall.
     Ignored for server-side authorisation.
 
 .. py:data:: pyvk.p_ads
+    :no-index:
 
     Access to advanced methods for `Ads API <https://vk.com/dev/ads>`__.
 
 .. py:data:: pyvk.p_offline
+    :no-index:
 
     Access to API at any time (non-expiring access token).
 
 .. py:data:: pyvk.p_docs
+    :no-index:
 
     Access to docs.
 
 .. py:data:: pyvk.p_groups
+    :no-index:
 
     Access to user communities.
 
 .. py:data:: pyvk.p_notifications
+    :no-index:
 
     Access to notifications about answers to the user.
 
 .. py:data:: pyvk.p_stats
+    :no-index:
 
     Access to statistics of user groups and applications
     where they is an administrator.
 
 .. py:data:: pyvk.p_email
+    :no-index:
 
     Access to user email.
 
 .. py:data:: pyvk.p_market
+    :no-index:
 
     Access to market.
 
@@ -479,6 +514,7 @@ User Input
 ++++++++++
 
 .. autoclass:: pyvk.Input
+    :no-index:
     :members:
 
 Options
