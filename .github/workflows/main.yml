@@ -1,9 +1,10 @@
 name: Tests
 on:
-  push:
-    branches:
-      - master
-      - actions
+#  push:
+#    branches:
+#      - master
+#      - actions
+
 jobs:
   test:
     runs-on: ubuntu-20.04
