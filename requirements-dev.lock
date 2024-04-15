@@ -8,7 +8,7 @@
 #   with-sources: false
 
 -e file:.
-alabaster==0.7.16
+alabaster==0.7.14
     # via sphinx
 appdirs==1.4.4
     # via pyvk
@@ -18,9 +18,12 @@ certifi==2024.2.2
     # via requests
 charset-normalizer==3.3.2
     # via requests
-coverage==7.4.4
+coverage==6.5.0
+    # via coveralls
     # via pytest-cov
-    # via python-coveralls
+coveralls==3.3.1
+docopt==0.6.2
+    # via coveralls
 docutils==0.20.1
     # via sphinx
 idna==3.7
@@ -46,15 +49,10 @@ pygments==2.17.2
 pytest==8.1.1
     # via pytest-cov
 pytest-cov==5.0.0
-python-coveralls==2.9.3
-pyyaml==6.0.1
-    # via python-coveralls
 requests==2.31.0
-    # via python-coveralls
+    # via coveralls
     # via pyvk
     # via sphinx
-six==1.16.0
-    # via python-coveralls
 snowballstemmer==2.2.0
     # via sphinx
 sphinx==7.2.6
