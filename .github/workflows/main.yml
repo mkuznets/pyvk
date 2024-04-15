@@ -1,30 +1,28 @@
 name: Tests
 on:
-#  push:
-#    branches:
-#      - master
-#      - actions
+  push:
+    branches:
+      - '**'
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version:
-          - '2.7'
-          - '3.5'
-          - '3.6'
-          - '3.7'
           - '3.8'
+          - '3.9'
+          - '3.10'
+          - '3.11'
+          - '3.12'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
       - name: Run tests
         env:
           API_USER: ${{ secrets.API_USER }}
@@ -32,7 +30,6 @@ jobs:
           API_ID: ${{ secrets.API_ID }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
-          cd $GITHUB_WORKSPACE
-          pip install -e .[tests]
-          PYTEST_ADDOPTS='-m "not network"' make test
+          pip install -r requirements-dev.lock
+          PYTEST_ADDOPTS='-m "not network"' pytest --cov-branch --cov=pyvk ./tests
           coveralls || true
