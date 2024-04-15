@@ -8,7 +8,7 @@
 #   with-sources: false
 
 -e file:.
-alabaster==0.7.14
+alabaster==0.7.13
     # via sphinx
 appdirs==1.4.4
     # via pyvk
