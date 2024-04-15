@@ -1,6 +1,6 @@
 # VK API for Python
 
-[![image](https://github.com/mkuznets/pyvk/workflows/Tests/badge.svg?branch=master)](https://github.com/mkuznets/pyvk/actions?query=workflow%3ATests)
+[![Tests](https://github.com/mkuznets/pyvk/actions/workflows/main.yml/badge.svg)](https://github.com/mkuznets/pyvk/actions/workflows/main.yml)
 [![image](https://coveralls.io/repos/github/mkuznets/pyvk/badge.svg?branch=master)](https://coveralls.io/github/mkuznets/pyvk?branch=master)
 [![image](https://img.shields.io/pypi/v/pyvk.svg?style=flat)](https://pypi.python.org/pypi/pyvk)
 
